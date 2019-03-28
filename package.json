@@ -1,5 +1,5 @@
 {
-  "name": "playkit-js-ovp",
+  "name": "@playkit-js/playkit-js-ovp",
   "version": "0.1.0",
   "license": "AGPL-3.0",
   "author": "Kaltura",
@@ -22,5 +22,7 @@
     "fs-extra": "^7.0.1",
     "typescript": "^3.2.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "preact": "^8.4.2"
+  }
 }
