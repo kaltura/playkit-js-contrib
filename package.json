@@ -1,5 +1,6 @@
 {
   "name": "@playkit-js/playkit-js-ovp",
+  "private": true,
   "version": "0.1.0",
   "license": "AGPL-3.0",
   "author": "Kaltura",
