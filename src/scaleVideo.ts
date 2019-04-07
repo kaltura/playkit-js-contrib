@@ -1,17 +1,32 @@
-
 export interface ScaleCalculation {
-  width: number,
-  height: number,
-  left: number,
-  top: number,
-  scaleToTargetWidth: boolean
+  width: number;
+  height: number;
+  left: number;
+  top: number;
+  scaleToTargetWidth: boolean;
 }
 
-export function scaleVideo(videoWidth: number, videoHeight: number, playerWidth: number, playerHeight: number, fLetterBox: boolean): ScaleCalculation {
+export function scaleVideo(
+  videoWidth: number,
+  videoHeight: number,
+  playerWidth: number,
+  playerHeight: number,
+  fLetterBox: boolean
+): ScaleCalculation {
+  var result: ScaleCalculation = {
+    width: 0,
+    height: 0,
+    left: 0,
+    top: 0,
+    scaleToTargetWidth: true
+  };
 
-  var result: ScaleCalculation = { width: 0, height: 0, left: 0, top: 0, scaleToTargetWidth: true };
-
-  if ((videoWidth <= 0) || (videoHeight <= 0) || (playerWidth <= 0) || (playerHeight <= 0)) {
+  if (
+    videoWidth <= 0 ||
+    videoHeight <= 0 ||
+    playerWidth <= 0 ||
+    playerHeight <= 0
+  ) {
     return result;
   }
 
@@ -24,7 +39,7 @@ export function scaleVideo(videoWidth: number, videoHeight: number, playerWidth:
   var scaleY2 = playerHeight;
 
   // now figure out which one we should use
-  var fScaleOnWidth = (scaleX2 > playerWidth);
+  var fScaleOnWidth = scaleX2 > playerWidth;
   if (fScaleOnWidth) {
     fScaleOnWidth = fLetterBox;
   } else {

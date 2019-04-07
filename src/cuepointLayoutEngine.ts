@@ -1,132 +1,136 @@
 import { log } from "./logger";
 import { ScaleCalculation, scaleVideo } from "./scaleVideo";
-import { CuepointEngine } from './cuepointEngine';
+import { CuepointEngine } from "./cuepointEngine";
 
 enum ChangeTypes {
-    Show = "show",
-    Hide = "hide"
+  Show = "show",
+  Hide = "hide"
 }
 export type PlayerSize = { width: number; height: number };
 export type VideoSize = { width: number; height: number };
-type ChangeData<T extends LayoutCuepoint> = { time: number; type: ChangeTypes; cuePoint: T };
+type ChangeData<T extends LayoutCuepoint> = {
+  time: number;
+  type: ChangeTypes;
+  cuePoint: T;
+};
 
 const reasonableSeekThreshold = 2000;
 
 export interface Layout {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 }
 
 export interface LayoutCuepoint {
-    id: string,
-    startTime: number,
-    endTime?: number,
-    rawLayout: {
-        relativeX: number;
-        relativeY: number;
-        relativeWidth: number;
-        relativeHeight: number;
-        stageWidth: number;
-        stageHeight: number;
+  id: string;
+  startTime: number;
+  endTime?: number;
+  rawLayout: {
+    relativeX: number;
+    relativeY: number;
+    relativeWidth: number;
+    relativeHeight: number;
+    stageWidth: number;
+    stageHeight: number;
+  };
+  layout: Layout;
+}
+
+export type RawLayoutCuepoint = Omit<LayoutCuepoint, "layout">;
+
+export interface LayoutCuepoint extends RawLayoutCuepoint {}
+
+export class CuepointLayoutEngine<
+  TRaw extends RawLayoutCuepoint,
+  T extends LayoutCuepoint
+> extends CuepointEngine<T> {
+  private playerSize: PlayerSize | null = null;
+  private videoSize: VideoSize | null = null;
+
+  constructor(cuepoints: TRaw[]) {
+    super(cuepoints as any); // NOTICE: it is the responsability of this engine not to return cuepoint without layout
+  }
+
+  public updateLayout(
+    playerSize: PlayerSize | null,
+    videoSize: VideoSize | null
+  ) {
+    this.videoSize = videoSize;
+    this.playerSize = playerSize;
+
+    this.recalculateCuepointLayout();
+    return this.getCurrentCuepointSnapshot();
+  }
+
+  private _calculateLayout(
+    cuepoint: TRaw,
+    scaleCalculation: ScaleCalculation
+  ): Layout {
+    const { rawLayout } = cuepoint;
+    return {
+      x: scaleCalculation.left + rawLayout.relativeX * scaleCalculation.width,
+      y: scaleCalculation.top + rawLayout.relativeY * scaleCalculation.height,
+      width: rawLayout.relativeWidth * scaleCalculation.width,
+      height: rawLayout.relativeHeight * scaleCalculation.height
     };
-    layout: Layout;
-}
+  }
 
-export type RawLayoutCuepoint = Omit<LayoutCuepoint, 'layout'>;
+  private recalculateCuepointLayout(): void {
+    log(
+      "debug",
+      "CuepointLayoutEngine::recalculateCuepointLayout",
+      `calculating cuepoint layout based on video/player sizes`
+    );
 
-
-export interface LayoutCuepoint extends RawLayoutCuepoint {
-}
-
-export class CuepointLayoutEngine<TRaw extends RawLayoutCuepoint, T extends LayoutCuepoint> extends CuepointEngine<T>{
-    private playerSize: PlayerSize | null = null;
-    private videoSize: VideoSize | null = null;
-
-    constructor(cuepoints: TRaw[]) {
-        super(cuepoints as any);// NOTICE: it is the responsability of this engine not to return cuepoint without layout
+    if (!this.playerSize || !this.videoSize) {
+      log(
+        "debug",
+        "CuepointLayoutEngine::recalculateCuepointLayout",
+        `missing video/player sizes, hide all cuepoint`
+      );
+      this.enabled = false;
+      return;
     }
 
-    public updateLayout(
-        playerSize: PlayerSize | null,
-        videoSize: VideoSize | null
-    ) {
-        this.videoSize = videoSize;
-        this.playerSize = playerSize;
+    const { width: playerWidth, height: playerHeight } = this.playerSize;
+    const { width: videoWidth, height: videoHeight } = this.videoSize;
+    const canCalcaulateLayout =
+      playerWidth && playerHeight && videoWidth && videoHeight;
 
-        this.recalculateCuepointLayout();
-        return this.getCurrentCuepointSnapshot();
+    if (!canCalcaulateLayout) {
+      log(
+        "debug",
+        "CuepointLayoutEngine::recalculateCuepointLayout",
+        `missing video/player sizes, hide all cuepoint`
+      );
+      this.enabled = false;
+      return;
     }
 
-    private _calculateLayout(
-        cuepoint: TRaw,
-        scaleCalculation: ScaleCalculation
-    ): Layout {
-        const { rawLayout } = cuepoint;
-        return {
-            x:
-                scaleCalculation.left +
-                rawLayout.relativeX * scaleCalculation.width,
-            y:
-                scaleCalculation.top +
-                rawLayout.relativeY * scaleCalculation.height,
-            width: rawLayout.relativeWidth * scaleCalculation.width,
-            height: rawLayout.relativeHeight * scaleCalculation.height
-        };
-    }
+    const scaleCalculation = scaleVideo(
+      videoWidth,
+      videoHeight,
+      playerWidth,
+      playerHeight,
+      true
+    );
 
-    private recalculateCuepointLayout(): void {
-        log(
-            "debug",
-            "CuepointLayoutEngine::recalculateCuepointLayout",
-            `calculating cuepoint layout based on video/player sizes`
-        );
+    log(
+      "debug",
+      "CuepointLayoutEngine::recalculateCuepointLayout",
+      `recalculate cuepoint layout based on new sizes`,
+      scaleCalculation
+    );
 
-        if (!this.playerSize || !this.videoSize) {
-            log(
-                "debug",
-                "CuepointLayoutEngine::recalculateCuepointLayout",
-                `missing video/player sizes, hide all cuepoint`
-            );
-            this.enabled = false;
-            return;
-        }
+    (this.cuepoints || []).forEach(cuepoint => {
+      cuepoint.layout = this._calculateLayout(
+        cuepoint as any,
+        scaleCalculation
+      );
+    });
 
-        const { width: playerWidth, height: playerHeight } = this.playerSize;
-        const { width: videoWidth, height: videoHeight } = this.videoSize;
-        const canCalcaulateLayout =
-            playerWidth && playerHeight && videoWidth && videoHeight;
-
-        if (!canCalcaulateLayout) {
-            log(
-                "debug",
-                "CuepointLayoutEngine::recalculateCuepointLayout",
-                `missing video/player sizes, hide all cuepoint`
-            );
-            this.enabled = false;
-            return;
-        }
-
-        const scaleCalculation = scaleVideo(
-            videoWidth,
-            videoHeight,
-            playerWidth,
-            playerHeight,
-            true
-        );
-
-        log(
-            "debug",
-            "CuepointLayoutEngine::recalculateCuepointLayout",
-            `recalculate cuepoint layout based on new sizes`,
-            scaleCalculation
-        );
-
-        (this.cuepoints || []).forEach(cuepoint => {
-            cuepoint.layout = this._calculateLayout(cuepoint as any, scaleCalculation);
-        });
-
-        this.enabled = true;
-    }
+    this.enabled = true;
+  }
 }
