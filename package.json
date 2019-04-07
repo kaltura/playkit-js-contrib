@@ -23,7 +23,8 @@
     "fs-extra": "^7.0.1",
     "husky": "^1.3.1",
     "lint-staged": "^8.1.5",
-    "typescript": "^3.2.2"
+    "typescript": "^3.2.2",
+    "prettier": "^1.16.4"
   },
   "lint-staged": {
     "*.{ts,tsx,json,css,html}": [
@@ -32,7 +33,6 @@
     ]
   },
   "dependencies": {
-    "preact": "^8.4.2",
-    "prettier": "^1.16.4"
+    "preact": "^8.4.2"
   }
 }
