@@ -4,7 +4,10 @@
         {
             "pragma": "h"
         }],
-        "@babel/typescript"
+        ["@babel/typescript",
+        {
+            "jsxPragma": "h"
+        }]
     ],
     "plugins": [
         "@babel/proposal-class-properties",
