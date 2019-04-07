@@ -23,6 +23,9 @@ async function createPackageFile() {
     ...packageDataOther,
     private: false,
   };
+
+  delete newPackageData['lint-staged'];
+
   const targetPath = path.resolve(buildPath, './package.json');
 
   await fse.writeFile(targetPath, JSON.stringify(newPackageData, null, 2), 'utf8');
