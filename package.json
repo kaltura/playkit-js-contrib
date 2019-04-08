@@ -13,7 +13,9 @@
     "build:copy-files": "node ./scripts/copy-files.js",
     "precommit": "lint-staged",
     "release": "standard-version --no-verify",
-    "release:rc": "npm run release -- --prerelease rc"
+    "release:rc": "npm run release -- --prerelease rc",
+    "deploy": "npm run build && git push --follow-tags origin master && npm publish dist",
+    "deploy:rc": "npm run build && git push --follow-tags origin master && npm publish --tag next dist"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.0",
