@@ -1,7 +1,7 @@
 {
   "name": "@playkit-js/playkit-js-ovp",
   "private": true,
-  "version": "0.2.0-2",
+  "version": "1.0.0-rc.0",
   "license": "AGPL-3.0",
   "author": "Kaltura",
   "scripts": {
@@ -13,7 +13,7 @@
     "build:copy-files": "node ./scripts/copy-files.js",
     "precommit": "lint-staged",
     "release": "standard-version --no-verify",
-    "prerelease": "npm run release -- --prerelease"
+    "release:rc": "npm run release -- --prerelease rc"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.0",
