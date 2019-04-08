@@ -1,53 +1,56 @@
 import { h, render, cloneElement } from "preact";
 
 export class UIManager {
-  private _root: any;
-  private _player: any;
-  private _rootParent: any;
-  private _rootRef: any;
-  private _renderRoot: () => any;
+    private _root: any;
+    private _player: any;
+    private _rootParent: any;
+    private _rootRef: any;
+    private _renderRoot: () => any;
+    private _pluginName: string;
+    private _className?: string;
 
-  constructor(private plugin: any, renderProp: any) {
-    this._renderRoot = renderProp;
-    this._player = plugin.player;
-    this._addBindings();
-  }
-
-  private _addBindings() {
-    this.plugin.eventManager.listen(
-      this._player,
-      this._player.Event.MEDIA_LOADED,
-      this._createRoot
-    );
-  }
-
-  public get root(): any {
-    return this._rootRef;
-  }
-
-  private _createRoot = (): void => {
-    if (this._root) {
-      return;
+    constructor(private plugin: any, pluginName: string, renderProp: any, className?: string) {
+        this._renderRoot = renderProp;
+        this._pluginName = pluginName;
+        this._className = className;
+        this._player = plugin.player;
+        this._addBindings();
     }
 
-    // TODO check if it changes after media change
-    const playerViewId = this._player.config.targetId;
-    const playerParentElement = document.querySelector(
-      `div#${playerViewId} div#player-gui`
-    );
-
-    if (!playerParentElement) {
-      return;
+    private _addBindings() {
+        this.plugin.eventManager.listen(
+            this._player,
+            this._player.Event.MEDIA_LOADED,
+            this._createRoot
+        );
     }
 
-    this._rootParent = document.createElement("div");
-    this._rootParent.setAttribute("id", "hotspots-overlay");
-    playerParentElement.append(this._rootParent);
+    public get root(): any {
+        return this._rootRef;
+    }
 
-    const Root = cloneElement(this._renderRoot(), {
-      ref: (ref: any) => (this._rootRef = ref)
-    });
+    private _createRoot = (): void => {
+        if (this._root) {
+            return;
+        }
 
-    this._root = render(Root, this._rootParent);
-  };
+        // TODO check if it changes after media change
+        const playerViewId = this._player.config.targetId;
+        const playerParentElement = document.querySelector(`div#${playerViewId} div#player-gui`);
+
+        if (!playerParentElement) {
+            return;
+        }
+
+        this._rootParent = document.createElement("div");
+        this._rootParent.setAttribute("id", `${this._pluginName}Overlay`);
+        this._rootParent.setAttribute("class", this._className);
+        playerParentElement.append(this._rootParent);
+
+        const Root = cloneElement(this._renderRoot(), {
+            ref: (ref: any) => (this._rootRef = ref)
+        });
+
+        this._root = render(Root, this._rootParent);
+    };
 }
