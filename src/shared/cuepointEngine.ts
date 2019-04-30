@@ -1,12 +1,11 @@
 // TODO remove dependency on logger as it is relevant to v2 only
-import { log } from "./pluginV2/logger";
+import { log } from "../pluginV2/logger";
 
 enum ChangeTypes {
     Show = "show",
     Hide = "hide"
 }
-export type PlayerSize = { width: number; height: number };
-export type VideoSize = { width: number; height: number };
+
 type ChangeData<T extends Cuepoint> = {
     time: number;
     type: ChangeTypes;
@@ -14,13 +13,6 @@ type ChangeData<T extends Cuepoint> = {
 };
 
 const reasonableSeekThreshold = 2000;
-
-export interface Layout {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-}
 
 export interface Cuepoint {
     id: string;

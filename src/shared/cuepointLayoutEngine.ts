@@ -1,8 +1,10 @@
 // TODO remove dependency on logger as it is relevant to v2 only
-import { log } from "./pluginV2/logger";
+import { log } from "../pluginV2/logger";
 
 import { ScaleCalculation, scaleVideo } from "./scaleVideo";
 import { CuepointEngine } from "./cuepointEngine";
+
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
 enum ChangeTypes {
     Show = "show",
