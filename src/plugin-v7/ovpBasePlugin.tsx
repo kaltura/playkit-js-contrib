@@ -18,6 +18,7 @@ export abstract class OVPBasePlugin extends (KalturaPlayer as any).core.BasePlug
 
     constructor(name: any, player: any, config: any) {
         super(name, player, config);
+
         this._addBindings();
         this.setup();
     }

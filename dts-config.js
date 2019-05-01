@@ -4,12 +4,12 @@ const config = {
   },
   entries: [
     {
-      filePath: './src/pluginV7/index.ts',
-      outFile: './dist/pluginV7.d.ts',
+      filePath: './src/plugin-v7/index.ts',
+      outFile: './dist/plugin-v7.d.ts',
     },
     {
-      filePath: './src/pluginV2/index.ts',
-      outFile: './dist/pluginV2.d.ts',
+      filePath: './src/plugin-v2/index.ts',
+      outFile: './dist/plugin-v2.d.ts',
     },
     {
       filePath: './src/shared/index.ts',

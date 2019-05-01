@@ -9,16 +9,21 @@ const distFolder = path.join(__dirname, "/dist");
 module.exports = (env, options) => {
   return {
     entry: {
-      pluginV7: "./src/pluginV7/index.ts",
-      pluginV2: "./src/pluginV2/index.ts",
+      'plugin-v7': "./src/plugin-v7/index.ts",
+      'plugin-v2': "./src/plugin-v2/index.ts",
     },
-    externals: [nodeExternals()],
+    externals: [nodeExternals(
+      {
+        importType: 'umd'
+      }
+    )],
     resolve: {
       extensions: [".ts", ".tsx", ".js", ".jsx"],
       symlinks: false
     },
     output: {
       filename: '[name].js',
+      libraryTarget: 'umd',
       path: path.resolve(__dirname, 'dist')
     },
     devtool: options.mode === "development" ? "eval-source-map" : "source-map",
@@ -35,7 +40,9 @@ module.exports = (env, options) => {
       splitChunks: {
         cacheGroups: {
           commons: {
-            test: /[\\/]shared[\\/]/,
+            test: function(module, name) {
+              return /src\/shared$/.test(module.context);
+            },
             name: 'shared',
             chunks: 'all'
           }

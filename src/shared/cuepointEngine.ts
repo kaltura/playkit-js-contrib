@@ -1,5 +1,5 @@
 // TODO remove dependency on logger as it is relevant to v2 only
-import { log } from "../pluginV2/logger";
+import { log } from "../plugin-v2/logger";
 
 enum ChangeTypes {
     Show = "show",
