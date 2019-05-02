@@ -25,8 +25,8 @@ export abstract class OVPBasePlugin extends (KalturaPlayer as any).core.BasePlug
 
     protected abstract setup(): void;
 
-    addUI(pluginUI: PluginUI) {
-        // TODO
+    addUI<T extends PluginUI>(pluginUI: T): T {
+        return pluginUI;
     }
 
     public destroy() {
@@ -46,5 +46,17 @@ export abstract class OVPBasePlugin extends (KalturaPlayer as any).core.BasePlug
 
     getServiceUrl(): string {
         return this.player.config.provider.env.serviceUrl;
+    }
+
+    getEntryId(): string {
+        return this.player.config.sources.id;
+    }
+
+    getPartnerId(): number {
+        return this.player.config.session.partnerId;
+    }
+
+    getKS(): string {
+        return this.player.config.session.ks;
     }
 }

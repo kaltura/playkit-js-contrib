@@ -1,3 +1,5 @@
+// TODO should move logger to v2 as v7 has a dedicated logger
+
 let isEnabled = false;
 let logPrefix = "";
 export function enableLog(prefix?: string) {

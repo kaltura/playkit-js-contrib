@@ -3,7 +3,8 @@ import { OVPBasePlugin, PluginUI } from "./ovpBasePlugin";
 
 export enum OverlayVisibilities {
     MediaLoaded,
-    OnDemand
+    OnDemand,
+    FirstPlay
 }
 
 export interface OverlayUIOptions {
@@ -50,11 +51,20 @@ export class OverlayUI<TRoot> implements PluginUI {
         // this._root = null;
     }
 
+    public rebuild(): void {
+        this._updateRoot({ shouldHandleResize: false });
+    }
+
     private _addPlayerBindings() {
         const { eventManager } = this._plugin;
 
         if (this._options.visibility === OverlayVisibilities.MediaLoaded) {
-            eventManager.listen(this._player, this._player.Event.MEDIA_LOADED, this._createRoot);
+            eventManager.listenOnce(this._player, this._player.Event.MEDIA_LOADED, this._createRoot);
+        }
+
+        if (this._options.visibility === OverlayVisibilities.FirstPlay) {
+            eventManager.listenOnce(this._player, this._player.Event.FIRST_PLAY, this._createRoot);
+            eventManager.listenOnce(this._player, this._player.Event.SEEKED, this._createRoot);
         }
 
         eventManager.listen(this._player, this._player.Event.TIME_UPDATE, () => {
@@ -88,7 +98,8 @@ export class OverlayUI<TRoot> implements PluginUI {
         }
 
         const rendererProps = this.getRendererProps({ shouldHandleResize });
-        this._root = render(this._options.renderer(this.setRef, rendererProps), this._rootParent);
+        const root = this._options.renderer(this.setRef, rendererProps);
+        this._root = render(root, this._rootParent, this._root);
     };
 
     private _createRoot = (): void => {

@@ -1,5 +1,5 @@
 // TODO remove dependency on logger as it is relevant to v2 only
-import { log } from "../plugin-v2/logger";
+import { log } from "./logger";
 
 import { ScaleCalculation, scaleVideo } from "./scaleVideo";
 import { CuepointEngine } from "./cuepointEngine";
