@@ -5,3 +5,4 @@ build
 .rpt2_cache
 dist
 lerna-debug.log
+.DS_Store
