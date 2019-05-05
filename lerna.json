@@ -5,12 +5,11 @@
   "npmClient": "npm",
   "command": {
     "publish": {
+      "allowBranch": "master",
       "ignoreChanges": [
         "ignored-file",
         "*.md"
-      ],
-      "message": "chore(release): publish",
-      "conventionalCommits": true
+      ]
     }
   },
   "version": "1.0.1-next.0"
