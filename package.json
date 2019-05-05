@@ -1,5 +1,5 @@
 {
-  "name": "@playkit-js/playkit-js-ovp",
+  "name": "root",
   "private": true,
   "version": "1.0.0-rc.1",
   "license": "AGPL-3.0",
@@ -9,26 +9,19 @@
     "url": "https://github.com/kaltura/playkit-js-ovp"
   },
   "scripts": {
-    "type-check": "tsc --noEmit",
-    "serve": "npm run type-check -- --watch",
-    "build": "webpack --mode production && npm run build:declaration && npm run build:copy-files",
-    "build:dev": "webpack --mode development && npm run build:declaration && npm run build:copy-files",
-    "build:declaration": "dts-bundle-generator --config dts-config.js",
-    "build:copy-files": "node ./scripts/copy-files.js",
-    "postinstall": "npm-install-peers",
     "precommit": "lint-staged",
-    "release": "standard-version --no-verify",
-    "release:rc": "npm run release -- --prerelease rc",
-    "deploy": "npm run build && git push --follow-tags origin master && npm publish dist",
-    "deploy:rc": "npm run build && git push --follow-tags origin master && npm publish --tag next dist"
+    "build": "lerna run build",
+    "bootstrap": "lerna bootstrap",
+    "lerna": "lerna"
   },
   "devDependencies": {
     "dts-bundle-generator": "^3.0.0",
-    "peer-deps-externals-webpack-plugin": "^1.0.4",
     "fs-extra": "^7.0.1",
     "husky": "^1.3.1",
+    "lerna": "^3.13.4",
     "lint-staged": "^8.1.5",
     "npm-install-peers": "^1.2.1",
+    "peer-deps-externals-webpack-plugin": "^1.0.4",
     "prettier": "^1.16.4",
     "standard-version": "^5.0.2",
     "ts-loader": "^5.3.3",

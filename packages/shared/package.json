@@ -1,6 +1,6 @@
 {
   "name": "@playkit-js/playkit-js-ovp",
-  "private": true,
+  "private": false,
   "version": "1.0.0-rc.1",
   "license": "AGPL-3.0",
   "author": "Kaltura",
@@ -23,11 +23,11 @@
   "types": "./lib/index.d.ts",
   "devDependencies": {
     "dts-bundle-generator": "^3.0.0",
-    "peer-deps-externals-webpack-plugin": "^1.0.4",
     "fs-extra": "^7.0.1",
     "husky": "^1.3.1",
     "lint-staged": "^8.1.5",
     "npm-install-peers": "^1.2.1",
+    "peer-deps-externals-webpack-plugin": "^1.0.4",
     "prettier": "^1.16.4",
     "standard-version": "^5.0.2",
     "ts-loader": "^5.3.3",
