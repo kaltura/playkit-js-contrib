@@ -8,7 +8,6 @@
     "url": "https://github.com/kaltura/playkit-js-ovp"
   },
   "scripts": {
-    "precommit": "lint-staged",
     "build": "lerna run build",
     "prepublish:latest": "npm run build &&  lerna version --conventional-commits",
     "publish:latest": "lerna publish from-package",

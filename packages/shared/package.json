@@ -43,5 +43,10 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "files": [
+    "lib",
+    "LICENSE",
+    "CHANGELOG.md"
+  ]
 }

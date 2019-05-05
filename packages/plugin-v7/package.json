@@ -44,6 +44,11 @@
     "publishConfig": {
         "access": "public"
     },
+    "files": [
+        "lib",
+        "LICENSE",
+        "CHANGELOG.md"
+    ],
     "dependencies": {
         "@playkit-js/playkit-js-ovp": "^1.0.1-next.1"
     }
