@@ -1,7 +1,6 @@
 {
   "name": "root",
   "private": true,
-  "version": "1.0.0-rc.1",
   "license": "AGPL-3.0",
   "author": "Kaltura",
   "repository": {
