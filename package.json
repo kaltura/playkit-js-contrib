@@ -9,13 +9,10 @@
   },
   "scripts": {
     "build": "lerna run build",
-    "prepublish:latest": "npm run build &&  lerna version --conventional-commits",
-    "publish:latest": "lerna publish from-package",
-    "prepublish:next": "npm run build &&  lerna version prerelease --preid next --conventional-commits",
-    "publish:next": "lerna publish from-package --dist-tag next",
+    "publish:latest": "npm run build &&  lerna version --conventional-commits && lerna publish from-package",
+    "publish:next": "npm run build &&  lerna version prerelease --preid next --conventional-commits && lerna publish from-package --dist-tag next",
     "publish:canary": "npm run build && lerna publish --canary --preid next",
-    "bootstrap": "lerna bootstrap && lerna link",
-    "lerna": "lerna"
+    "bootstrap": "lerna bootstrap && lerna link"
   },
   "devDependencies": {
     "dts-bundle-generator": "^3.0.0",
