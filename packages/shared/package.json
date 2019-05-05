@@ -13,11 +13,7 @@
     "serve": "npm run type-check -- --watch",
     "build": "webpack --mode production && npm run build:declaration",
     "build:declaration": "dts-bundle-generator --config dts-config.js",
-    "postinstall": "npm-install-peers",
-    "release": "standard-version --no-verify",
-    "release:rc": "npm run release -- --prerelease rc",
-    "deploy": "npm run build && git push --follow-tags origin master && npm publish",
-    "deploy:rc": "npm run build && git push --follow-tags origin master && npm publish --tag next"
+    "postinstall": "npm-install-peers"
   },
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -29,7 +25,6 @@
     "npm-install-peers": "^1.2.1",
     "peer-deps-externals-webpack-plugin": "^1.0.4",
     "prettier": "^1.16.4",
-    "standard-version": "^5.0.2",
     "ts-loader": "^5.3.3",
     "typescript": "^3.2.2",
     "webpack": "^4.29.6",
