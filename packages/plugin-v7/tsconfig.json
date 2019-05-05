@@ -1,14 +1,12 @@
 {
     "compilerOptions": {
-        "target": "esnext",
+        "target": "ES5",
         "module": "commonjs",
         "jsx": "react",
         "jsxFactory": "h",
-        "declaration": true,
-        "outDir": "dist",
+        "declaration": false,
         "strict": true,
         "allowSyntheticDefaultImports": true,
-        "esModuleInterop": true,
         "preserveSymlinks": true
     }
 }

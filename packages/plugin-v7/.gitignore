@@ -4,4 +4,4 @@ build
 /.vscode
 .rpt2_cache
 dist
-lerna-debug.log
+lib
