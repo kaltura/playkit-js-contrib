@@ -1,8 +1,7 @@
-/node_modules
-build
-/.idea
-/.vscode
+node_modules
+.idea
+.vscode
 .rpt2_cache
-dist
-lerna-debug.log
 .DS_Store
+
+lerna-debug.log
