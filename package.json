@@ -15,7 +15,7 @@
     "publish": "lerna publish from-package --dist-tag next",
     "publish:next": "lerna publish from-package",
     "publish:canary": "npm run build && lerna publish --canary --preid next",
-    "bootstrap": "lerna bootstrap",
+    "bootstrap": "lerna bootstrap && lerna link",
     "lerna": "lerna"
   },
   "devDependencies": {
@@ -27,7 +27,6 @@
     "npm-install-peers": "^1.2.1",
     "peer-deps-externals-webpack-plugin": "^1.0.4",
     "prettier": "^1.16.4",
-    "standard-version": "^5.0.2",
     "ts-loader": "^5.3.3",
     "typescript": "^3.2.2",
     "webpack": "^4.29.6",
