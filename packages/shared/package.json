@@ -13,7 +13,7 @@
     "serve": "npm run type-check -- --watch",
     "build": "webpack --mode production && npm run build:declaration",
     "build:declaration": "dts-bundle-generator --config dts-config.js",
-    "postinstall": "npm-install-peers"
+    "prepare": "npm-install-peers"
   },
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
