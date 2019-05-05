@@ -10,10 +10,10 @@
   "scripts": {
     "precommit": "lint-staged",
     "build": "lerna run build",
-    "prepublish": "npm run build &&  lerna version --conventional-commits",
+    "prepublish:latest": "npm run build &&  lerna version --conventional-commits",
+    "publish:latest": "lerna publish from-package",
     "prepublish:next": "npm run build &&  lerna version prerelease --preid next --conventional-commits",
-    "publish": "lerna publish from-package --dist-tag next",
-    "publish:next": "lerna publish from-package",
+    "publish:next": "lerna publish from-package --dist-tag next",
     "publish:canary": "npm run build && lerna publish --canary --preid next",
     "bootstrap": "lerna bootstrap && lerna link",
     "lerna": "lerna"
