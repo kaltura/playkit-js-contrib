@@ -1,14 +1,15 @@
 import { h, render, cloneElement, Ref } from "preact";
-import { OVPBasePlugin, PluginUI } from "./ovpBasePlugin";
+import { OVPBasePlugin } from "./ovpBasePlugin";
+import { UIManagerItem } from "./uiManager";
 
-export enum OverlayVisibilities {
+export enum OverlayUIModes {
     MediaLoaded,
     OnDemand,
     FirstPlay
 }
 
 export interface OverlayUIOptions {
-    visibility: OverlayVisibilities;
+    mode: OverlayUIModes;
     renderer: (setRef: any, overlayUIProps: OverlayUIProps) => any;
     className?: string;
 }
@@ -18,51 +19,69 @@ export interface OverlayUIProps {
     shouldHandleResize: boolean;
 }
 
-export class OverlayUI<TRoot> implements PluginUI {
+export class OverlayUI<TRoot> implements UIManagerItem {
     private _root: any;
     private _player: any;
     private _rootParent: any;
     private _rootRef: TRoot | null = null;
     private _plugin: any;
+    private _destroyed = false;
     private _options: OverlayUIOptions;
 
-    constructor(plugin: OVPBasePlugin, options: OverlayUIOptions) {
-        this._plugin = plugin;
+    constructor(options: OverlayUIOptions) {
         this._options = options;
+    }
+
+    public setPlugin(plugin: OVPBasePlugin): void {
+        this._plugin = plugin;
         this._player = plugin.player;
 
-        this._addPluginBindings();
         this._addPlayerBindings();
     }
 
-    private _addPluginBindings() {
-        // TODO
-        // if (!this._root) {
-        // 	return;
-        // }
-        //
-        // render(
-        // 	// @ts-ignore
-        // 	h(null),
-        // 	this._rootParent,
-        // 	this._root
-        // );
-        //
-        // this._root = null;
-    }
-
+    /**
+     * trigeer update overlay root component
+     */
     public rebuild(): void {
         this._updateRoot({ shouldHandleResize: false });
+    }
+
+    public get root(): any {
+        return this._rootRef;
+    }
+
+    /**
+     * destory the ui item
+     */
+    destroy(): void {
+        this._destroyed = true;
+
+        if (!this._root) {
+            return;
+        }
+
+        render(
+            // @ts-ignore
+            h(null),
+            this._rootParent,
+            this._root
+        );
+
+        this._root = null;
     }
 
     private _addPlayerBindings() {
         const { eventManager } = this._plugin;
 
-        if (this._options.visibility === OverlayVisibilities.MediaLoaded) {
-            eventManager.listenOnce(this._player, this._player.Event.MEDIA_LOADED, this._createRoot);
+        if (this._options.mode === OverlayUIModes.MediaLoaded) {
+            eventManager.listenOnce(
+                this._player,
+                this._player.Event.MEDIA_LOADED,
+                this._createRoot
+            );
         }
 
-        if (this._options.visibility === OverlayVisibilities.FirstPlay) {
+        if (this._options.mode === OverlayUIModes.FirstPlay) {
             eventManager.listenOnce(this._player, this._player.Event.FIRST_PLAY, this._createRoot);
             eventManager.listenOnce(this._player, this._player.Event.SEEKED, this._createRoot);
         }
@@ -71,13 +90,13 @@ export class OverlayUI<TRoot> implements PluginUI {
             this._updateRoot({ shouldHandleResize: false });
         });
 
-        eventManager.listen(this._player, this._player.Event.RESIZE, () => {
-            this._updateRoot({ shouldHandleResize: true });
-        });
-    }
-
-    public get root(): any {
-        return this._rootRef;
+        eventManager.listen(
+            this._player,
+            "resize" /* workaround as this._player.Event.RESIZE returns undefined */,
+            () => {
+                this._updateRoot({ shouldHandleResize: true });
+            }
+        );
     }
 
     private setRef: Ref<TRoot> = (ref: TRoot) => (this._rootRef = ref);
@@ -103,11 +122,14 @@ export class OverlayUI<TRoot> implements PluginUI {
     };
 
     private _createRoot = (): void => {
+        if (this._destroyed) {
+            throw new Error("item was destroyed, cannot create root");
+        }
+
         if (this._root) {
             return;
         }
 
-        // TODO check if it changes after media change
         const playerViewId = this._player.config.targetId;
         const playerParentElement = document.querySelector(`div#${playerViewId} div#player-gui`);
 

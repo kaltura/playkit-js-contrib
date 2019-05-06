@@ -1,16 +1,14 @@
 import { h, render } from "preact";
 
 import { PlayerCompat } from "./playerCompat";
-
-export interface PluginUI {}
+import { UIManager } from "./uiManager";
 
 // TODO try to remove the 'as any'
 // @ts-ignore
 export abstract class OVPBasePlugin extends (KalturaPlayer as any).core.BasePlugin {
     static defaultConfig = {};
-
-    protected playerCompat = new PlayerCompat(this.player);
-    //private _uiManager: UIManager;
+    private _uiManager: UIManager;
+    //protected playerCompat = new PlayerCompat(this.player);
 
     static isValid(player: any) {
         return true;
@@ -18,23 +16,28 @@ export abstract class OVPBasePlugin extends (KalturaPlayer as any).core.BasePlug
 
     constructor(name: any, player: any, config: any) {
         super(name, player, config);
-
-        this._addBindings();
-        this.setup();
+        this._uiManager = new UIManager({ plugin: this });
     }
 
-    protected abstract setup(): void;
+    loadMedia(): void {
+        this._onAddOverlays(this._uiManager);
+        this._onAddBindings(this.eventManager);
+    }
 
-    addUI<T extends PluginUI>(pluginUI: T): T {
-        return pluginUI;
+    public getUIManager(): UIManager {
+        return this._uiManager;
     }
 
     public destroy() {
-        // TODO unlisten to events on destroy
+        this.eventManager.removeAll();
+        this.eventManager.destroy();
+        this._onResetState();
     }
 
     public reset() {
-        // TODO cancel load request
+        this.eventManager.removeAll();
+        this._uiManager.reset();
+        this._onInitMembers();
     }
 
     protected _sendAnalytics() {
@@ -42,7 +45,9 @@ export abstract class OVPBasePlugin extends (KalturaPlayer as any).core.BasePlug
         throw new Error("tbd");
     }
 
-    protected _addBindings() {}
+    protected abstract _onAddBindings(eventManager: any): void;
+    protected abstract _onAddOverlays(uiManager: UIManager): void;
+    protected abstract _onInitMembers(): void;
 
     getServiceUrl(): string {
         return this.player.config.provider.env.serviceUrl;
