@@ -1,11 +1,12 @@
 import { h, render, cloneElement, Ref } from "preact";
 import { OVPBasePlugin } from "./ovpBasePlugin";
 import { UIManagerItem } from "./uiManager";
+import { log } from "@playkit-js/playkit-js-ovp";
 
 export enum OverlayUIModes {
-    MediaLoaded,
-    OnDemand,
-    FirstPlay
+    MediaLoaded = "MediaLoaded",
+    OnDemand = "OnDemand",
+    FirstPlay = "FirstPlay"
 }
 
 export interface OverlayUIOptions {
@@ -30,6 +31,7 @@ export class OverlayUI<TRoot> implements UIManagerItem {
 
     constructor(options: OverlayUIOptions) {
         this._options = options;
+        log("debug", `plugin-v7::overlayUI:ctor()`, "executed", { options });
     }
 
     public setPlugin(plugin: OVPBasePlugin): void {
@@ -50,12 +52,13 @@ export class OverlayUI<TRoot> implements UIManagerItem {
         return this._rootRef;
     }
 
-    /**
-     * destory the ui item
-     */
-    destroy(): void {
-        this._destroyed = true;
+    open = (): void => {
+        log("debug", `plugin-v7::overlayUI.open()`, "executed");
+        this._createRoot();
+    };
 
+    close = (): void => {
+        log("debug", `plugin-v7::overlayUI.close()`, "executed");
         if (!this._root) {
             return;
         }
@@ -68,22 +71,27 @@ export class OverlayUI<TRoot> implements UIManagerItem {
         );
 
         this._root = null;
+    };
+
+    /**
+     * destory the ui item
+     */
+    destroy(): void {
+        log("debug", `plugin-v7::overlayUI.destroy()`, "executed");
+        this._destroyed = true;
+        this.close();
     }
 
     private _addPlayerBindings() {
         const { eventManager } = this._plugin;
 
         if (this._options.mode === OverlayUIModes.MediaLoaded) {
-            eventManager.listenOnce(
-                this._player,
-                this._player.Event.MEDIA_LOADED,
-                this._createRoot
-            );
+            eventManager.listenOnce(this._player, this._player.Event.MEDIA_LOADED, this.open);
         }
 
         if (this._options.mode === OverlayUIModes.FirstPlay) {
-            eventManager.listenOnce(this._player, this._player.Event.FIRST_PLAY, this._createRoot);
-            eventManager.listenOnce(this._player, this._player.Event.SEEKED, this._createRoot);
+            eventManager.listenOnce(this._player, this._player.Event.FIRST_PLAY, this.open);
+            eventManager.listenOnce(this._player, this._player.Event.SEEKED, this.open);
         }
 
         eventManager.listen(this._player, this._player.Event.TIME_UPDATE, () => {
