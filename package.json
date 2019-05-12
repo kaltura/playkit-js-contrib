@@ -9,9 +9,10 @@
   },
   "scripts": {
     "build": "lerna run build",
-    "publish:latest": "npm run build &&  lerna version --conventional-commits && lerna publish from-package",
+    "publish:latest": "npm run build &&  lerna version --conventional-commits && lerna publish from-package && npm run npm:setLatestAsNext",
     "publish:next": "npm run build &&  lerna version prerelease --preid next --conventional-commits && lerna publish from-package --dist-tag next",
-    "publish:canary": "npm run build && lerna publish --canary --preid next",
+    "publish:canary": "npm run build && lerna publish --canary",
+    "npm:setLatestAsNext": "npx lerna exec --no-bail --no-private --no-sort --stream -- '[ -n \"$(npm v . dist-tags.next)\" -a \"$(npm v . dist-tags.next)\" != \"$(npm v . dist.tags.latest)\" ] && npm dist-tag add ${LERNA_PACKAGE_NAME}@$(npm v . dist-tags.latest) next'",
     "bootstrap": "lerna bootstrap && lerna link"
   },
   "devDependencies": {
