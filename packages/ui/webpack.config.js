@@ -1,7 +1,4 @@
 const path = require("path");
-var PeerDepsExternalsPlugin = require('peer-deps-externals-webpack-plugin');
-var {IgnorePlugin} = require('webpack');
-var webpackMerge = require('webpack-merge');
 var nodeExternals = require('webpack-node-externals');
 
 const distFolder = path.join(__dirname, "/dist");

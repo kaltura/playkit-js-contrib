@@ -1,7 +1,5 @@
-import { h, render, cloneElement, Ref } from "preact";
-import { OVPBasePlugin } from "./ovpBasePlugin";
-import { UIManagerItem } from "./uiManager";
-import { log } from "@playkit-js/playkit-js-ovp";
+import { h, render, Ref } from "preact";
+import { log, OVPBasePlugin, UIManagerItem } from "@playkit-js/ovp-common";
 
 export enum OverlayUIModes {
     MediaLoaded = "MediaLoaded",
@@ -13,6 +11,7 @@ export interface OverlayUIOptions {
     mode: OverlayUIModes;
     renderer: (setRef: any, overlayUIProps: OverlayUIProps) => any;
     className?: string;
+    plugin: OVPBasePlugin;
 }
 
 export interface OverlayUIProps {
@@ -31,12 +30,10 @@ export class OverlayUI<TRoot> implements UIManagerItem {
 
     constructor(options: OverlayUIOptions) {
         this._options = options;
-        log("debug", `plugin-v7::overlayUI:ctor()`, "executed", { options });
-    }
+        log("debug", `ovp-ui::overlayUI:ctor()`, "executed", { options });
 
-    public setPlugin(plugin: OVPBasePlugin): void {
-        this._plugin = plugin;
-        this._player = plugin.player;
+        this._plugin = options.plugin;
+        this._player = options.plugin.player;
 
         this._addPlayerBindings();
     }

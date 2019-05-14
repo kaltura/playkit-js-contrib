@@ -1,38 +1,20 @@
-import { h, render, cloneElement } from "preact";
-import { OVPBasePlugin } from "./ovpBasePlugin";
-
 export interface UIManagerItem {
     /**
      * mark ui manager item as destroyed.
      */
     destroy: () => void;
-
-    /**
-     * initialize ui manager item with relevant plugin instance
-     * @param plugin
-     */
-    setPlugin(plugin: OVPBasePlugin): void;
-}
-
-export interface Options {
-    plugin: any;
 }
 
 export class UIManager {
-    private _plugin: any;
+    private _items: any[] = [];
 
-    private _items: UIManagerItem[] = [];
-
-    constructor(options: Options) {
-        this._plugin = options.plugin;
-    }
+    constructor() {}
 
     /**
      * initialize new ui manager item
      * @param item
      */
     add<T extends UIManagerItem>(item: T): T {
-        item.setPlugin(this._plugin);
         this._items.push(item);
         return item;
     }
