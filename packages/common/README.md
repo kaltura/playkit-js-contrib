@@ -1,2 +1,2 @@
-# Playkit OVP services for player v2 & v7
+# Kaltura Player V7 - OVP common services
 
