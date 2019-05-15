@@ -1,6 +1,7 @@
 import { h, render } from "preact";
-import { enableLog } from "./logger";
-import { UIManager } from "./uiManager";
+import { OverlayManager, UIManager, UpperBarManager } from "@playkit-js/ovp-ui";
+import { ResourceManager } from "@playkit-js/ovp-common/src/resourceManager";
+import { EnvironmentManager } from "./environmentManager";
 
 // TODO try to remove the 'as any'
 // @ts-ignore
@@ -11,21 +12,14 @@ export abstract class OVPBasePlugin extends (KalturaPlayer as any).core.BasePlug
         return true;
     }
 
-    private _uiManager: UIManager;
-
-    constructor(name: any, player: any, config: any) {
-        super(name, player, config);
-
-        // TODO hook log to player log flags
-        enableLog(name);
-
-        this._uiManager = new UIManager();
-        debugger;
-    }
+    private _environment: EnvironmentManager = EnvironmentManager.get({
+        kalturaPlayer: this.player,
+        eventManager: this.eventManager
+    });
 
     loadMedia(): void {
         this._onAddBindings(this.eventManager);
-        this._onAddOverlays(this._uiManager);
+        this._onAddOverlays(this._environment.uiManager);
 
         this.eventManager.listenOnce(this.player, this.player.Event.MEDIA_LOADED, () => {
             this._onMediaLoaded();
@@ -40,7 +34,7 @@ export abstract class OVPBasePlugin extends (KalturaPlayer as any).core.BasePlug
 
     public reset() {
         this.eventManager.removeAll();
-        this._uiManager.reset();
+        this._environment.uiManager.reset();
         this._onInitMembers();
     }
 

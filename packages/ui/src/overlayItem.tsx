@@ -1,40 +1,23 @@
 import { h, render, Ref } from "preact";
-import { log, OVPBasePlugin, UIManagerItem } from "@playkit-js/ovp-common";
+import { log } from "@playkit-js/ovp-common";
+import { OverlayItemSettings, OverlayItemProps, OverlayUIModes } from "./overlayItemSettings";
 
-export enum OverlayUIModes {
-    MediaLoaded = "MediaLoaded",
-    OnDemand = "OnDemand",
-    FirstPlay = "FirstPlay"
+export interface OverlayItemOptions {
+    eventManager: any;
+    kalturaPlayer: any;
+    item: OverlayItemSettings<any>;
 }
 
-export interface OverlayUIOptions {
-    mode: OverlayUIModes;
-    renderer: (setRef: any, overlayUIProps: OverlayUIProps) => any;
-    className?: string;
-    plugin: OVPBasePlugin;
-}
+let uniqueIdCounter = 0;
 
-export interface OverlayUIProps {
-    currentTime: number;
-    shouldHandleResize: boolean;
-}
-
-export class OverlayUI<TRoot> implements UIManagerItem {
+export class OverlayItem<TRoot> {
     private _root: any;
-    private _player: any;
     private _rootParent: any;
     private _rootRef: TRoot | null = null;
-    private _plugin: any;
     private _destroyed = false;
-    private _options: OverlayUIOptions;
 
-    constructor(options: OverlayUIOptions) {
-        this._options = options;
-        log("debug", `ovp-ui::overlayUI:ctor()`, "executed", { options });
-
-        this._plugin = options.plugin;
-        this._player = options.plugin.player;
-
+    constructor(private _options: OverlayItemOptions) {
+        log("debug", `ovp-ui::overlayUI:ctor()`, "executed", { options: _options });
         this._addPlayerBindings();
     }
 
@@ -80,24 +63,24 @@ export class OverlayUI<TRoot> implements UIManagerItem {
     }
 
     private _addPlayerBindings() {
-        const { eventManager } = this._plugin;
+        const { eventManager, item, kalturaPlayer } = this._options;
 
-        if (this._options.mode === OverlayUIModes.MediaLoaded) {
-            eventManager.listenOnce(this._player, this._player.Event.MEDIA_LOADED, this.open);
+        if (item.mode === OverlayUIModes.MediaLoaded) {
+            eventManager.listenOnce(kalturaPlayer, kalturaPlayer.Event.MEDIA_LOADED, this.open);
         }
 
-        if (this._options.mode === OverlayUIModes.FirstPlay) {
-            eventManager.listenOnce(this._player, this._player.Event.FIRST_PLAY, this.open);
-            eventManager.listenOnce(this._player, this._player.Event.SEEKED, this.open);
+        if (item.mode === OverlayUIModes.FirstPlay) {
+            eventManager.listenOnce(kalturaPlayer, kalturaPlayer.Event.FIRST_PLAY, this.open);
+            eventManager.listenOnce(kalturaPlayer, kalturaPlayer.Event.SEEKED, this.open);
         }
 
-        eventManager.listen(this._player, this._player.Event.TIME_UPDATE, () => {
+        eventManager.listen(kalturaPlayer, kalturaPlayer.Event.TIME_UPDATE, () => {
             this._updateRoot({ shouldHandleResize: false });
         });
 
         eventManager.listen(
-            this._player,
-            "resize" /* workaround as this._player.Event.RESIZE returns undefined */,
+            kalturaPlayer,
+            "resize" /* workaround as kalturaPlayer.Event.RESIZE returns undefined */,
             () => {
                 this._updateRoot({ shouldHandleResize: true });
             }
@@ -106,12 +89,14 @@ export class OverlayUI<TRoot> implements UIManagerItem {
 
     private setRef: Ref<TRoot> = (ref: TRoot) => (this._rootRef = ref);
 
-    private getRendererProps(props: Partial<OverlayUIProps>): OverlayUIProps {
+    private getRendererProps(props: Partial<OverlayItemProps>): OverlayItemProps {
+        const { kalturaPlayer } = this._options;
+
         return {
             currentTime:
                 typeof props.currentTime !== "undefined"
                     ? props.currentTime
-                    : this._player.currentTime * 1000,
+                    : kalturaPlayer.currentTime * 1000,
             shouldHandleResize: props.shouldHandleResize || false
         };
     }
@@ -121,8 +106,10 @@ export class OverlayUI<TRoot> implements UIManagerItem {
             return;
         }
 
+        const { item } = this._options;
+
         const rendererProps = this.getRendererProps({ shouldHandleResize });
-        const root = this._options.renderer(this.setRef, rendererProps);
+        const root = item.renderer(this.setRef, rendererProps);
         this._root = render(root, this._rootParent, this._root);
     };
 
@@ -135,7 +122,8 @@ export class OverlayUI<TRoot> implements UIManagerItem {
             return;
         }
 
-        const playerViewId = this._player.config.targetId;
+        const { kalturaPlayer, item } = this._options;
+        const playerViewId = kalturaPlayer.config.targetId;
         const playerParentElement = document.querySelector(`div#${playerViewId} div#player-gui`);
 
         if (!playerParentElement) {
@@ -143,15 +131,22 @@ export class OverlayUI<TRoot> implements UIManagerItem {
         }
 
         this._rootParent = document.createElement("div");
-        this._rootParent.setAttribute("id", `${this._plugin.name}Overlay`);
-        if (this._options.className) {
-            this._rootParent.setAttribute("class", this._options.className);
+        const overlayId = this._getUniqueId();
+        this._rootParent.setAttribute("id", `${item.name}OVP${overlayId}Overlay`);
+        if (item.className) {
+            this._rootParent.setAttribute("class", item.className);
         }
 
         playerParentElement.append(this._rootParent);
 
         const rendererProps = this.getRendererProps({ shouldHandleResize: false });
 
-        this._root = render(this._options.renderer(this.setRef, rendererProps), this._rootParent);
+        this._root = render(item.renderer(this.setRef, rendererProps), this._rootParent);
     };
+
+    private _getUniqueId(): number {
+        const id = uniqueIdCounter;
+        uniqueIdCounter++;
+        return id;
+    }
 }

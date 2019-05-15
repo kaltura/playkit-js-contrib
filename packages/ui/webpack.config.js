@@ -1,11 +1,13 @@
 const path = require("path");
 var nodeExternals = require('webpack-node-externals');
 
-const distFolder = path.join(__dirname, "/dist");
+const libraryName = 'ui';
 
 module.exports = (env, options) => {
   return {
-    entry: './src/index.ts',
+    entry: {
+      [`playkit-ovp-${libraryName}`]: './src/index.ts'
+    },
     externals: [nodeExternals(
       {
         importType: 'umd'
@@ -16,9 +18,11 @@ module.exports = (env, options) => {
       symlinks: false
     },
     output: {
+      path: path.resolve(__dirname, 'lib'),
       filename: 'index.js',
+      library: ['playkit', 'ovp', libraryName],
       libraryTarget: 'umd',
-      path: path.resolve(__dirname, 'lib')
+      umdNamedDefine: true
     },
     devtool: options.mode === "development" ? "eval-source-map" : "source-map",
     module: {

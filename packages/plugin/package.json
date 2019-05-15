@@ -1,5 +1,5 @@
 {
-    "name": "@playkit-js/ovp-ui",
+    "name": "@playkit-js/ovp-plugin",
     "private": false,
     "version": "0.1.1",
     "license": "AGPL-3.0",
@@ -23,6 +23,7 @@
     "types": "./lib/index.d.ts",
     "devDependencies": {
         "@playkit-js/ovp-common": "^0.1.1",
+        "@playkit-js/ovp-ui": "^0.1.1",
         "dts-bundle-generator": "^3.0.0",
         "fs-extra": "^7.0.1",
         "preact": "^8.4.2",
@@ -33,8 +34,7 @@
         "webpack-merge": "^4.2.1",
         "webpack-node-externals": "^1.7.2"
     },
-    "peerDependencies": {
-    },
+    "peerDependencies": {},
     "publishConfig": {
         "access": "public"
     },
@@ -42,5 +42,6 @@
         "lib",
         "LICENSE",
         "CHANGELOG.md"
-    ]
+    ],
+    "dependencies": {}
 }

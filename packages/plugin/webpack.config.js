@@ -1,7 +1,7 @@
 const path = require("path");
 var nodeExternals = require('webpack-node-externals');
 
-const libraryName = 'common';
+const libraryName = 'plugin';
 
 module.exports = (env, options) => {
   return {
