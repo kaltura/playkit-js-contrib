@@ -1,7 +1,7 @@
 {
   "name": "@playkit-js/ovp-common",
   "private": false,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "license": "AGPL-3.0",
   "author": "Kaltura",
   "repository": {
@@ -23,13 +23,13 @@
   "devDependencies": {
     "dts-bundle-generator": "^3.0.0",
     "fs-extra": "^7.0.1",
+    "preact": "^8.4.2",
     "ts-loader": "^5.3.3",
     "typescript": "^3.2.2",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0",
     "webpack-merge": "^4.2.1",
-    "webpack-node-externals": "^1.7.2",
-    "preact": "^8.4.2"
+    "webpack-node-externals": "^1.7.2"
   },
   "peerDependencies": {
     "preact": "^8.4.2"
