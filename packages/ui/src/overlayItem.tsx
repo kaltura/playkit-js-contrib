@@ -1,11 +1,11 @@
 import { h, render, Ref } from "preact";
 import { log } from "@playkit-js/ovp-common";
-import { OverlayItemSettings, OverlayItemProps, OverlayUIModes } from "./overlayItemSettings";
+import { OverlayItemData, OverlayItemProps, OverlayUIModes } from "./overlayItemData";
 
 export interface OverlayItemOptions {
     eventManager: any;
     kalturaPlayer: any;
-    item: OverlayItemSettings<any>;
+    data: OverlayItemData<any>;
 }
 
 let uniqueIdCounter = 0;
@@ -15,9 +15,11 @@ export class OverlayItem<TRoot> {
     private _rootParent: any;
     private _rootRef: TRoot | null = null;
     private _destroyed = false;
+    private _options: OverlayItemOptions;
 
-    constructor(private _options: OverlayItemOptions) {
-        log("debug", `ovp-ui::overlayUI:ctor()`, "executed", { options: _options });
+    constructor(options: OverlayItemOptions) {
+        this._options = options;
+        log("debug", `ovp-ui::OverlayItem:ctor()`, "executed", { options: options });
         this._addPlayerBindings();
     }
 
@@ -63,13 +65,13 @@ export class OverlayItem<TRoot> {
     }
 
     private _addPlayerBindings() {
-        const { eventManager, item, kalturaPlayer } = this._options;
+        const { eventManager, data, kalturaPlayer } = this._options;
 
-        if (item.mode === OverlayUIModes.MediaLoaded) {
+        if (data.mode === OverlayUIModes.MediaLoaded) {
             eventManager.listenOnce(kalturaPlayer, kalturaPlayer.Event.MEDIA_LOADED, this.open);
         }
 
-        if (item.mode === OverlayUIModes.FirstPlay) {
+        if (data.mode === OverlayUIModes.FirstPlay) {
             eventManager.listenOnce(kalturaPlayer, kalturaPlayer.Event.FIRST_PLAY, this.open);
             eventManager.listenOnce(kalturaPlayer, kalturaPlayer.Event.SEEKED, this.open);
         }
@@ -106,10 +108,10 @@ export class OverlayItem<TRoot> {
             return;
         }
 
-        const { item } = this._options;
+        const { data } = this._options;
 
         const rendererProps = this.getRendererProps({ shouldHandleResize });
-        const root = item.renderer(this.setRef, rendererProps);
+        const root = data.renderer(this.setRef, rendererProps);
         this._root = render(root, this._rootParent, this._root);
     };
 
@@ -122,7 +124,7 @@ export class OverlayItem<TRoot> {
             return;
         }
 
-        const { kalturaPlayer, item } = this._options;
+        const { kalturaPlayer, data } = this._options;
         const playerViewId = kalturaPlayer.config.targetId;
         const playerParentElement = document.querySelector(`div#${playerViewId} div#player-gui`);
 
@@ -132,16 +134,16 @@ export class OverlayItem<TRoot> {
 
         this._rootParent = document.createElement("div");
         const overlayId = this._getUniqueId();
-        this._rootParent.setAttribute("id", `${item.name}OVP${overlayId}Overlay`);
-        if (item.className) {
-            this._rootParent.setAttribute("class", item.className);
+        this._rootParent.setAttribute("id", `${data.name}OVP${overlayId}Overlay`);
+        if (data.className) {
+            this._rootParent.setAttribute("class", data.className);
         }
 
         playerParentElement.append(this._rootParent);
 
         const rendererProps = this.getRendererProps({ shouldHandleResize: false });
 
-        this._root = render(item.renderer(this.setRef, rendererProps), this._rootParent);
+        this._root = render(data.renderer(this.setRef, rendererProps), this._rootParent);
     };
 
     private _getUniqueId(): number {

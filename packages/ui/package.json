@@ -23,9 +23,13 @@
     "types": "./lib/index.d.ts",
     "devDependencies": {
         "@playkit-js/ovp-common": "^0.1.1",
+        "css-loader": "^2.1.1",
         "dts-bundle-generator": "^3.0.0",
         "fs-extra": "^7.0.1",
+        "node-sass": "^4.12.0",
         "preact": "^8.4.2",
+        "sass-loader": "^7.1.0",
+        "style-loader": "^0.23.1",
         "ts-loader": "^5.3.3",
         "typescript": "^3.2.2",
         "webpack": "^4.29.6",
@@ -33,8 +37,7 @@
         "webpack-merge": "^4.2.1",
         "webpack-node-externals": "^1.7.2"
     },
-    "peerDependencies": {
-    },
+    "peerDependencies": {},
     "publishConfig": {
         "access": "public"
     },

@@ -1,5 +1,6 @@
 import { OverlayItem } from "./overlayItem";
-import { OverlayItemSettings } from "./overlayItemSettings";
+import { OverlayItemData } from "./overlayItemData";
+import { UpperBarManagerOptions } from "./upperBarManager";
 
 export interface OverlayManagerOptions {
     eventManager: any;
@@ -7,29 +8,32 @@ export interface OverlayManagerOptions {
 }
 
 export class OverlayManager {
-    private _engines: OverlayItem<any>[] = [];
+    private _items: OverlayItem<any>[] = [];
+    private _options: OverlayManagerOptions;
 
-    constructor(private _options: OverlayManagerOptions) {}
+    constructor(private options: OverlayManagerOptions) {
+        this._options = options;
+    }
 
     /**
      * initialize new overlay ui item
      * @param item
      */
-    add<T>(item: OverlayItemSettings<T>): OverlayItem<T> {
-        const engineOptions = {
+    add<T>(data: OverlayItemData<T>): OverlayItem<T> {
+        const itemOptions = {
             ...this._options,
-            item
+            data
         };
-        const engine = new OverlayItem<any>(engineOptions);
-        this._engines.push(engine);
-        return engine;
+        const item = new OverlayItem<any>(itemOptions);
+        this._items.push(item);
+        return item;
     }
 
     /**
      * remove all ui manager items
      */
     reset(): void {
-        this._engines.forEach(item => {
+        this._items.forEach(item => {
             try {
                 item.destroy();
             } catch (e) {
@@ -38,6 +42,6 @@ export class OverlayManager {
             }
         });
 
-        this._engines = [];
+        this._items = [];
     }
 }

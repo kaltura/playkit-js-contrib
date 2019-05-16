@@ -6,7 +6,7 @@ export enum OverlayUIModes {
     FirstPlay = "FirstPlay"
 }
 
-export interface OverlayItemSettings<TComponent> {
+export interface OverlayItemData<TComponent> {
     name: string;
     mode: OverlayUIModes;
     renderer: (setRef: Ref<TComponent>, overlayItemProps: OverlayItemProps) => any;

@@ -1,5 +1,5 @@
 import { enableLog } from "@playkit-js/ovp-common";
-import { OverlayManager, UIManager, UpperBarManager } from "@playkit-js/ovp-ui";
+import { OverlayManager, UIManager, UpperBarManager, KitchenSinkManager } from "@playkit-js/ovp-ui";
 import { ResourceManager } from "@playkit-js/ovp-common";
 
 export interface EnvironmentManagerOptions {
@@ -48,12 +48,15 @@ export class EnvironmentManager {
     }
 
     private _createUIManager = (): UIManager => {
+        const sharedOptions = {
+            eventManager: this._options.eventManager,
+            kalturaPlayer: this._options.kalturaPlayer
+        };
+
         return new UIManager({
-            upperBarManager: new UpperBarManager(),
-            overlayManager: new OverlayManager({
-                eventManager: this._options.eventManager,
-                kalturaPlayer: this._options.kalturaPlayer
-            })
+            upperBarManager: new UpperBarManager(sharedOptions),
+            kitchenSinkManager: new KitchenSinkManager(sharedOptions),
+            overlayManager: new OverlayManager(sharedOptions)
         });
     };
 }

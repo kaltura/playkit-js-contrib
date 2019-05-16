@@ -1,6 +1,12 @@
-export * from "./overlayItem";
-export * from "./overlayItemSettings";
-export * from "./overlayManager";
+/// <reference path="./custom.d.ts" />
+
 export * from "./uiManager";
-export * from "./upperBarIcon";
+export * from "./overlayItem";
+export * from "./overlayItemData";
+export * from "./overlayManager";
+export * from "./upperBarItem";
+export * from "./upperBarItemData";
 export * from "./upperBarManager";
+export * from "./kitchenSinkItem";
+export * from "./kitchenSinkItemData";
+export * from "./kitchenSinkManager";

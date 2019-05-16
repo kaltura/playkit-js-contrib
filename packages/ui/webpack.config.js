@@ -14,7 +14,7 @@ module.exports = (env, options) => {
       }
     )],
     resolve: {
-      extensions: [".ts", ".tsx", ".js", ".jsx"],
+      extensions: [".ts", ".tsx", ".js", ".jsx", ".scss"],
       symlinks: false
     },
     output: {
@@ -31,6 +31,25 @@ module.exports = (env, options) => {
           test: /\.tsx?$/,
           loader: "ts-loader",
           exclude: /node_modules/
+        },
+        {
+          test: /\.scss$/,
+          use: [
+            {
+              loader: 'style-loader'
+            },
+            {
+              loader: 'css-loader',
+              options: {
+                camelCase: true,
+                modules: true,
+                localIdentName: 'ovp[name]__[local]___[hash:base64:5]'
+              }
+            },
+            {
+              loader: 'sass-loader'
+            }
+          ]
         }
       ]
     },
