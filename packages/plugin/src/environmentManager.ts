@@ -1,62 +1,100 @@
-import { enableLog } from "@playkit-js/ovp-common";
-import { OverlayManager, UIManager, UpperBarManager, KitchenSinkManager } from "@playkit-js/ovp-ui";
-import { ResourceManager } from "@playkit-js/ovp-common";
+import { enableLog, PlayerAPI, PlayerContribServices } from "@playkit-js/ovp-common";
+import {
+    OverlayManager,
+    UIManager,
+    UpperBarManager,
+    KitchenSinkManager,
+    PresetManager
+} from "@playkit-js/ovp-ui";
 
 export interface EnvironmentManagerOptions {
-    eventManager: any;
-    kalturaPlayer: any;
+    playerAPI: PlayerAPI;
 }
 
-function getResourceManager(kalturaPlayer: any): ResourceManager {
-    return ResourceManager.get(kalturaPlayer);
+function getPlayerContribServices(kalturaPlayer: any): PlayerContribServices {
+    return PlayerContribServices.get(kalturaPlayer);
 }
 
 export class EnvironmentManager {
     static get(options: EnvironmentManagerOptions): EnvironmentManager {
-        const resourceManager = getResourceManager(options.kalturaPlayer);
-        return resourceManager.getResource(
-            {
-                name: "EnvironmentManager",
-                version: "1"
-            },
-            () => {
-                return new EnvironmentManager(resourceManager, options);
-            }
-        );
+        const playerContribServices = getPlayerContribServices(options.playerAPI.kalturaPlayer);
+        return playerContribServices.register("EnvironmentManager-v1", 1, () => {
+            return new EnvironmentManager(playerContribServices, options);
+        });
     }
 
     constructor(
-        private _resourceManager: ResourceManager,
+        private _playerContribServices: PlayerContribServices,
         private _options: EnvironmentManagerOptions
     ) {
         // TODO hook log to player log flags
         enableLog(name);
     }
 
-    public get resourceManager(): ResourceManager {
-        return ResourceManager.get(this._options.kalturaPlayer);
+    private registerResources() {}
+
+    public get playerContribServices(): PlayerContribServices {
+        return PlayerContribServices.get(this._options.playerAPI.kalturaPlayer);
     }
 
     public get uiManager(): UIManager {
-        return this._resourceManager.getResource(
-            {
-                name: "uiManager",
-                version: "1"
-            },
-            this._createUIManager
+        return UIManager.fromPlayer(
+            this.playerContribServices,
+            (): UIManager => {
+                const options = {
+                    playerAPI: this._options.playerAPI,
+                    presetManager: this.presetManager,
+                    upperBarManager: this.upperBarManager,
+                    kitchenSinkManager: this.kitchenSinkManager,
+                    overlayManager: this.overlayManager
+                };
+
+                return new UIManager(options);
+            }
         );
     }
 
-    private _createUIManager = (): UIManager => {
-        const sharedOptions = {
-            eventManager: this._options.eventManager,
-            kalturaPlayer: this._options.kalturaPlayer
-        };
+    public get presetManager(): PresetManager {
+        return PresetManager.fromPlayer(this.playerContribServices, () => {
+            const options = {
+                playerAPI: this._options.playerAPI
+            };
 
-        return new UIManager({
-            upperBarManager: new UpperBarManager(sharedOptions),
-            kitchenSinkManager: new KitchenSinkManager(sharedOptions),
-            overlayManager: new OverlayManager(sharedOptions)
+            return new PresetManager(options);
         });
-    };
+    }
+
+    public get upperBarManager(): UpperBarManager {
+        return UpperBarManager.fromPlayer(this.playerContribServices, () => {
+            const options = {
+                playerAPI: this._options.playerAPI,
+                presetManager: this.presetManager
+            };
+
+            return new UpperBarManager(options);
+        });
+    }
+
+    public get kitchenSinkManager(): KitchenSinkManager {
+        return KitchenSinkManager.fromPlayer(this.playerContribServices, () => {
+            const options = {
+                playerAPI: this._options.playerAPI,
+                presetManager: this.presetManager,
+                upperBarManager: this.upperBarManager
+            };
+
+            return new KitchenSinkManager(options);
+        });
+    }
+
+    public get overlayManager(): OverlayManager {
+        return OverlayManager.fromPlayer(this.playerContribServices, () => {
+            const options = {
+                playerAPI: this._options.playerAPI,
+                presetManager: this.presetManager
+            };
+
+            return new OverlayManager(options);
+        });
+    }
 }

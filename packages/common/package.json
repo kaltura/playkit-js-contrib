@@ -32,8 +32,7 @@
     "webpack-merge": "^4.2.1",
     "webpack-node-externals": "^1.7.2"
   },
-  "peerDependencies": {
-  },
+  "peerDependencies": {},
   "publishConfig": {
     "access": "public"
   },

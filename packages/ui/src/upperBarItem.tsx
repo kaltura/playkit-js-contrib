@@ -1,14 +1,12 @@
-import { h, render, Ref } from "preact";
-import { log } from "@playkit-js/ovp-common";
+import { h, ComponentChild } from "preact";
+import { log, PlayerAPI } from "@playkit-js/ovp-common";
 import { UpperBarItemData } from "./upperBarItemData";
 
 export interface UpperBarItemOptions {
-    eventManager: any;
-    kalturaPlayer: any;
     data: UpperBarItemData;
 }
 
-export interface UpperBarUIProps {}
+export interface UpperBarItemProps {}
 
 export class UpperBarItem {
     private _options: UpperBarItemOptions;
@@ -17,4 +15,15 @@ export class UpperBarItem {
         this._options = options;
         log("debug", `ovp-ui::UpperBarItem:ctor()`, "executed", { options });
     }
+
+    public render = (props: UpperBarItemProps): ComponentChild => {
+        const { onClick, renderer, tooltip } = this._options.data;
+        const children = renderer(props);
+
+        return (
+            <div onClick={onClick} title={tooltip} className={"icon--clickable"}>
+                {children}
+            </div>
+        );
+    };
 }

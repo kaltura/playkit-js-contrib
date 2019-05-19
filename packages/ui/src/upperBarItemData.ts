@@ -1,6 +1,7 @@
-import { UpperBarUIProps } from "./upperBarItem";
+import { UpperBarItemProps } from "./upperBarItem";
 
 export interface UpperBarItemData {
-    renderer: (setRef: any, upperBarUIProps: UpperBarUIProps) => any;
+    renderer: (upperBarUIProps: UpperBarItemProps) => any;
     tooltip: string;
+    onClick: () => void;
 }

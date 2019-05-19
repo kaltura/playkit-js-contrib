@@ -7,6 +7,10 @@
         "declaration": false,
         "strict": true,
         "allowSyntheticDefaultImports": true,
-        "preserveSymlinks": true
+        "preserveSymlinks": true,
+        "baseUrl": "./src",
+        "paths": {
+            "*": ["../node_modules/*"]
+        }
     }
 }

@@ -15,6 +15,7 @@ module.exports = (env, options) => {
     )],
     resolve: {
       extensions: [".ts", ".tsx", ".js", ".jsx"],
+      modules: [path.resolve(__dirname, "node_modules")],
       symlinks: false
     },
     output: {

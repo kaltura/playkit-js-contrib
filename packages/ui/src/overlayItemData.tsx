@@ -1,4 +1,4 @@
-import { Ref } from "preact";
+import { ComponentChild, Ref } from "preact";
 
 export enum OverlayUIModes {
     MediaLoaded = "MediaLoaded",
@@ -9,7 +9,7 @@ export enum OverlayUIModes {
 export interface OverlayItemData<TComponent> {
     name: string;
     mode: OverlayUIModes;
-    renderer: (setRef: Ref<TComponent>, overlayItemProps: OverlayItemProps) => any;
+    renderer: (overlayItemProps: OverlayItemProps) => ComponentChild;
     className?: string;
 }
 
