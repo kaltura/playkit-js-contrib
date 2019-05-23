@@ -9,11 +9,15 @@ const distFolder = path.join(__dirname, "/dist");
 module.exports = (env, options) => {
   return {
     entry: './src/index.ts',
-    externals: [nodeExternals(
-      {
-        importType: 'umd'
-      }
-    )],
+    externals: [
+        function(context, request, callback) {
+          if (request.indexOf('@playkit-js') === 0) {
+            return callback(null, 'umd ' + request);
+          }
+
+          callback();
+        }
+    ],
     resolve: {
       extensions: [".ts", ".tsx", ".js", ".jsx"],
       symlinks: false
