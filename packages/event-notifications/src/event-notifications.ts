@@ -16,13 +16,21 @@ export interface ConnectionParams {
 }
 
 export class EventNotification {
+    private static instancePool: any = {};
+
     private socketPool: any = {};
     private clientApi: any;
     private logger = this.getlogger("EventNotification");
 
     static getInstance(parmas: ConnectionParams): EventNotification {
-        // TODO use dedicated manager per url
-        return new EventNotification(parmas);
+        const domainUrl = EventNotification.getDomainFromUrl(parmas.serviceUrl);
+
+        if (!EventNotification.instancePool[domainUrl]) {
+            const newInstance = new EventNotification(parmas);
+            EventNotification.instancePool[domainUrl] = newInstance;
+        }
+
+        return EventNotification.instancePool[domainUrl];
     }
 
     constructor(params: ConnectionParams) {
@@ -103,7 +111,7 @@ export class EventNotification {
             return Promise.resolve(result.message);
         } else {
             //cache sockets by host name
-            let socketKey = result.url.replace(/^(.*\/\/[^\/?#]*).*$/, "$1");
+            let socketKey = EventNotification.getDomainFromUrl(result.url);
             let socketWrapper = this.socketPool[socketKey];
             if (!socketWrapper) {
                 socketWrapper = new SocketWrapper(socketKey);
@@ -127,5 +135,9 @@ export class EventNotification {
 
             return Promise.resolve();
         }
+    }
+
+    private static getDomainFromUrl(url: string) {
+        return url.replace(/^(.*\/\/[^\/?#]*).*$/, "$1");
     }
 }
