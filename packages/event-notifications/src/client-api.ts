@@ -1,24 +1,25 @@
 import axios, { AxiosRequestConfig } from "axios";
+import { ConnectionParams } from "./event-notifications";
 
 export class ClientApi {
     private baseParams: any;
     private serviceUrl: string;
 
-    constructor(params: any) {
+    static getInstance(params: ConnectionParams): ClientApi {
+        return new ClientApi(params);
+    }
+
+    constructor(params: ConnectionParams) {
+        this.serviceUrl = params.serviceUrl;
+
         this.baseParams = {
             apiVersion: "3.1",
             expiry: "86400",
             ignoreNull: 1,
-            clientTag: "kwidget:v7.0.0", // todo: get it from player version
+            clientTag: "kwidget:v7.0.0", // Todo: get it from player version
             ks: params.ks,
-            kalsig: "" // todo: convert params before the send to url escapeed params and MD5 hash it.
+            kalsig: "" // Todo: convert params before the send to url escapeed params and MD5 hash it.
         };
-
-        this.serviceUrl = params.serviceUrl;
-    }
-
-    static getInstance(params: any): ClientApi {
-        return new ClientApi(params);
     }
 
     public doMultiRegistrationRequest(apiRequests: any) {
