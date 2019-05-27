@@ -1,2 +1,2 @@
-# Kaltura Player V7 - OVP common services
+# Kaltura Player V7 Contrib - common services
 

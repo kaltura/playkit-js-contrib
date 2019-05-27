@@ -1,1 +1,1 @@
-export { UpperBar } from "./upper-bar";
+export { UpperBar } from "./upperBar";

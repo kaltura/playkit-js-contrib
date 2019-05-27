@@ -1,2 +1,2 @@
-export * from "./ovpBasePlugin";
+export * from "./playerContribPlugin";
 export * from "./environmentManager";

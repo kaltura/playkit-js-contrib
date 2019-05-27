@@ -1,11 +1,10 @@
 import { h, render } from "preact";
-import { OverlayManager, UIManager, UpperBarManager } from "@playkit-js/ovp-ui";
-import { ResourceManager } from "@playkit-js/ovp-common/src/resourceManager";
+import { OverlayManager, UIManager, UpperBarManager } from "@playkit-js-contrib/ui";
 import { EnvironmentManager } from "./environmentManager";
 
 // TODO try to remove the 'as any'
 // @ts-ignore
-export abstract class OVPBasePlugin extends (KalturaPlayer as any).core.BasePlugin {
+export abstract class PlayerContribPlugin extends (KalturaPlayer as any).core.BasePlugin {
     static defaultConfig = {};
 
     static isValid(player: any) {
@@ -13,8 +12,10 @@ export abstract class OVPBasePlugin extends (KalturaPlayer as any).core.BasePlug
     }
 
     private _environment: EnvironmentManager = EnvironmentManager.get({
-        kalturaPlayer: this.player,
-        eventManager: this.eventManager
+        playerAPI: {
+            kalturaPlayer: this.player,
+            eventManager: this.eventManager
+        }
     });
 
     loadMedia(): void {
@@ -44,7 +45,6 @@ export abstract class OVPBasePlugin extends (KalturaPlayer as any).core.BasePlug
     }
 
     protected _onMediaLoaded() {}
-
     protected abstract _onAddOverlays(uiManager: UIManager): void;
     protected abstract _onAddBindings(eventManager: any): void;
     protected abstract _onInitMembers(): void;

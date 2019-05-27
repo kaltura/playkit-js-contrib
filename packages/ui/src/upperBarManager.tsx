@@ -1,25 +1,49 @@
-import { h, render } from "preact";
+import { ComponentChild, h, render } from "preact";
 import { UpperBarItem } from "./upperBarItem";
 import { UpperBarItemData } from "./upperBarItemData";
 import { UpperBar } from "./components/upper-bar";
+import { PresetManager } from "./presetManager";
+import { PlayerPresets, PresetAreas } from "./presetItemData";
+import { PlayerContribServices } from "@playkit-js-contrib/common";
+import { PlayerAPI } from "@playkit-js-contrib/common";
+import { PresetItem } from "./presetItem";
 
 export interface UpperBarManagerOptions {
-    eventManager: any;
-    kalturaPlayer: any;
+    playerAPI: PlayerAPI;
+    presetManager: PresetManager;
 }
 
+export interface UpperBarRendererProps {}
+
+const ResourceToken = "UpperBarManager-v1";
+
 export class UpperBarManager {
-    private _root: any;
-    private _rootParent: any;
-    private _destroyed = false;
+    static fromPlayer(
+        playerContribServices: PlayerContribServices,
+        creator: () => UpperBarManager
+    ) {
+        return playerContribServices.register(ResourceToken, 1, creator);
+    }
+
     private _items: UpperBarItem[] = [];
     private _options: UpperBarManagerOptions;
+    private _upperBar: PresetItem<UpperBarRendererProps>;
 
-    constructor(private options: UpperBarManagerOptions) {
+    constructor(options: UpperBarManagerOptions) {
         this._options = options;
-
-        this._renderRoot();
+        this._upperBar = this._options.presetManager.add({
+            label: "upper-bar-manager",
+            preset: PlayerPresets.playback,
+            area: PresetAreas.topBarRightControls,
+            renderer: this._renderUpperBar,
+            initialProps: {}
+        });
     }
+
+    private _renderUpperBar = (props: UpperBarRendererProps): ComponentChild => {
+        const items = this._items.map(item => item.render({}));
+        return <UpperBar>{items}</UpperBar>;
+    };
 
     /**
      * initialize new upper bar item
@@ -27,36 +51,13 @@ export class UpperBarManager {
      */
     add(data: UpperBarItemData): UpperBarItem {
         const itemOptions = {
-            ...this._options,
+            playerAPI: this._options.playerAPI,
             data
         };
         const item = new UpperBarItem(itemOptions);
         this._items.push(item);
         return item;
     }
-
-    private _renderRoot = (): void => {
-        if (this._destroyed) {
-            throw new Error("item was destroyed, cannot create root");
-        }
-
-        if (this._root) {
-            return;
-        }
-
-        const { kalturaPlayer } = this._options;
-        const playerViewId = kalturaPlayer.config.targetId;
-        const playerParentElement = document.querySelector(`div#${playerViewId} div#player-gui`);
-
-        if (!playerParentElement) {
-            return;
-        }
-
-        this._rootParent = document.createElement("div");
-        playerParentElement.append(this._rootParent);
-
-        this._root = render(<UpperBar />, this._rootParent);
-    };
 
     /**
      * remove all ui manager items

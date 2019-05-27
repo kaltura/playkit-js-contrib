@@ -5,7 +5,7 @@
   "author": "Kaltura",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kaltura/playkit-js-ovp"
+    "url": "https://github.com/kaltura/playkit-js-contrib"
   },
   "scripts": {
     "clean": "lerna run clean",

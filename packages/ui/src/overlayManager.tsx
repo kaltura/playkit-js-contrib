@@ -1,13 +1,21 @@
 import { OverlayItem } from "./overlayItem";
-import { OverlayItemData } from "./overlayItemData";
-import { UpperBarManagerOptions } from "./upperBarManager";
+import { OverlayItemData, OverlayItemProps } from "./overlayItemData";
+import { PresetManager } from "./presetManager";
+import { PlayerPresets, PresetAreas } from "./presetItemData";
+import { PlayerAPI, PlayerContribServices } from "@playkit-js-contrib/common";
 
 export interface OverlayManagerOptions {
-    eventManager: any;
-    kalturaPlayer: any;
+    playerAPI: PlayerAPI;
+    presetManager: PresetManager;
 }
 
+const ResourceToken = "OverlayManager-v1";
+
 export class OverlayManager {
+    static fromPlayer(playerContribServices: PlayerContribServices, creator: () => OverlayManager) {
+        return playerContribServices.register(ResourceToken, 1, creator);
+    }
+
     private _items: OverlayItem<any>[] = [];
     private _options: OverlayManagerOptions;
 
@@ -19,11 +27,15 @@ export class OverlayManager {
      * initialize new overlay ui item
      * @param item
      */
-    add<T>(data: OverlayItemData<T>): OverlayItem<T> {
+    add<T>(data: OverlayItemData<T>): OverlayItem<T> | null {
+        const { presetManager } = this._options;
+
         const itemOptions = {
-            ...this._options,
+            presetManager,
+            ...this.options,
             data
         };
+
         const item = new OverlayItem<any>(itemOptions);
         this._items.push(item);
         return item;
