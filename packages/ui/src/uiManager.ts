@@ -1,7 +1,7 @@
 import { UpperBarManager } from "./upperBarManager";
 import { OverlayManager } from "./overlayManager";
 import { KitchenSinkManager } from "./kitchenSinkManager";
-import { PlayerContribServices } from "@playkit-js/ovp-common";
+import { PlayerContribServices } from "@playkit-js-contrib/common";
 
 export interface UIManagerOptions {
     upperBarManager: UpperBarManager;

@@ -3,7 +3,7 @@ import { KitchenSinkItemData } from "./kitchenSinkItemData";
 import { KitchenSinkItem } from "./kitchenSinkItem";
 import { UpperBarManager, UpperBarRendererProps } from "./upperBarManager";
 import { PresetManager } from "./presetManager";
-import { PlayerAPI, PlayerContribServices } from "@playkit-js/ovp-common";
+import { PlayerAPI, PlayerContribServices } from "@playkit-js-contrib/common";
 import { PlayerPresets, PresetAreas } from "./presetItemData";
 import { KitchenSink } from "./components/kitchen-sink/kitchenSink";
 import { PresetItem } from "./presetItem";

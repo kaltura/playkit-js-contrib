@@ -6,7 +6,7 @@ const libraryName = 'plugin';
 module.exports = (env, options) => {
   return {
     entry: {
-      [`playkit-ovp-${libraryName}`]: './src/index.ts'
+      [`playkit-js-contrib-${libraryName}`]: './src/index.ts'
     },
     externals: [nodeExternals(
       {
@@ -21,7 +21,7 @@ module.exports = (env, options) => {
     output: {
       path: path.resolve(__dirname, 'lib'),
       filename: 'index.js',
-      library: ['playkit', 'ovp', libraryName],
+      library: ['playkit', 'contrib', libraryName],
       libraryTarget: 'umd',
       umdNamedDefine: true
     },

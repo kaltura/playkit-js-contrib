@@ -1,6 +1,6 @@
 import { h, Component } from "preact";
 import * as styles from "./_upperBar.scss";
-import { log } from "@playkit-js/ovp-common";
+import { log } from "@playkit-js-contrib/common";
 
 export interface UpperBarProps {}
 

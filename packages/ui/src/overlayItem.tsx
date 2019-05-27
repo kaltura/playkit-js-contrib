@@ -1,5 +1,5 @@
 import { h } from "preact";
-import { log, PlayerAPI } from "@playkit-js/ovp-common";
+import { log, PlayerAPI } from "@playkit-js-contrib/common";
 import { OverlayItemData, OverlayItemProps, OverlayUIModes } from "./overlayItemData";
 import { PresetItem } from "./presetItem";
 import { PlayerPresets, PresetAreas } from "./presetItemData";
@@ -18,7 +18,7 @@ export class OverlayItem<TRoot> {
 
     constructor(options: OverlayItemOptions) {
         this._options = options;
-        log("debug", `ovp-ui::OverlayItem:ctor()`, "executed", { options: options });
+        log("debug", `contrib-ui::OverlayItem:ctor()`, "executed", { options: options });
         this._addPlayerBindings();
 
         this._presetItem = this._createPresetItem();

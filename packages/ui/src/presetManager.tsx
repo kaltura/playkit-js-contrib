@@ -1,4 +1,4 @@
-import { PlayerAPI, PlayerContribServices } from "@playkit-js/ovp-common";
+import { PlayerAPI, PlayerContribServices } from "@playkit-js-contrib/common";
 import { PresetItemData } from "./presetItemData";
 import { PresetItem } from "./presetItem";
 

@@ -1,8 +1,6 @@
 // TODO remove dependency on logger as it is relevant to v2 only
-import { log } from "./logger";
-
 import { ScaleCalculation, scaleVideo } from "./scaleVideo";
-import { CuepointEngine } from "./cuepointEngine";
+import { CuepointEngine, log } from "@playkit-js-contrib/common";
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
@@ -12,7 +10,7 @@ enum ChangeTypes {
 }
 export type PlayerSize = { width: number; height: number };
 export type VideoSize = { width: number; height: number };
-type ChangeData<T extends LayoutCuepoint> = {
+type ChangeData<T extends OverlayCuepoint> = {
     time: number;
     type: ChangeTypes;
     cuePoint: T;
@@ -27,7 +25,7 @@ export interface Layout {
     height: number;
 }
 
-export interface LayoutCuepoint {
+export interface OverlayCuepoint {
     id: string;
     startTime: number;
     endTime?: number;
@@ -42,13 +40,13 @@ export interface LayoutCuepoint {
     layout: Layout;
 }
 
-export type RawLayoutCuepoint = Omit<LayoutCuepoint, "layout">;
+export type RawOverlayCuepoint = Omit<OverlayCuepoint, "layout">;
 
-export interface LayoutCuepoint extends RawLayoutCuepoint {}
+export interface OverlayCuepoint extends RawOverlayCuepoint {}
 
-export class CuepointLayoutEngine<
-    TRaw extends RawLayoutCuepoint,
-    T extends LayoutCuepoint
+export class CuepointOverlayEngine<
+    TRaw extends RawOverlayCuepoint,
+    T extends OverlayCuepoint
 > extends CuepointEngine<T> {
     private playerSize: PlayerSize | null = null;
     private videoSize: VideoSize | null = null;

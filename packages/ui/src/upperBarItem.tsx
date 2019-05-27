@@ -1,5 +1,5 @@
 import { h, ComponentChild } from "preact";
-import { log, PlayerAPI } from "@playkit-js/ovp-common";
+import { log, PlayerAPI } from "@playkit-js-contrib/common";
 import { UpperBarItemData } from "./upperBarItemData";
 
 export interface UpperBarItemOptions {
@@ -13,7 +13,7 @@ export class UpperBarItem {
 
     constructor(options: UpperBarItemOptions) {
         this._options = options;
-        log("debug", `ovp-ui::UpperBarItem:ctor()`, "executed", { options });
+        log("debug", `contrib-ui::UpperBarItem:ctor()`, "executed", { options });
     }
 
     public render = (props: UpperBarItemProps): ComponentChild => {

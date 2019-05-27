@@ -1,11 +1,11 @@
-import { enableLog, PlayerAPI, PlayerContribServices } from "@playkit-js/ovp-common";
+import { enableLog, PlayerAPI, PlayerContribServices } from "@playkit-js-contrib/common";
 import {
     OverlayManager,
     UIManager,
     UpperBarManager,
     KitchenSinkManager,
     PresetManager
-} from "@playkit-js/ovp-ui";
+} from "@playkit-js-contrib/ui";
 
 export interface EnvironmentManagerOptions {
     playerAPI: PlayerAPI;

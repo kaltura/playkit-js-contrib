@@ -11,3 +11,5 @@ export * from "./kitchenSinkItem";
 export * from "./kitchenSinkItemData";
 export * from "./kitchenSinkManager";
 export * from "./presetManager";
+export * from "./scaleVideo";
+export * from "./cuepointOverlayEngine";

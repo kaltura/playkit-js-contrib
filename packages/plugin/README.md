@@ -1,1 +1,2 @@
-# Kaltura Player V7 - OVP UI services
+# Kaltura Player V7 Contrib - plugin services
+

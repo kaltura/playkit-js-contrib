@@ -4,8 +4,8 @@ import { UpperBarItemData } from "./upperBarItemData";
 import { UpperBar } from "./components/upper-bar";
 import { PresetManager } from "./presetManager";
 import { PlayerPresets, PresetAreas } from "./presetItemData";
-import { PlayerContribServices } from "@playkit-js/ovp-common";
-import { PlayerAPI } from "@playkit-js/ovp-common";
+import { PlayerContribServices } from "@playkit-js-contrib/common";
+import { PlayerAPI } from "@playkit-js-contrib/common";
 import { PresetItem } from "./presetItem";
 
 export interface UpperBarManagerOptions {

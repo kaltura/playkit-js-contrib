@@ -1,5 +1,5 @@
 import { ComponentChild, h } from "preact";
-import { log, PlayerAPI } from "@playkit-js/ovp-common";
+import { log, PlayerAPI } from "@playkit-js-contrib/common";
 import { PresetAreas, PresetItemData } from "./presetItemData";
 import { PresetItem as PresetItemComponent } from "./components/preset-item";
 
@@ -16,7 +16,7 @@ export class PresetItem<TProps extends Record<string, any>> {
 
     constructor(options: PresetItemOptions<TProps>) {
         this._options = options;
-        log("debug", `ovp-ui::PresetItem:ctor()`, "executed", { options });
+        log("debug", `contrib-ui::PresetItem:ctor()`, "executed", { options });
         this._props = this._options.data.initialProps;
         this._addPresetComponent();
     }
@@ -52,7 +52,7 @@ export class PresetItem<TProps extends Record<string, any>> {
         if (!containerName) {
             log(
                 "warn",
-                `ovp-ui::_addPresetComponent()`,
+                `contrib-ui::_addPresetComponent()`,
                 `failed to match container for area ${this._options.data.area} `
             );
             return;

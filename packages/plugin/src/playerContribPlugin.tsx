@@ -1,11 +1,10 @@
 import { h, render } from "preact";
-import { OverlayManager, UIManager, UpperBarManager } from "@playkit-js/ovp-ui";
-import { PlayerContribServices } from "../../common/src/playerContribServices";
+import { OverlayManager, UIManager, UpperBarManager } from "@playkit-js-contrib/ui";
 import { EnvironmentManager } from "./environmentManager";
 
 // TODO try to remove the 'as any'
 // @ts-ignore
-export abstract class OVPBasePlugin extends (KalturaPlayer as any).core.BasePlugin {
+export abstract class PlayerContribPlugin extends (KalturaPlayer as any).core.BasePlugin {
     static defaultConfig = {};
 
     static isValid(player: any) {

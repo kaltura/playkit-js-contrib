@@ -2,10 +2,9 @@ export class PlayerContribServices {
     private _cache: Record<string, { apiVersion: number; instance: any }> = {};
 
     static get(player: any): PlayerContribServices {
-        player.__ovp__ = player.__ovp__ || {};
-        player.__ovp__.contribServices =
-            player.__ovp__.contribServices || new PlayerContribServices();
-        return player.__ovp__.contribServices;
+        player.__contrib__ = player.__contrib__ || {};
+        player.__contrib__.services = player.__contrib__.services || new PlayerContribServices();
+        return player.__contrib__.services;
     }
 
     public get(token: string): any {
