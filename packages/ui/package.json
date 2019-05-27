@@ -1,7 +1,7 @@
 {
     "name": "@playkit-js-contrib/ui",
     "private": false,
-    "version": "0.1.1",
+    "version": "0.1.2",
     "license": "AGPL-3.0",
     "author": "Kaltura",
     "repository": {
@@ -22,7 +22,6 @@
     "main": "./lib/index.js",
     "types": "./lib/index.d.ts",
     "devDependencies": {
-        "@playkit-js-contrib/common": "^0.1.1",
         "css-loader": "^2.1.1",
         "dts-bundle-generator": "^3.0.0",
         "fs-extra": "^7.0.1",
@@ -45,5 +44,8 @@
         "lib",
         "LICENSE",
         "CHANGELOG.md"
-    ]
+    ],
+    "dependencies": {
+        "@playkit-js-contrib/common": "^0.1.2"
+    }
 }
