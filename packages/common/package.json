@@ -1,7 +1,7 @@
 {
   "name": "@playkit-js-contrib/common",
   "private": false,
-  "version": "1.10.0",
+  "version": "2.0.0",
   "license": "AGPL-3.0",
   "author": "Kaltura",
   "repository": {
@@ -32,7 +32,6 @@
     "webpack-merge": "^4.2.1",
     "webpack-node-externals": "^1.7.2"
   },
-  "peerDependencies": {},
   "publishConfig": {
     "access": "public"
   },
