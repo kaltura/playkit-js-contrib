@@ -1,4 +1,5 @@
 import { ComponentChild, Ref } from "preact";
+import { PlayerSize, VideoSize } from "./common.types";
 
 export enum OverlayUIModes {
     MediaLoaded = "MediaLoaded",
@@ -15,5 +16,8 @@ export interface OverlayItemData<TComponent> {
 
 export interface OverlayItemProps {
     currentTime: number;
-    shouldHandleResize: boolean;
+    canvas: {
+        playerSize: PlayerSize;
+        videoSize: VideoSize;
+    };
 }

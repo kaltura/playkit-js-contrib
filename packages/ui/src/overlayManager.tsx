@@ -1,7 +1,6 @@
 import { OverlayItem } from "./overlayItem";
-import { OverlayItemData, OverlayItemProps } from "./overlayItemData";
+import { OverlayItemData } from "./overlayItemData";
 import { PresetManager } from "./presetManager";
-import { PlayerPresets, PresetAreas } from "./presetItemData";
 import { PlayerAPI, PlayerContribServices } from "@playkit-js-contrib/common";
 
 export interface OverlayManagerOptions {

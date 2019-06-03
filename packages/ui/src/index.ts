@@ -13,3 +13,4 @@ export * from "./kitchenSinkManager";
 export * from "./presetManager";
 export * from "./scaleVideo";
 export * from "./cuepointOverlayEngine";
+export * from "./common.types";

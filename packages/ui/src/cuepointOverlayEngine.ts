@@ -1,6 +1,7 @@
 // TODO remove dependency on logger as it is relevant to v2 only
 import { ScaleCalculation, scaleVideo } from "./scaleVideo";
 import { CuepointEngine, log } from "@playkit-js-contrib/common";
+import { PlayerSize, VideoSize } from "./common.types";
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
@@ -8,8 +9,6 @@ enum ChangeTypes {
     Show = "show",
     Hide = "hide"
 }
-export type PlayerSize = { width: number; height: number };
-export type VideoSize = { width: number; height: number };
 type ChangeData<T extends OverlayCuepoint> = {
     time: number;
     type: ChangeTypes;
