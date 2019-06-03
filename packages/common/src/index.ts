@@ -1,8 +1,5 @@
 export * from "./cuepointEngine";
 export * from "./logger";
 export * from "./playerContribServices";
-
-export interface PlayerAPI {
-    eventManager: any;
-    kalturaPlayer: any;
-}
+export * from "./eventManager";
+export * from "./common.types";
