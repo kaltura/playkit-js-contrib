@@ -45,6 +45,6 @@
         "CHANGELOG.md"
     ],
     "dependencies": {
-        "@playkit-js-contrib/common": "^0.1.2"
+        "@playkit-js-contrib/common": "*"
     }
 }
