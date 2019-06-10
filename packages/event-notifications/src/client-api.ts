@@ -1,36 +1,61 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { ConnectionParams } from "./event-notifications";
+import { EventNotificationsOptions } from "./event-notifications";
+
+export interface APIResponse {
+    objectType: string;
+}
+
+export interface APIErrorResponse extends APIResponse {
+    code: string;
+    message: string;
+}
+
+export interface ClientApiOptions {
+    ks: string;
+    serviceUrl: string;
+    clientTag: string;
+}
+
+export function isAPIErrorResopnse(response: APIResponse): response is APIErrorResponse {
+    debugger; // todo
+    return response.objectType === "TODO_TODO";
+}
+
+export function isAPIResponse(response: any): response is APIResponse {
+    return "objectType" in response;
+}
 
 export class ClientApi {
     private baseParams: any;
     private serviceUrl: string;
 
-    static getInstance(params: ConnectionParams): ClientApi {
-        return new ClientApi(params);
-    }
-
-    constructor(params: ConnectionParams) {
-        this.serviceUrl = params.serviceUrl;
+    constructor(options: ClientApiOptions) {
+        this.serviceUrl = options.serviceUrl;
 
         this.baseParams = {
             apiVersion: "3.1",
             expiry: "86400",
             ignoreNull: 1,
-            clientTag: "kwidget:v7.0.0", // Todo: get it from player version
-            ks: params.ks,
-            kalsig: "" // Todo: convert params before the send to url escapeed params and MD5 hash it.
+            clientTag: options.clientTag,
+            ks: options.ks,
+            kalsig: "" // Todo: MD5 hash code for the params object.
         };
     }
 
-    public doMultiRegistrationRequest(apiRequests: any) {
+    public doMultiRegistrationRequest(apiRequests: any): Promise<APIResponse[]> {
         let data = this.preparePostMultiData(apiRequests);
         let options: AxiosRequestConfig = {
-            headers: { "Content-Type": "application/json" }
+            headers: {
+                "Content-Type": "application/json",
+                responseType: "application/x-www-form-urlencoded"
+            }
         };
 
-        return axios.post(`${this.serviceUrl}?service=multirequest`, data, options).then(res => {
-            return res.data;
-        });
+        return axios
+            .post<{ objects: unknown[] }>(`${this.serviceUrl}?service=multirequest`, data, options)
+            .then(res => {
+                return res.data.objects as APIResponse[];
+            });
     }
 
     private preparePostMultiData(apiRequests: any) {

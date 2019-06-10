@@ -1,4 +1,4 @@
-import { ClientApi } from "./client-api";
+import { APIErrorResponse, APIResponse, ClientApi, isAPIErrorResopnse } from "./client-api";
 import { SocketWrapper } from "./socket-wrapper";
 import { RegisterRequestConfig, StringKeyValue } from "./event-notifications";
 
@@ -10,9 +10,22 @@ export interface RegisterRequestConfig {
 
 export type StringKeyValue<T> = { [key: string]: T };
 
-export interface ConnectionParams {
+export interface EventNotificationsOptions {
     ks: string;
     serviceUrl: string;
+    clientTag: string;
+}
+
+export interface APINotificationResponse extends APIResponse {
+    url: string;
+    queueName: string;
+    queueKey: string;
+}
+
+export function isAPINotificationResponse(
+    response: APIResponse
+): response is APINotificationResponse {
+    return response.objectType === "EventNotification"; // todo is it?
 }
 
 export class EventNotification {
@@ -22,7 +35,7 @@ export class EventNotification {
     private clientApi: any;
     private logger = this.getlogger("EventNotification");
 
-    static getInstance(parmas: ConnectionParams): EventNotification {
+    static getInstance(parmas: EventNotificationsOptions): EventNotification {
         const domainUrl = EventNotification.getDomainFromUrl(parmas.serviceUrl);
 
         if (!EventNotification.instancePool[domainUrl]) {
@@ -33,8 +46,8 @@ export class EventNotification {
         return EventNotification.instancePool[domainUrl];
     }
 
-    constructor(params: ConnectionParams) {
-        this.clientApi = ClientApi.getInstance(params);
+    constructor(options: EventNotificationsOptions) {
+        this.clientApi = new ClientApi(options);
     }
 
     private getlogger(context: string) {
@@ -57,24 +70,24 @@ export class EventNotification {
         this.socketPool = {};
     }
 
-    public registerNotifications(registerRequestConfigs: RegisterRequestConfig[]) {
+    public registerNotifications(registerRequestConfigs: RegisterRequestConfig[]): Promise<void> {
         let apiRequests: StringKeyValue<string | number>[] = registerRequestConfigs.map(
             (eventConfig: RegisterRequestConfig) => {
                 return this.prepareRegisterRequest(eventConfig);
             }
         );
 
-        return this.clientApi.doMultiRegistrationRequest(apiRequests).then((results: any) => {
-            if (results["objectType"] === "KalturaAPIException") {
-                return Promise.reject(results);
-            }
+        return this.clientApi
+            .doMultiRegistrationRequest(apiRequests)
+            .then((results: APIResponse[]) => {
+                let promiseArray = results.map((result, index) => {
+                    return this.processResult(registerRequestConfigs[index], result);
+                });
 
-            let promiseArray = results.map((result: any, index: number) => {
-                return this.processResult(registerRequestConfigs[index], result);
+                return Promise.all(promiseArray).then(() => {
+                    return undefined;
+                });
             });
-
-            return Promise.all(promiseArray);
-        });
     }
 
     private prepareRegisterRequest(eventRequestConfig: RegisterRequestConfig) {
@@ -101,40 +114,46 @@ export class EventNotification {
         return request;
     }
 
-    private processResult(registerRequest: RegisterRequestConfig, result: any) {
-        if (result.objectType === "KalturaAPIException") {
+    private processResult(
+        registerRequest: RegisterRequestConfig,
+        result: APIResponse
+    ): Promise<void> {
+        if (isAPIErrorResopnse(result)) {
             this.logger(
                 `processResult: Error registering to ${registerRequest.eventName}, message:${
                     result.message
                 } (${result.code})`
             );
-            return Promise.resolve(result.message);
-        } else {
-            //cache sockets by host name
-            let socketKey = EventNotification.getDomainFromUrl(result.url);
-            let socketWrapper = this.socketPool[socketKey];
-            if (!socketWrapper) {
-                socketWrapper = new SocketWrapper(socketKey);
-                this.socketPool[socketKey] = socketWrapper;
-                socketWrapper.connectAndRegister(result.url, registerRequest.eventName);
-            }
-
-            socketWrapper.prepareForListening(
-                registerRequest.eventName,
-                result.queueName,
-                result.queueKey,
-                (obj: any) => {
-                    this.logger(
-                        `processResult: received event for ${
-                            registerRequest.eventName
-                        } queueKey is ${result.queueKey}`
-                    );
-                    registerRequest.onMessage(obj);
-                }
-            );
-
-            return Promise.resolve();
+            return Promise.reject(new Error(result.message));
         }
+
+        if (!isAPINotificationResponse(result)) {
+            return Promise.reject(new Error("invalid response structure"));
+        }
+
+        //cache sockets by host name
+        let socketKey = EventNotification.getDomainFromUrl(result.url);
+        let socketWrapper = this.socketPool[socketKey];
+        if (!socketWrapper) {
+            socketWrapper = new SocketWrapper({ key: socketKey, url: result.url });
+            this.socketPool[socketKey] = socketWrapper;
+        }
+
+        socketWrapper.prepareForListening(
+            registerRequest.eventName,
+            result.queueName,
+            result.queueKey,
+            (obj: any) => {
+                this.logger(
+                    `processResult: received event for ${registerRequest.eventName} queueKey is ${
+                        result.queueKey
+                    }`
+                );
+                registerRequest.onMessage(obj);
+            }
+        );
+
+        return Promise.resolve();
     }
 
     private static getDomainFromUrl(url: string) {

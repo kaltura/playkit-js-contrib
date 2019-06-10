@@ -11,8 +11,11 @@ export class SocketWrapper {
     private connected: boolean = false;
     private logger = this.getlogger("SocketWrapper");
 
-    constructor(key: string) {
+    constructor({ key, url }: { key: string; url: string }) {
         this.key = key;
+
+        this.logger(`connect: Connecting to socket for ${url}`);
+        this._registerSocket(url);
     }
 
     private getlogger(context: string) {
@@ -27,27 +30,26 @@ export class SocketWrapper {
             this.socket.disconnect();
             this.socket = null;
         }
+
+        this.listenKeys = null;
+        this.callbackMap = null;
+        this.connected = false;
     }
 
-    public connectAndRegister(url: string, eventName: string) {
-        this.destroy();
-        this.logger(`connect: Connecting to socket for ${url}`);
+    private _registerSocket(url: string) {
+        this.logger("registerSocket: registering to socket", "info");
+
         this.socket = io.connect(url, {
             forceNew: true,
             timeout: SocketWrapper.CONNECTION_TIMEOUT
         });
-        this.registerSocket(url, eventName);
-    }
-
-    private registerSocket(url: string, eventName: string) {
-        this.logger("registerSocket: registering to socket", "info");
 
         this.socket.on("validated", () => {
             this.connected = true;
 
             for (let key in this.listenKeys) {
                 this.logger(
-                    `registerSocket: on Validated: emit 'listen' to url ${url} eventName ${eventName}`,
+                    `registerSocket: on Validated: emit 'listen' to url ${url}`,
                     this.listenKeys[key],
                     "info"
                 );
@@ -74,12 +76,12 @@ export class SocketWrapper {
             if (this.listenKeys[queueKeyHash]) {
                 this.callbackMap[queueKey] = this.listenKeys[queueKeyHash];
                 this.logger(
-                    `on Connected: Listening to ${eventName} queueKey ${queueKey} and \n queueKeyHash ${queueKeyHash}`,
+                    `on Connected: Listening to queueKey ${queueKey} and \n queueKeyHash ${queueKeyHash}`,
                     "info"
                 );
             } else {
                 this.logger(
-                    `on Connected: Cannot listen to ${eventName} queueKey ${queueKey} \n queueKeyHash ${queueKeyHash} queueKeyHash not found`,
+                    `on Connected: Cannot listen to queueKey ${queueKey} \n queueKeyHash ${queueKeyHash} queueKeyHash not found`,
                     "info"
                 );
             }
@@ -87,7 +89,7 @@ export class SocketWrapper {
 
         this.socket.on("message", (queueKey: string, msg: any) => {
             this.logger(
-                `on Message: eventName ${eventName} queueKey ${queueKey} message is: `,
+                `on Message: queueKey ${queueKey} message is: `,
                 ...(Array.isArray(msg) ? msg : [msg]),
                 "info"
             );
@@ -96,7 +98,7 @@ export class SocketWrapper {
                 this.callbackMap[queueKey].cb(msg);
             } else {
                 this.logger(
-                    `onMessage: Error couldn't find queueKey in map. queueKey ${queueKey} for eventName ${eventName}`,
+                    `onMessage: Error couldn't find queueKey in map. queueKey ${queueKey} `,
                     "error"
                 );
             }
