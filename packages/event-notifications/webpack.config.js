@@ -1,31 +1,31 @@
 const path = require("path");
-var PeerDepsExternalsPlugin = require('peer-deps-externals-webpack-plugin');
-var {IgnorePlugin} = require('webpack');
-var webpackMerge = require('webpack-merge');
 var nodeExternals = require('webpack-node-externals');
 
-const distFolder = path.join(__dirname, "/dist");
+const libraryName = 'eventNotification';
 
 module.exports = (env, options) => {
   return {
-    entry: './src/index.ts',
-    externals: [
-        function(context, request, callback) {
-          if (request.indexOf('@playkit-js') === 0) {
-            return callback(null, 'umd ' + request);
-          }
+    entry: {
+      [`playkit-js-contrib-${libraryName}`]: './src/index.ts'
+    },
+    externals: [function(context, request, callback) {
+      if (request.indexOf('@playkit-js') === 0) {
+        return callback(null, 'umd ' + request);
+      }
 
-          callback();
-        }
-    ],
+      callback();
+    }],
     resolve: {
       extensions: [".ts", ".tsx", ".js", ".jsx"],
+      modules: [path.resolve(__dirname, "node_modules")],
       symlinks: false
     },
     output: {
+      path: path.resolve(__dirname, 'lib'),
       filename: 'index.js',
+      library: ['playkit', 'contrib', libraryName],
       libraryTarget: 'umd',
-      path: path.resolve(__dirname, 'lib')
+      umdNamedDefine: true
     },
     devtool: options.mode === "development" ? "eval-source-map" : "source-map",
     module: {
