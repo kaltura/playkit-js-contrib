@@ -5,31 +5,24 @@
   "author": "Kaltura",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kaltura/playkit-js-ovp"
+    "url": "https://github.com/kaltura/playkit-js-contrib"
   },
   "scripts": {
+    "clean": "lerna run clean",
     "build": "lerna run build",
-    "publish:latest": "npm run build &&  lerna version --conventional-commits && lerna publish from-package && npm run npm:setLatestAsNext",
-    "publish:next": "npm run build &&  lerna version prerelease --preid next --conventional-commits && lerna publish from-package --dist-tag next",
-    "publish:canary": "npm run build && lerna publish --canary",
-    "npm:setLatestAsNext": "npx lerna exec --no-bail --no-private --no-sort --stream -- '[ -n \"$(npm v . dist-tags.next)\" -a \"$(npm v . dist-tags.next)\" != \"$(npm v . dist.tags.latest)\" ] && npm dist-tag add ${LERNA_PACKAGE_NAME}@$(npm v . dist-tags.latest) next'",
-    "bootstrap": "lerna bootstrap && lerna link"
+    "build:dev": "lerna run build:dev",
+    "publish:latest": "npm run clean && npm run build &&  lerna version --conventional-commits && lerna publish from-package && npm run fix-npm-next-tag",
+    "publish:next": "npm run clean && npm run build &&  lerna version prerelease --preid next --conventional-commits && lerna publish from-package --dist-tag next",
+    "fix-npm-next-tag": "lerna exec --no-bail --no-private --no-sort --stream -- '[ -n \"$(npm v . dist-tags.next)\" -a \"$(npm v . dist-tags.next)\" != \"$(npm v . dist.tags.latest)\" ] && npm dist-tag add ${LERNA_PACKAGE_NAME}@$(npm v . dist-tags.latest) next'",
+    "reset": "lerna run reset && rm -rf node_modules",
+    "setup": "npm i && lerna bootstrap && lerna run setup && lerna link",
+    "lerna": "lerna"
   },
   "devDependencies": {
-    "dts-bundle-generator": "^3.0.0",
-    "fs-extra": "^7.0.1",
     "husky": "^1.3.1",
     "lerna": "^3.13.4",
     "lint-staged": "^8.1.5",
-    "npm-install-peers": "^1.2.1",
-    "peer-deps-externals-webpack-plugin": "^1.0.4",
-    "prettier": "^1.16.4",
-    "ts-loader": "^5.3.3",
-    "typescript": "^3.2.2",
-    "webpack": "^4.29.6",
-    "webpack-cli": "^3.3.0",
-    "webpack-merge": "^4.2.1",
-    "webpack-node-externals": "^1.7.2"
+    "prettier": "^1.16.4"
   },
   "lint-staged": {
     "*.{ts,tsx,json,css,html}": [
@@ -41,9 +34,6 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
-  },
-  "peerDependencies": {
-    "preact": "^8.4.2"
   },
   "dependencies": {}
 }

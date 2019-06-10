@@ -42,7 +42,7 @@ onRegisterUI(uiManager: UIManager): void; // interface OnRegisterUI
 
 ## [0.1.1](https://github.com/kaltura/playkit-js-contrib/compare/v0.1.0...v0.1.1) (2019-05-15)
 
-**Note:** Version bump only for package root
+**Note:** Version bump only for package @playkit-js/contrib-ui
 
 
 
