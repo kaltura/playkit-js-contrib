@@ -1,16 +1,26 @@
-import { APIErrorResponse, APIResponse, ClientApi, isAPIErrorResopnse } from "./client-api";
+import {
+    APIResponse,
+    ClientApi,
+    isAPIErrorResopnse,
+    RegisterRequestParams,
+    RegisterRequestResponse
+} from "./client-api";
 import { SocketWrapper } from "./socket-wrapper";
-import { RegisterRequestConfig, StringKeyValue } from "./event-notifications";
 
-export interface RegisterRequestConfig {
-    eventName: string;
-    eventParams?: any;
-    onMessage: Function;
+export interface EventParams extends Record<string, any> {
+    entryId: string;
+    userId?: string;
 }
 
-export type StringKeyValue<T> = { [key: string]: T };
+export interface PrepareRegisterRequest {
+    eventName: string;
+    eventParams?: EventParams;
+    onMessage: Function;
+    onDisconnect: Function;
+    onReconnect: Function;
+}
 
-export interface EventNotificationsOptions {
+export interface PushNotificationsOptions {
     ks: string;
     serviceUrl: string;
     clientTag: string;
@@ -25,73 +35,70 @@ export interface APINotificationResponse extends APIResponse {
 export function isAPINotificationResponse(
     response: APIResponse
 ): response is APINotificationResponse {
-    return response.objectType === "EventNotification"; // todo is it?
+    return response.objectType === "KalturaPushNotificationData"; // todo: is it current?
 }
 
-export class EventNotification {
-    private static instancePool: any = {};
+export class PushNotifications {
+    private static instancePool: any = {}; // Todo by @Eran_Sakal register singleton per player (and remove this line)
 
-    private socketPool: any = {};
-    private clientApi: any;
-    private logger = this.getlogger("EventNotification");
+    private _socketPool: any = {};
+    private _clientApi: any;
+    private _logger = this._getLogger("PushNotifications");
 
-    static getInstance(parmas: EventNotificationsOptions): EventNotification {
-        const domainUrl = EventNotification.getDomainFromUrl(parmas.serviceUrl);
+    static getInstance(params: PushNotificationsOptions): PushNotifications {
+        const domainUrl = PushNotifications._getDomainFromUrl(params.serviceUrl);
 
-        if (!EventNotification.instancePool[domainUrl]) {
-            const newInstance = new EventNotification(parmas);
-            EventNotification.instancePool[domainUrl] = newInstance;
+        if (!PushNotifications.instancePool[domainUrl]) {
+            const newInstance = new PushNotifications(params);
+            PushNotifications.instancePool[domainUrl] = newInstance;
         }
 
-        return EventNotification.instancePool[domainUrl];
+        return PushNotifications.instancePool[domainUrl];
     }
 
-    constructor(options: EventNotificationsOptions) {
-        this.clientApi = new ClientApi(options);
+    constructor(options: PushNotificationsOptions) {
+        this._clientApi = new ClientApi(options);
     }
 
-    private getlogger(context: string) {
+    private _getLogger(context: string) {
         // TODO use logger from common
         return (message: string, ...args: any[]) => {
             console.log(`>>>> [${context}] ${message}`, ...args);
         };
     }
 
-    public init() {
-        // Remove any old bindings:
-        this.destroy();
-    }
-
-    private destroy() {
-        for (let socketKey in this.socketPool) {
-            this.socketPool[socketKey].destroy();
+    private _reset() {
+        for (let socketKey in this._socketPool) {
+            this._socketPool[socketKey]._reset();
         }
 
-        this.socketPool = {};
+        this._socketPool = {};
     }
 
-    public registerNotifications(registerRequestConfigs: RegisterRequestConfig[]): Promise<void> {
-        let apiRequests: StringKeyValue<string | number>[] = registerRequestConfigs.map(
-            (eventConfig: RegisterRequestConfig) => {
-                return this.prepareRegisterRequest(eventConfig);
+    public registerNotifications(prepareRegisterRequests: PrepareRegisterRequest[]): Promise<void> {
+        let apiRequests: RegisterRequestParams[] = prepareRegisterRequests.map(
+            (eventConfig: PrepareRegisterRequest) => {
+                return this._prepareRegisterRequest(eventConfig);
             }
         );
 
-        return this.clientApi
-            .doMultiRegistrationRequest(apiRequests)
-            .then((results: APIResponse[]) => {
+        return this._clientApi
+            .doMultiRegisterRequest(apiRequests)
+            .then((results: RegisterRequestResponse[]) => {
                 let promiseArray = results.map((result, index) => {
-                    return this.processResult(registerRequestConfigs[index], result);
+                    return this._processResult(prepareRegisterRequests[index], result);
                 });
 
                 return Promise.all(promiseArray).then(() => {
-                    return undefined;
+                    return;
                 });
             });
     }
 
-    private prepareRegisterRequest(eventRequestConfig: RegisterRequestConfig) {
-        let request: StringKeyValue<string | number> = {
+    private _prepareRegisterRequest(
+        eventRequestConfig: PrepareRegisterRequest
+    ): RegisterRequestParams {
+        let request: RegisterRequestParams = {
             service: "eventnotification_eventnotificationtemplate",
             action: "register",
             notificationTemplateSystemName: eventRequestConfig.eventName,
@@ -114,12 +121,12 @@ export class EventNotification {
         return request;
     }
 
-    private processResult(
-        registerRequest: RegisterRequestConfig,
+    private _processResult(
+        registerRequest: PrepareRegisterRequest,
         result: APIResponse
     ): Promise<void> {
         if (isAPIErrorResopnse(result)) {
-            this.logger(
+            this._logger(
                 `processResult: Error registering to ${registerRequest.eventName}, message:${
                     result.message
                 } (${result.code})`
@@ -132,31 +139,26 @@ export class EventNotification {
         }
 
         //cache sockets by host name
-        let socketKey = EventNotification.getDomainFromUrl(result.url);
-        let socketWrapper = this.socketPool[socketKey];
+        let socketKey = PushNotifications._getDomainFromUrl(result.url);
+        let socketWrapper = this._socketPool[socketKey];
         if (!socketWrapper) {
             socketWrapper = new SocketWrapper({ key: socketKey, url: result.url });
-            this.socketPool[socketKey] = socketWrapper;
+            this._socketPool[socketKey] = socketWrapper;
         }
 
         socketWrapper.prepareForListening(
             registerRequest.eventName,
             result.queueName,
             result.queueKey,
-            (obj: any) => {
-                this.logger(
-                    `processResult: received event for ${registerRequest.eventName} queueKey is ${
-                        result.queueKey
-                    }`
-                );
-                registerRequest.onMessage(obj);
-            }
+            registerRequest.onMessage,
+            registerRequest.onDisconnect,
+            registerRequest.onReconnect
         );
 
         return Promise.resolve();
     }
 
-    private static getDomainFromUrl(url: string) {
+    private static _getDomainFromUrl(url: string) {
         return url.replace(/^(.*\/\/[^\/?#]*).*$/, "$1");
     }
 }

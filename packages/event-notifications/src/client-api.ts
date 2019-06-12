@@ -1,11 +1,19 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { EventNotificationsOptions } from "./event-notifications";
+import { PushNotificationsOptions } from "./event-notifications";
+import { APIResponse } from "../lib";
 
 export interface APIResponse {
     objectType: string;
 }
 
+export interface RegisterRequestResponse extends APIResponse {
+    queueKey: string;
+    queueName: string;
+    url: string;
+}
+
 export interface APIErrorResponse extends APIResponse {
+    objectType: string;
     code: string;
     message: string;
 }
@@ -14,6 +22,22 @@ export interface ClientApiOptions {
     ks: string;
     serviceUrl: string;
     clientTag: string;
+}
+
+export interface RegisterRequestParams extends Record<string, any> {
+    service: string;
+    action: string;
+    notificationTemplateSystemName: string;
+    "pushNotificationParams:objectType": string;
+}
+
+interface BaseRequestParams extends Record<string, any> {
+    apiVersion: string;
+    expiry: string;
+    ignoreNull: number;
+    clientTag: string;
+    ks: string;
+    kalsig: string;
 }
 
 export function isAPIErrorResopnse(response: APIResponse): response is APIErrorResponse {
@@ -26,13 +50,14 @@ export function isAPIResponse(response: any): response is APIResponse {
 }
 
 export class ClientApi {
-    private baseParams: any;
-    private serviceUrl: string;
+    private _baseParams: BaseRequestParams;
+    private _serviceUrl: string;
+    private _logger = this._getLogger("ClientApi");
 
     constructor(options: ClientApiOptions) {
-        this.serviceUrl = options.serviceUrl;
+        this._serviceUrl = options.serviceUrl;
 
-        this.baseParams = {
+        this._baseParams = {
             apiVersion: "3.1",
             expiry: "86400",
             ignoreNull: 1,
@@ -42,31 +67,46 @@ export class ClientApi {
         };
     }
 
-    public doMultiRegistrationRequest(apiRequests: any): Promise<APIResponse[]> {
-        let data = this.preparePostMultiData(apiRequests);
+    private _getLogger(context: string) {
+        // TODO use logger from common
+        return (message: string, ...args: any[]) => {
+            console.log(`>>>> [${context}] ${message}`, ...args);
+        };
+    }
+
+    public doMultiRegisterRequest(
+        apiRequests: RegisterRequestParams[]
+    ): Promise<void | RegisterRequestResponse[]> {
+        let data = this._preparePostMultiData(apiRequests);
         let options: AxiosRequestConfig = {
             headers: {
                 "Content-Type": "application/json",
-                responseType: "application/x-www-form-urlencoded"
+                responseType: "application/json"
             }
         };
 
         return axios
-            .post<{ objects: unknown[] }>(`${this.serviceUrl}?service=multirequest`, data, options)
+            .post(`${this._serviceUrl}?service=multirequest`, data, options)
             .then(res => {
-                return res.data.objects as APIResponse[];
+                return res.data as RegisterRequestResponse[];
+            })
+            .catch(err => {
+                this._logger(
+                    "doMultiRegistrationRequest Error: failed to multirequest the queueNameHash and queueKeyHash",
+                    err
+                );
             });
     }
 
-    private preparePostMultiData(apiRequests: any) {
+    private _preparePostMultiData(apiRequests: RegisterRequestParams[]) {
         let data: any = {};
 
         let multiRequestIndex = 1;
 
         // Add base parameters
-        for (let paramKey in this.baseParams) {
+        for (let paramKey in this._baseParams) {
             if (typeof data[paramKey] === "undefined") {
-                data[paramKey] = this.baseParams[paramKey];
+                data[paramKey] = this._baseParams[paramKey];
             }
         }
 

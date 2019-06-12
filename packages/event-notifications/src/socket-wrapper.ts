@@ -1,15 +1,24 @@
 import * as io from "socket.io-client";
 import Socket = SocketIOClient.Socket;
 
+export interface ListenKeysObject {
+    eventName: string;
+    queueNameHash: string;
+    queueKeyHash: string;
+    onMessage: Function;
+    onDisconnect?: Function;
+    onReconnect?: Function;
+}
+
 export class SocketWrapper {
     public static CONNECTION_TIMEOUT: number = 10 * 60 * 1000;
 
     private socket: Socket | any;
     private key: string;
-    private listenKeys: any = {};
-    private callbackMap: any = {};
+    private listenKeys: Record<string, ListenKeysObject> = {};
+    private callbackMap: Record<string, ListenKeysObject> = {};
     private connected: boolean = false;
-    private logger = this.getlogger("SocketWrapper");
+    private logger = this._getLogger("SocketWrapper");
 
     constructor({ key, url }: { key: string; url: string }) {
         this.key = key;
@@ -18,7 +27,7 @@ export class SocketWrapper {
         this._registerSocket(url);
     }
 
-    private getlogger(context: string) {
+    private _getLogger(context: string) {
         // TODO use logger from common
         return (message: string, ...args: any[]) => {
             console.log(`>>>> [${context}] ${message}`, ...args);
@@ -31,8 +40,8 @@ export class SocketWrapper {
             this.socket = null;
         }
 
-        this.listenKeys = null;
-        this.callbackMap = null;
+        this.listenKeys = {};
+        this.callbackMap = {};
         this.connected = false;
     }
 
@@ -61,11 +70,20 @@ export class SocketWrapper {
             }
         });
 
-        this.socket.on("disconnect", () => {
+        this.socket.on("disconnect", (e: any) => {
             this.logger("on Disconnect: push server was disconnected", "info");
+            for (let key in this.listenKeys) {
+                let onDisconnect = this.listenKeys[key].onDisconnect;
+                if (onDisconnect) onDisconnect(e);
+            }
         });
-        this.socket.on("reconnect", () => {
+
+        this.socket.on("reconnect", (e: any) => {
             this.logger("on Reconnect: push server was reconnected", "info");
+            for (let key in this.listenKeys) {
+                let onReconnect = this.listenKeys[key].onReconnect;
+                if (onReconnect) onReconnect(e);
+            }
         });
 
         this.socket.on("reconnect_error", (e: any) => {
@@ -95,7 +113,7 @@ export class SocketWrapper {
             );
 
             if (this.callbackMap[queueKey]) {
-                this.callbackMap[queueKey].cb(msg);
+                this.callbackMap[queueKey].onMessage(msg);
             } else {
                 this.logger(
                     `onMessage: Error couldn't find queueKey in map. queueKey ${queueKey} `,
@@ -113,13 +131,17 @@ export class SocketWrapper {
         eventName: string,
         queueNameHash: string,
         queueKeyHash: string,
-        cb: Function
+        onMessage: Function,
+        onDisconnect: Function,
+        onReconnect: Function
     ) {
         this.listenKeys[queueKeyHash] = {
             eventName: eventName,
             queueNameHash: queueNameHash,
             queueKeyHash: queueKeyHash,
-            cb: cb
+            onMessage: onMessage,
+            onDisconnect: onDisconnect,
+            onReconnect: onReconnect
         };
 
         if (this.connected) {
