@@ -6,6 +6,7 @@ import {
     RegisterRequestResponse
 } from "./client-api";
 import { SocketWrapper } from "./socket-wrapper";
+import { PlayerAPI, log } from "@playkit-js-contrib/common";
 
 export interface EventParams extends Record<string, any> {
     entryId: string;
@@ -24,6 +25,7 @@ export interface PushNotificationsOptions {
     ks: string;
     serviceUrl: string;
     clientTag: string;
+    playerAPI: PlayerAPI;
 }
 
 export interface APINotificationResponse extends APIResponse {
@@ -35,7 +37,7 @@ export interface APINotificationResponse extends APIResponse {
 export function isAPINotificationResponse(
     response: APIResponse
 ): response is APINotificationResponse {
-    return response.objectType === "KalturaPushNotificationData"; // todo: is it current?
+    return response.objectType === "KalturaPushNotificationData";
 }
 
 export class PushNotifications {
@@ -45,11 +47,11 @@ export class PushNotifications {
     private _clientApi: any;
     private _logger = this._getLogger("PushNotifications");
 
-    static getInstance(params: PushNotificationsOptions): PushNotifications {
-        const domainUrl = PushNotifications._getDomainFromUrl(params.serviceUrl);
+    static getInstance(options: PushNotificationsOptions): PushNotifications {
+        const domainUrl = PushNotifications._getDomainFromUrl(options.serviceUrl);
 
         if (!PushNotifications.instancePool[domainUrl]) {
-            const newInstance = new PushNotifications(params);
+            const newInstance = new PushNotifications(options);
             PushNotifications.instancePool[domainUrl] = newInstance;
         }
 
@@ -61,15 +63,14 @@ export class PushNotifications {
     }
 
     private _getLogger(context: string) {
-        // TODO use logger from common
-        return (message: string, ...args: any[]) => {
-            console.log(`>>>> [${context}] ${message}`, ...args);
+        return (level: "debug" | "log" | "warn" | "error", message: string, ...args: any[]) => {
+            log(level, context, message, ...args);
         };
     }
 
-    private _reset() {
+    public reset() {
         for (let socketKey in this._socketPool) {
-            this._socketPool[socketKey]._reset();
+            this._socketPool[socketKey].destroy();
         }
 
         this._socketPool = {};
@@ -127,6 +128,7 @@ export class PushNotifications {
     ): Promise<void> {
         if (isAPIErrorResopnse(result)) {
             this._logger(
+                "error",
                 `processResult: Error registering to ${registerRequest.eventName}, message:${
                     result.message
                 } (${result.code})`

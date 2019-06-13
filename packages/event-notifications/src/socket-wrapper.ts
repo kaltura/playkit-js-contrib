@@ -1,5 +1,6 @@
 import * as io from "socket.io-client";
 import Socket = SocketIOClient.Socket;
+import { log } from "@playkit-js-contrib/common";
 
 export interface ListenKeysObject {
     eventName: string;
@@ -13,121 +14,121 @@ export interface ListenKeysObject {
 export class SocketWrapper {
     public static CONNECTION_TIMEOUT: number = 10 * 60 * 1000;
 
-    private socket: Socket | any;
-    private key: string;
-    private listenKeys: Record<string, ListenKeysObject> = {};
-    private callbackMap: Record<string, ListenKeysObject> = {};
-    private connected: boolean = false;
-    private logger = this._getLogger("SocketWrapper");
+    private _socket: Socket | any;
+    private _key: string;
+    private _listenKeys: Record<string, ListenKeysObject> = {};
+    private _callbackMap: Record<string, ListenKeysObject> = {};
+    private _connected: boolean = false;
+    private _logger = this._getLogger("SocketWrapper");
 
     constructor({ key, url }: { key: string; url: string }) {
-        this.key = key;
+        this._key = key;
 
-        this.logger(`connect: Connecting to socket for ${url}`);
+        this._logger("log", `connect: Connecting to socket for ${url}`);
         this._registerSocket(url);
     }
 
     private _getLogger(context: string) {
-        // TODO use logger from common
-        return (message: string, ...args: any[]) => {
-            console.log(`>>>> [${context}] ${message}`, ...args);
+        return (level: "debug" | "log" | "warn" | "error", message: string, ...args: any[]) => {
+            log(level, context, message, ...args);
         };
     }
 
-    private destroy() {
-        if (this.socket) {
-            this.socket.disconnect();
-            this.socket = null;
+    public destroy() {
+        if (this._socket) {
+            this._socket.disconnect();
+            this._socket = null;
         }
 
-        this.listenKeys = {};
-        this.callbackMap = {};
-        this.connected = false;
+        this._listenKeys = {};
+        this._callbackMap = {};
+        this._connected = false;
     }
 
     private _registerSocket(url: string) {
-        this.logger("registerSocket: registering to socket", "info");
+        this._logger("log", "registerSocket: registering to socket");
 
-        this.socket = io.connect(url, {
+        this._socket = io.connect(url, {
             forceNew: true,
             timeout: SocketWrapper.CONNECTION_TIMEOUT
         });
 
-        this.socket.on("validated", () => {
-            this.connected = true;
+        this._socket.on("validated", () => {
+            this._connected = true;
 
-            for (let key in this.listenKeys) {
-                this.logger(
+            for (let key in this._listenKeys) {
+                this._logger(
+                    "log",
                     `registerSocket: on Validated: emit 'listen' to url ${url}`,
-                    this.listenKeys[key],
-                    "info"
+                    this._listenKeys[key]
                 );
-                this.socket.emit(
+                this._socket.emit(
                     "listen",
-                    this.listenKeys[key].queueNameHash,
-                    this.listenKeys[key].queueKeyHash
+                    this._listenKeys[key].queueNameHash,
+                    this._listenKeys[key].queueKeyHash
                 );
             }
         });
 
-        this.socket.on("disconnect", (e: any) => {
-            this.logger("on Disconnect: push server was disconnected", "info");
-            for (let key in this.listenKeys) {
-                let onDisconnect = this.listenKeys[key].onDisconnect;
+        this._socket.on("disconnect", (e: any) => {
+            this._logger("log", "on Disconnect: push server was disconnected");
+            for (let key in this._listenKeys) {
+                let onDisconnect = this._listenKeys[key].onDisconnect;
                 if (onDisconnect) onDisconnect(e);
             }
         });
 
-        this.socket.on("reconnect", (e: any) => {
-            this.logger("on Reconnect: push server was reconnected", "info");
-            for (let key in this.listenKeys) {
-                let onReconnect = this.listenKeys[key].onReconnect;
+        this._socket.on("reconnect", (e: any) => {
+            this._logger("log", "on Reconnect: push server was reconnected");
+            for (let key in this._listenKeys) {
+                let onReconnect = this._listenKeys[key].onReconnect;
                 if (onReconnect) onReconnect(e);
             }
         });
 
-        this.socket.on("reconnect_error", (e: any) => {
-            this.logger("on Reconnect_error: reconnection failed ", e, "info");
+        this._socket.on("reconnect_error", (e: any) => {
+            this._logger("log", "on Reconnect_error: reconnection failed ", e);
         });
 
-        this.socket.on("connected", (queueKey: string, queueKeyHash: string) => {
-            if (this.listenKeys[queueKeyHash]) {
-                this.callbackMap[queueKey] = this.listenKeys[queueKeyHash];
-                this.logger(
-                    `on Connected: Listening to queueKey ${queueKey} and \n queueKeyHash ${queueKeyHash}`,
-                    "info"
+        this._socket.on("connected", (queueKey: string, queueKeyHash: string) => {
+            if (this._listenKeys[queueKeyHash]) {
+                this._callbackMap[queueKey] = this._listenKeys[queueKeyHash];
+                this._logger(
+                    "log",
+                    `on Connected: Listening to queueKey ${queueKey} and \n queueKeyHash ${queueKeyHash}`
                 );
             } else {
-                this.logger(
+                this._logger(
+                    "error",
                     `on Connected: Cannot listen to queueKey ${queueKey} \n queueKeyHash ${queueKeyHash} queueKeyHash not found`,
                     "info"
                 );
             }
         });
 
-        this.socket.on("message", (queueKey: string, msg: any) => {
-            this.logger(
+        this._socket.on("message", (queueKey: string, msg: any) => {
+            this._logger(
+                "log",
                 `on Message: queueKey ${queueKey} message is: `,
-                ...(Array.isArray(msg) ? msg : [msg]),
-                "info"
+                ...(Array.isArray(msg) ? msg : [msg])
             );
 
-            if (this.callbackMap[queueKey]) {
-                this.callbackMap[queueKey].onMessage(msg);
+            if (this._callbackMap[queueKey]) {
+                this._callbackMap[queueKey].onMessage(msg);
             } else {
-                this.logger(
-                    `onMessage: Error couldn't find queueKey in map. queueKey ${queueKey} `,
-                    "error"
+                this._logger(
+                    "error",
+                    `onMessage: Error couldn't find queueKey in map. queueKey ${queueKey} `
                 );
             }
         });
 
-        this.socket.on("errorMsg", (msg: any) => {
-            this.logger("on ErrorMsg", msg);
+        this._socket.on("errorMsg", (msg: any) => {
+            this._logger("error", "on ErrorMsg", msg);
         });
     }
 
-    prepareForListening(
+    public prepareForListening(
         eventName: string,
         queueNameHash: string,
         queueKeyHash: string,
@@ -135,7 +136,7 @@ export class SocketWrapper {
         onDisconnect: Function,
         onReconnect: Function
     ) {
-        this.listenKeys[queueKeyHash] = {
+        this._listenKeys[queueKeyHash] = {
             eventName: eventName,
             queueNameHash: queueNameHash,
             queueKeyHash: queueKeyHash,
@@ -144,11 +145,12 @@ export class SocketWrapper {
             onReconnect: onReconnect
         };
 
-        if (this.connected) {
-            this.logger(
+        if (this._connected) {
+            this._logger(
+                "log",
                 `Listening to ${eventName} queueNameHash ${queueNameHash} queueKeyHash ${queueKeyHash}`
             );
-            this.socket.emit("listen", queueNameHash, queueKeyHash);
+            this._socket.emit("listen", queueNameHash, queueKeyHash);
         }
     }
 }
