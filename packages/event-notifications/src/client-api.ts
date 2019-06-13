@@ -40,9 +40,8 @@ interface BaseRequestParams extends Record<string, any> {
     kalsig: string;
 }
 
-export function isAPIErrorResopnse(response: APIResponse): response is APIErrorResponse {
-    debugger; // todo
-    return response.objectType === "TODO_TODO";
+export function isAPIErrorResponse(response: APIResponse): response is APIErrorResponse {
+    return response.objectType === "KalturaAPIException";
 }
 
 export function isAPIResponse(response: any): response is APIResponse {

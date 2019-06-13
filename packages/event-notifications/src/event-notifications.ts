@@ -1,7 +1,7 @@
 import {
     APIResponse,
     ClientApi,
-    isAPIErrorResopnse,
+    isAPIErrorResponse,
     RegisterRequestParams,
     RegisterRequestResponse
 } from "./client-api";
@@ -126,12 +126,12 @@ export class PushNotifications {
         registerRequest: PrepareRegisterRequest,
         result: APIResponse
     ): Promise<void> {
-        if (isAPIErrorResopnse(result)) {
+        if (isAPIErrorResponse(result)) {
             this._logger(
                 "error",
-                `processResult: Error registering to ${registerRequest.eventName}, message:${
-                    result.message
-                } (${result.code})`
+                `processResult: Error fetching registration info from service ${
+                    registerRequest.eventName
+                }, message:${result.message} (${result.code})`
             );
             return Promise.reject(new Error(result.message));
         }
