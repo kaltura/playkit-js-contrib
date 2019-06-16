@@ -17,14 +17,14 @@ export class SocketWrapper {
     private _socket: Socket | any;
     private _key: string;
     private _listenKeys: Record<string, ListenKeysObject> = {};
-    private _callbackMap: Record<string, ListenKeysObject> = {};
+    private _messageKeyToQueueKeyMap: Record<string, string> = {};
     private _connected: boolean = false;
     private _logger = this._getLogger("SocketWrapper");
 
     constructor({ key, url }: { key: string; url: string }) {
         this._key = key;
 
-        this._logger("log", `connect: Connecting to socket for ${url}`);
+        this._logger("log", `c'tor: Connecting to socket for ${url}`);
         this._registerSocket(url);
     }
 
@@ -41,12 +41,12 @@ export class SocketWrapper {
         }
 
         this._listenKeys = {};
-        this._callbackMap = {};
+        this._messageKeyToQueueKeyMap = {};
         this._connected = false;
     }
 
     private _registerSocket(url: string) {
-        this._logger("log", "registerSocket: registering to socket");
+        this._logger("log", "RegisterSocket: io connection to socket");
 
         this._socket = io.connect(url, {
             forceNew: true,
@@ -59,13 +59,49 @@ export class SocketWrapper {
             for (let key in this._listenKeys) {
                 this._logger(
                     "log",
-                    `registerSocket: on Validated: emit 'listen' to url ${url}`,
+                    `registerSocket: on Validated: Emit listen' to url ${url}`,
                     this._listenKeys[key]
                 );
                 this._socket.emit(
                     "listen",
                     this._listenKeys[key].queueNameHash,
                     this._listenKeys[key].queueKeyHash
+                );
+            }
+        });
+
+        this._socket.on("connected", (messageKey: string, queueKey: string) => {
+            if (this._listenKeys[queueKey]) {
+                this._messageKeyToQueueKeyMap[messageKey] = queueKey;
+                this._logger(
+                    "log",
+                    `on Connected: Listening to queueKey ${messageKey} and \n queueKeyHash ${queueKey}`
+                );
+            } else {
+                this._logger(
+                    "error",
+                    `on Connected: Cannot listen to queueKey ${messageKey} \n queueKeyHash ${queueKey} queueKeyHash not found`,
+                    "info"
+                );
+            }
+        });
+
+        this._socket.on("message", (messageKey: string, msg: any) => {
+            this._logger(
+                "log",
+                `on Message: queueKey ${messageKey} message is: `,
+                ...(Array.isArray(msg) ? msg : [msg])
+            );
+
+            if (
+                this._messageKeyToQueueKeyMap[messageKey] &&
+                this._listenKeys[this._messageKeyToQueueKeyMap[messageKey]]
+            ) {
+                this._listenKeys[this._messageKeyToQueueKeyMap[messageKey]].onMessage(msg);
+            } else {
+                this._logger(
+                    "error",
+                    `onMessage: Error couldn't find queueKey in map. queueKey ${messageKey} `
                 );
             }
         });
@@ -88,39 +124,6 @@ export class SocketWrapper {
 
         this._socket.on("reconnect_error", (e: any) => {
             this._logger("log", "on Reconnect_error: reconnection failed ", e);
-        });
-
-        this._socket.on("connected", (queueKey: string, queueKeyHash: string) => {
-            if (this._listenKeys[queueKeyHash]) {
-                this._callbackMap[queueKey] = this._listenKeys[queueKeyHash];
-                this._logger(
-                    "log",
-                    `on Connected: Listening to queueKey ${queueKey} and \n queueKeyHash ${queueKeyHash}`
-                );
-            } else {
-                this._logger(
-                    "error",
-                    `on Connected: Cannot listen to queueKey ${queueKey} \n queueKeyHash ${queueKeyHash} queueKeyHash not found`,
-                    "info"
-                );
-            }
-        });
-
-        this._socket.on("message", (queueKey: string, msg: any) => {
-            this._logger(
-                "log",
-                `on Message: queueKey ${queueKey} message is: `,
-                ...(Array.isArray(msg) ? msg : [msg])
-            );
-
-            if (this._callbackMap[queueKey]) {
-                this._callbackMap[queueKey].onMessage(msg);
-            } else {
-                this._logger(
-                    "error",
-                    `onMessage: Error couldn't find queueKey in map. queueKey ${queueKey} `
-                );
-            }
         });
 
         this._socket.on("errorMsg", (msg: any) => {

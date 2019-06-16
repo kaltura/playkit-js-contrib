@@ -60,6 +60,11 @@ export class PushNotifications {
 
     constructor(options: PushNotificationsOptions) {
         this._clientApi = new ClientApi(options);
+
+        // todo listen to on Player reset
+        // options.playerAPI.eventManager.listen(options.playerAPI.kalturaPlayer, options.playerAPI.kalturaPlayer.Event.PLAYER_RESET, () => {
+        //     this.reset();
+        // });
     }
 
     private _getLogger(context: string) {
