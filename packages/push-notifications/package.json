@@ -1,5 +1,5 @@
 {
-    "name": "@playkit-js-contrib/event-notifications",
+    "name": "@playkit-js-contrib/push-notifications",
     "private": false,
     "version": "2.0.0",
     "license": "AGPL-3.0",
