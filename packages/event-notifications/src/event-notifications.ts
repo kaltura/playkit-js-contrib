@@ -103,19 +103,23 @@ export class PushNotifications {
             service: "eventnotification_eventnotificationtemplate",
             action: "register",
             notificationTemplateSystemName: eventRequestConfig.eventName,
-            "pushNotificationParams:objectType": "KalturaPushNotificationParams"
+            pushNotificationParams: {
+                objectType: "KalturaPushNotificationParams",
+                userParams: {}
+            }
         };
 
         let index = 0;
-        for (let eventPrmKey in eventRequestConfig.eventParams) {
-            request[`pushNotificationParams:userParams:item${index}:objectType`] =
-                "KalturaPushNotificationParams";
-            request[`pushNotificationParams:userParams:item${index}:key`] = eventPrmKey;
-            request[`pushNotificationParams:userParams:item${index}:value:objectType`] =
-                "KalturaStringValue";
-            request[`pushNotificationParams:userParams:item${index}:value:value`] =
-                eventRequestConfig.eventParams[eventPrmKey];
-            request[`pushNotificationParams:userParams:item${index}:isQueueKeyParam`] = 1;
+        for (let paramsKey in eventRequestConfig.eventParams) {
+            request.pushNotificationParams.userParams[`item${index}`] = {
+                objectType: "KalturaPushNotificationParams",
+                key: paramsKey,
+                value: {
+                    objectType: "KalturaStringValue",
+                    value: eventRequestConfig.eventParams[paramsKey]
+                },
+                sQueueKeyParam: 1
+            };
             index++;
         }
 

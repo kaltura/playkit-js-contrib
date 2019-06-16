@@ -28,7 +28,12 @@ export interface RegisterRequestParams extends Record<string, any> {
     service: string;
     action: string;
     notificationTemplateSystemName: string;
-    "pushNotificationParams:objectType": string;
+    pushNotificationParams: PushNotificationParams;
+}
+
+export interface PushNotificationParams extends Record<string, any> {
+    objectType: string;
+    userParams: any;
 }
 
 interface BaseRequestParams extends Record<string, any> {
