@@ -47,6 +47,7 @@ export class PushNotifications {
     private _clientApi: any;
     private _logger = this._getLogger("PushNotifications");
 
+    // Todo: should use plugin instance
     static getInstance(options: PushNotificationsOptions): PushNotifications {
         const domainUrl = PushNotifications._getDomainFromUrl(options.serviceUrl);
 
