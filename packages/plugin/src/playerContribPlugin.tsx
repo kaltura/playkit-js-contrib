@@ -45,14 +45,6 @@ function hasOnMediaUnload(plugin: any): plugin is OnMediaUnload {
     return "onMediaUnload" in plugin;
 }
 
-export interface OnRegisterEvents {
-    onRegisterEvents(eventManager: any): void;
-}
-
-function hasOnRegisterEvents(plugin: any): plugin is OnRegisterEvents {
-    return "onRegisterEvents" in plugin;
-}
-
 // TODO try to remove the 'as any'
 // @ts-ignore
 export abstract class PlayerContribPlugin extends (KalturaPlayer as any).core.BasePlugin {
@@ -101,16 +93,6 @@ export abstract class PlayerContribPlugin extends (KalturaPlayer as any).core.Ba
                 }
             }
 
-            if (hasOnRegisterEvents(this)) {
-                try {
-                    this.onRegisterEvents(this.eventManager);
-                } catch (e) {
-                    console.error(`failed to register to kaltura player events`, {
-                        error: e.message
-                    });
-                }
-            }
-
             if (hasOnMediaLoad(this)) {
                 try {
                     const config = {
@@ -131,7 +113,6 @@ export abstract class PlayerContribPlugin extends (KalturaPlayer as any).core.Ba
     }
 
     public reset() {
-        this.eventManager.removeAll();
         this._environment.uiManager.reset();
         if (hasOnMediaUnload(this)) {
             try {
