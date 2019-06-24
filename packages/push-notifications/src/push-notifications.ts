@@ -13,12 +13,16 @@ export interface EventParams extends Record<string, any> {
     userId?: string;
 }
 
-export interface PrepareRegisterRequest {
+export interface PrepareRegisterRequestConfig {
     eventName: string;
     eventParams?: EventParams;
     onMessage: Function;
-    onDisconnect: Function;
-    onReconnect: Function;
+}
+
+export interface RegisterNotificationsParams {
+    prepareRegisterRequestConfigs: PrepareRegisterRequestConfig[];
+    onSocketDisconnect?: Function;
+    onSocketReconnect?: Function;
 }
 
 export interface PushNotificationsOptions {
@@ -88,9 +92,11 @@ export class PushNotifications {
         this._socketPool = {};
     }
 
-    public registerNotifications(prepareRegisterRequests: PrepareRegisterRequest[]): Promise<void> {
-        let apiRequests: RegisterRequestParams[] = prepareRegisterRequests.map(
-            (eventConfig: PrepareRegisterRequest) => {
+    public registerNotifications(
+        registerNotifications: RegisterNotificationsParams
+    ): Promise<void> {
+        let apiRequests: RegisterRequestParams[] = registerNotifications.prepareRegisterRequestConfigs.map(
+            (eventConfig: PrepareRegisterRequestConfig) => {
                 return this._prepareRegisterRequest(eventConfig);
             }
         );
@@ -99,7 +105,12 @@ export class PushNotifications {
             .doMultiRegisterRequest(apiRequests)
             .then((results: RegisterRequestResponse[]) => {
                 let promiseArray = results.map((result, index) => {
-                    return this._processResult(prepareRegisterRequests[index], result);
+                    return this._processResult(
+                        registerNotifications.prepareRegisterRequestConfigs[index],
+                        result,
+                        registerNotifications.onSocketDisconnect,
+                        registerNotifications.onSocketReconnect
+                    );
                 });
 
                 return Promise.all(promiseArray).then(() => {
@@ -109,12 +120,12 @@ export class PushNotifications {
     }
 
     private _prepareRegisterRequest(
-        eventRequestConfig: PrepareRegisterRequest
+        prepareRegisterRequestConfig: PrepareRegisterRequestConfig
     ): RegisterRequestParams {
         let request: RegisterRequestParams = {
             service: "eventnotification_eventnotificationtemplate",
             action: "register",
-            notificationTemplateSystemName: eventRequestConfig.eventName,
+            notificationTemplateSystemName: prepareRegisterRequestConfig.eventName,
             pushNotificationParams: {
                 objectType: "KalturaPushNotificationParams",
                 userParams: {}
@@ -122,13 +133,13 @@ export class PushNotifications {
         };
 
         let index = 0;
-        for (let paramsKey in eventRequestConfig.eventParams) {
+        for (let paramsKey in prepareRegisterRequestConfig.eventParams) {
             request.pushNotificationParams.userParams[`item${index}`] = {
                 objectType: "KalturaPushNotificationParams",
                 key: paramsKey,
                 value: {
                     objectType: "KalturaStringValue",
-                    value: eventRequestConfig.eventParams[paramsKey]
+                    value: prepareRegisterRequestConfig.eventParams[paramsKey]
                 },
                 sQueueKeyParam: 1
             };
@@ -139,8 +150,10 @@ export class PushNotifications {
     }
 
     private _processResult(
-        registerRequest: PrepareRegisterRequest,
-        result: APIResponse
+        registerRequest: PrepareRegisterRequestConfig,
+        result: APIResponse,
+        onSocketDisconnect?: Function,
+        onSocketReconnect?: Function
     ): Promise<void> {
         if (isAPIErrorResponse(result)) {
             this._logger(
@@ -160,7 +173,12 @@ export class PushNotifications {
         let socketKey = PushNotifications._getDomainFromUrl(result.url);
         let socketWrapper = this._socketPool[socketKey];
         if (!socketWrapper) {
-            socketWrapper = new SocketWrapper({ key: socketKey, url: result.url });
+            socketWrapper = new SocketWrapper({
+                key: socketKey,
+                url: result.url,
+                onSocketDisconnect,
+                onSocketReconnect
+            });
             this._socketPool[socketKey] = socketWrapper;
         }
 
@@ -168,9 +186,7 @@ export class PushNotifications {
             registerRequest.eventName,
             result.queueName,
             result.queueKey,
-            registerRequest.onMessage,
-            registerRequest.onDisconnect,
-            registerRequest.onReconnect
+            registerRequest.onMessage
         );
 
         return Promise.resolve();
