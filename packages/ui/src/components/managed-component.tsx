@@ -18,8 +18,8 @@ export class ManagedComponent extends Component<Props, State> {
     }
 
     componentDidMount(): void {
-        this.setState({
-            toggler: false
+        this.setState(() => {
+            return { toggler: false };
         });
     }
 
