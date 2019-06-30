@@ -34,9 +34,10 @@ export class KitchenSinkItem {
     public render = (props: KitchenSinkItemRenderProps): ComponentChild => {
         const { contentRenderer } = this._options.data;
         return (
-            <ManagedComponent ref={ref => (this._componentRef = ref)}>
-                {contentRenderer(props)}
-            </ManagedComponent>
+            <ManagedComponent
+                ref={ref => (this._componentRef = ref)}
+                renderer={() => contentRenderer(props)}
+            />
         );
     };
 }
