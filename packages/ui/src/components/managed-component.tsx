@@ -1,4 +1,4 @@
-import { h, Component } from "preact";
+import { h, Component, ComponentChild } from "preact";
 import { getFirstChild } from "./utils";
 
 type State = {
@@ -6,6 +6,7 @@ type State = {
 };
 type Props = {
     children: any;
+    renderer?: () => ComponentChild;
 };
 
 export class ManagedComponent extends Component<Props, State> {
@@ -24,8 +25,7 @@ export class ManagedComponent extends Component<Props, State> {
     }
 
     render() {
-        const { toggler } = this.state;
-        console.log(">>>>> managed component render", { toggler: this.state.toggler });
-        return getFirstChild(this.props.children);
+        const { renderer } = this.props;
+        return renderer ? renderer() : getFirstChild(this.props.children);
     }
 }
