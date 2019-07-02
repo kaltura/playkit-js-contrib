@@ -13,8 +13,6 @@ export interface UpperBarManagerOptions {
     presetManager: PresetManager;
 }
 
-export interface UpperBarRendererProps {}
-
 const ResourceToken = "UpperBarManager-v1";
 
 export class UpperBarManager {
@@ -27,7 +25,7 @@ export class UpperBarManager {
 
     private _items: UpperBarItem[] = [];
     private _options: UpperBarManagerOptions;
-    private _upperBar: PresetItem<UpperBarRendererProps> | null;
+    private _upperBar: PresetItem | null;
 
     constructor(options: UpperBarManagerOptions) {
         this._options = options;
@@ -35,13 +33,12 @@ export class UpperBarManager {
             label: "upper-bar-manager",
             presets: [PresetNames.Playback, PresetNames.Live],
             container: { name: 'topBar', position: 'right'},
-            renderer: this._renderUpperBar,
-            initialProps: {}
+            renderChild: this._renderChild,
         });
     }
 
-    private _renderUpperBar = (props: UpperBarRendererProps): ComponentChild => {
-        const items = this._items.map(item => item.render({}));
+    private _renderChild = (): ComponentChild => {
+        const items = this._items.map(item => item.renderChild({}));
         return <UpperBar>{items}</UpperBar>;
     };
 

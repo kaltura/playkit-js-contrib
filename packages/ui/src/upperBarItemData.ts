@@ -1,7 +1,8 @@
 import { UpperBarItemProps } from "./upperBarItem";
+import { ComponentChild } from 'preact';
 
 export interface UpperBarItemData {
-    renderer: (upperBarUIProps: UpperBarItemProps) => any;
-    tooltip: string;
+    label: string,
+    renderItem: (upperBarUIProps: UpperBarItemProps) => ComponentChild;
     onClick: () => void;
 }

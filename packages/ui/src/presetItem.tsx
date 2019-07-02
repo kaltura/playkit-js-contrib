@@ -1,20 +1,21 @@
-import { ComponentChild, h } from "preact";
+import { ComponentChild, h, render } from "preact";
 import { log, PlayerAPI } from "@playkit-js-contrib/common";
 import { PresetItemData, PresetContainer } from "./presetItemData";
-import { PresetItem as PresetItemComponent } from "./components/preset-item";
 import { ManagedComponent } from './components/managed-component';
 
-export interface PresetItemOptions<TProps extends Record<string, any>> {
+export interface PresetItemOptions {
     playerAPI: PlayerAPI;
-    data: PresetItemData<TProps>;
+    data: PresetItemData;
 }
 
 export interface PresetItemProps {}
 
 export interface KalturaPlayerPresetComponent {
+    label: string,
     presets: string[],
     container: string,
-    render: () => ComponentChild
+    create: (options: { context?: any, parent: HTMLElement }) => void,
+    onDestroy: (options: { context?: any, parent: HTMLElement }) => void
 }
 
 function getPlayerPresetContainer(container: PresetContainer): string {
@@ -36,48 +37,15 @@ function getPlayerPresetContainer(container: PresetContainer): string {
     return '';
 }
 
-export class PresetItem<TProps extends Record<string, any>> {
-    private _options: PresetItemOptions<TProps>;
-    private _props: TProps;
+export class PresetItem {
+    private _options: PresetItemOptions;
     private _componentRef: ManagedComponent | null = null;
-    private _isShown: boolean;
+    private _element: Element | null = null;
 
-
-    constructor(options: PresetItemOptions<TProps> & { shown?: boolean}) {
+    constructor(options: PresetItemOptions & { shown?: boolean }) {
         this._options = options;
-        log("debug", `contrib-ui::PresetItem:ctor()`, "executed", { options });
-        this._props = this._options.data.initialProps;
-        this._isShown = options.shown || true;
+        log("debug", `contrib-ui::PresetItem:ctor()`, "executed", {options});
     }
-
-    setProps(props: TProps) {
-        this._props = props;
-    }
-
-    remove = (): void => {
-        log("debug", `plugin-v7::overlayUI.remove()`, "executed");
-        this._isShown = false;
-
-        // TODO sakal check if need to manually call renderer update or if shown prop is enough
-        if (!this._componentRef) {
-            return;
-        }
-
-        this._componentRef.update();
-    };
-
-    add = (): void => {
-
-        log("debug", `plugin-v7::PresetItem.add()`, "executed");
-        this._isShown = true;
-
-        // TODO sakal check if need to manually call renderer update or if shown prop is enough
-        if (!this._componentRef) {
-            return;
-        }
-
-        this._componentRef.update();
-    };
 
     get playerConfig(): KalturaPlayerPresetComponent | null {
         const containerName = getPlayerPresetContainer(this._options.data.container);
@@ -93,23 +61,41 @@ export class PresetItem<TProps extends Record<string, any>> {
 
         // TODO sakal change in @playkit-js/playkit-js-ui render to renderChild
         return {
+            label: this._options.data.label,
             presets: this._options.data.presets,
             container: containerName,
-            render: this._render
+            create: this._create,
+            onDestroy: this._onDestroy
         }
     }
 
-    private _renderChild = (): ComponentChild => {
-        const {label, renderer} = this._options.data;
-        return <ManagedComponent label={label} renderChildren={() => renderer(this._props)} shown={this._isShown}
-                                 ref={(ref) => this._componentRef = ref}/>
+    private _onDestroy = (options: { context?: any, parent: HTMLElement }): void => {
+        // TODO sakal handle destroy
     }
 
-    public _render = (): ComponentChild => {
-        const { label, fitToContainer } = this._options.data;
-        // TODO set here actual name of plugin
-        return (
-            <PresetItemComponent label={label} fitToContainer={fitToContainer} renderChild={this._renderChild} />
-        );
-    };
+    private _create = (options: { context?: any, parent: HTMLElement }): void => {
+
+        if (!options.parent) {
+            log(
+                "warn",
+                "presetItem().create()",
+                "missing parent argument, aborting element creation"
+            )
+            return;
+        }
+        const {label} = this._options.data;
+        const child = this._options.data.renderChild();
+
+        if (!child) {
+            log(
+                "warn",
+                "presetItem().create()",
+                "child renderer result is invalid, expected element got undefined|null"
+            )
+            return;
+        }
+
+        this._element = render(child, options.parent);
+        return;
+    }
 }

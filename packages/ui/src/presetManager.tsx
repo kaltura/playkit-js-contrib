@@ -15,14 +15,14 @@ export class PresetManager {
 
     private _isLocked = false;
     private _options: PresetManagerOptions;
-    private _components: PresetItem<any>[] = [];
-    private _pendingComponents: PresetItem<any>[] = [];
+    private _components: PresetItem[] = [];
+    private _pendingComponents: PresetItem[] = [];
 
     constructor(options: PresetManagerOptions) {
         this._options = options;
     }
 
-    add<TProps>(data: PresetItemData<TProps> & { shown?: boolean}): PresetItem<TProps> | null {
+    add<TProps>(data: PresetItemData & { shown?: boolean}): PresetItem | null {
         if (this._isLocked) {
             console.warn(`cannot add new preset items once player completed its' setup phase`);
             return null;

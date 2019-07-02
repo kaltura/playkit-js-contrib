@@ -22,7 +22,7 @@ export class OverlayManager {
         return playerContribServices.register(ResourceToken, 1, creator);
     }
 
-    private _overlayContainer: PresetItem<any> | null = null;
+    private _overlayContainer: PresetItem | null = null;
     private _items: OverlayItem[] = [];
     private _componentRef: ManagedComponent | null = null;
     private _options: OverlayManagerOptions;
@@ -40,8 +40,7 @@ export class OverlayManager {
             fitToContainer: true,
             presets: [PresetNames.Playback, PresetNames.Live],
             container: { name: "video", isModal: false },
-            renderer: this._render,
-            initialProps: this._getRendererProps({})
+            renderChild: this._renderChild,
         });
         this._addPlayerBindings();
         this._updateCachedCanvas();
@@ -102,11 +101,11 @@ export class OverlayManager {
 
     private _renderChildren = () => {
         const props = this._getRendererProps({});
-        return this._items.map(item => item.render(props));
+        return this._items.map(item => item.renderOverlayChild(props));
     }
-    private _render = (): ComponentChild => {
+    private _renderChild = (): ComponentChild => {
         // TODO sakal get label from renderer executer
-        return <ManagedComponent label={'overlay-manager'}  renderChildren={this._renderChildren} shown={true} ref={ref => (this._componentRef = ref)} />
+        return <ManagedComponent label={'overlay-manager'}  renderChildren={this._renderChildren} isShown={() => true} ref={ref => (this._componentRef = ref)} />
     };
 
     private _addPlayerBindings() {

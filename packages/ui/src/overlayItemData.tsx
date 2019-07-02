@@ -8,9 +8,9 @@ export enum OverlayUIModes {
 }
 
 export interface OverlayItemData {
-    name: string;
+    label: string;
     mode: OverlayUIModes;
-    renderer: (overlayItemProps: OverlayItemProps) => ComponentChild;
+    renderContent: (overlayItemProps: OverlayItemProps) => ComponentChild;
     className?: string;
 }
 

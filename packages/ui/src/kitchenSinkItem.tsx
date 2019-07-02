@@ -20,7 +20,7 @@ export class KitchenSinkItem {
     }
 
     get displayName() {
-        return this._options.data.name;
+        return this._options.data.label;
     }
 
     public update() {
@@ -31,11 +31,11 @@ export class KitchenSinkItem {
         this._componentRef.update();
     }
 
-    public render = (props: KitchenSinkItemRenderProps): ComponentChild => {
+    public renderContentChild = (props: KitchenSinkItemRenderProps): ComponentChild => {
         const {
-            contentRenderer } = this._options.data;
+            renderContent, label } = this._options.data;
         return (
-            <ManagedComponent label={'kitchen sink'} renderChildren={() => contentRenderer(props)} shown={true} ref={ref => (this._componentRef = ref)}>
+            <ManagedComponent label={label} renderChildren={() => renderContent(props)} isShown={() => true} ref={ref => (this._componentRef = ref)}>
             </ManagedComponent>
         );
     };

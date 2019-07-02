@@ -12,11 +12,10 @@ export enum PresetNames {
     Live = "live"
 }
 
-export interface PresetItemData<TProps extends Record<string, any>> {
+export interface PresetItemData {
     label: string;
     fitToContainer?: boolean;
     presets: PresetNames[];
     container: PresetContainer;
-    renderer: (props: any) => ComponentChild;
-    initialProps: TProps;
+    renderChild: () => ComponentChild;
 }

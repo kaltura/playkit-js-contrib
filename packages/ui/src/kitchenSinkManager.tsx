@@ -24,7 +24,7 @@ export class KitchenSinkManager {
         return playerContribServices.register(ResourceToken, 1, creator);
     }
 
-    private _kitchenSink: PresetItem<any> | null;
+    private _kitchenSink: PresetItem | null;
     private _items: KitchenSinkItem[] = [];
     private _options: KitchenSinkManagerOptions;
 
@@ -35,8 +35,7 @@ export class KitchenSinkManager {
             fitToContainer: true,
             presets: [PresetNames.Playback, PresetNames.Live],
             container: { name: 'sidePanel', position: 'right'},
-            renderer: this._render,
-            initialProps: this._getRenderProps()
+            renderChild: this._renderChild,
         });
     }
 
@@ -68,17 +67,17 @@ export class KitchenSinkManager {
         this._items.push(item);
 
         this.options.upperBarManager.add({
-            tooltip: data.name,
-            renderer: data.iconRenderer,
+            label: data.label,
+            renderItem: data.renderIcon,
             onClick: () => this._onUpperBarClick(item)
         });
 
         return item;
     }
 
-    private _render = (): ComponentChild => {
+    private _renderChild = (): ComponentChild => {
         const props = this._getRenderProps();
-        const items = this._items.map(item => item.render(props));
+        const items = this._items.map(item => item.renderContentChild(props));
         return <KitchenSink onClose={this._onClose}>{items}</KitchenSink>;
     };
 

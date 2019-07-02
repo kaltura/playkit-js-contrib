@@ -5,7 +5,7 @@ type State = {
     toggler: boolean;
 };
 type Props = {
-    shown: boolean;
+    isShown: () => boolean;
     renderChildren: () => ComponentChildren;
     label: string
 };
@@ -26,12 +26,12 @@ export class ManagedComponent extends Component<Props, State> {
     }
 
     render() {
-        if (!this.props.shown) {
+        if (!this.props.isShown()) {
             return null;
         }
 
         console.log(`[contrib] [ManagedComponent(${this.props.label}).render()]: executed`);
-        return <div>
+        return <div data-contrib-item={this.props.label}>
             {this.props.renderChildren()}
         </div>;
     }

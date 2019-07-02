@@ -51,11 +51,11 @@ export class OverlayItem {
         this.remove();
     }
 
-    render(props: OverlayItemProps) {
+    renderOverlayChild(props: OverlayItemProps) {
         // TODO sakal check if should rename 'name' to 'label'
-        const {name} = this._options.data;
+        const {label} = this._options.data;
 
-       return <ManagedComponent label={name} renderChildren={() => this._options.data.renderer(props)} shown={this._isShown} ref={ref => (this._componentRef = ref)}>
+       return <ManagedComponent label={label} renderChildren={() => this._options.data.renderContent(props)} isShown={() => this._isShown} ref={ref => (this._componentRef = ref)}>
         </ManagedComponent>;
     }
 

@@ -16,12 +16,12 @@ export class UpperBarItem {
         log("debug", `contrib-ui::UpperBarItem:ctor()`, "executed", { options });
     }
 
-    public render = (props: UpperBarItemProps): ComponentChild => {
-        const { onClick, renderer, tooltip } = this._options.data;
-        const children = renderer(props);
+    public renderChild = (props: UpperBarItemProps): ComponentChild => {
+        const { onClick, renderItem, label } = this._options.data;
+        const children = renderItem(props);
 
         return (
-            <div onClick={onClick} title={tooltip} className={"icon--clickable"}>
+            <div data-contrib-item={label} onClick={onClick} className={"icon--clickable"}>
                 {children}
             </div>
         );
