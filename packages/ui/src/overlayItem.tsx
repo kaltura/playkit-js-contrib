@@ -1,85 +1,45 @@
 import { h } from "preact";
 import { log, PlayerAPI } from "@playkit-js-contrib/common";
 import { OverlayItemData, OverlayItemProps, OverlayUIModes } from "./overlayItemData";
-import { PresetItem } from "./presetItem";
-import { PlayerPresets, PresetAreas } from "./presetItemData";
-import { PresetManager } from "./presetManager";
-import { getPlayerSize, getVideoSize } from "./playerUtils";
-import { PlayerSize, VideoSize } from "./common.types";
+import { ManagedComponent } from "./components/managed-component";
 
 export interface OverlayItemOptions {
     playerAPI: PlayerAPI;
-    presetManager: PresetManager;
-    data: OverlayItemData<any>;
+    data: OverlayItemData;
 }
 
-export class OverlayItem<TRoot> {
+export class OverlayItem {
     private _destroyed = false;
     private _options: OverlayItemOptions;
-    private _presetItem: PresetItem<OverlayItemProps>;
-    private _cache: {
-        canvas: {
-            playerSize: PlayerSize;
-            videoSize: VideoSize;
-        };
-    } = { canvas: { playerSize: { width: 0, height: 0 }, videoSize: { width: 0, height: 0 } } };
+    private _isShown = false;
+    private _componentRef: ManagedComponent | null = null;
 
     constructor(options: OverlayItemOptions) {
         this._options = options;
         log("debug", `contrib-ui::OverlayItem:ctor()`, "executed", { options: options });
         this._addPlayerBindings();
-        this._updateCachedCanvas();
-
-        this._presetItem = this._createPresetItem();
-    }
-
-    private _updateCachedCanvas() {
-        this._cache.canvas = {
-            playerSize: getPlayerSize(this._options.playerAPI.kalturaPlayer),
-            videoSize: getVideoSize(this._options.playerAPI.kalturaPlayer)
-        };
-    }
-
-    private _createPresetItem(): PresetItem<OverlayItemProps> {
-        const { presetManager, data } = this._options;
-
-        return presetManager.add({
-            label: data.name,
-            preset: PlayerPresets.playback,
-            area: PresetAreas.videoOverlay,
-            renderer: (options: OverlayItemProps) => {
-                const rendererProps = this._getRendererProps(options);
-                return data.renderer(rendererProps);
-            },
-            initialProps: this._getRendererProps({})
-        });
-    }
-
-    private _getRendererProps(props: Partial<OverlayItemProps>): OverlayItemProps {
-        const { kalturaPlayer } = this._options.playerAPI;
-
-        return {
-            currentTime:
-                typeof props.currentTime !== "undefined"
-                    ? props.currentTime
-                    : kalturaPlayer.currentTime * 1000,
-            canvas: this._cache.canvas
-        };
     }
 
     remove = (): void => {
         log("debug", `plugin-v7::overlayUI.remove()`, "executed");
-        this._presetItem.hide();
+        this._isShown = false;
+        // TODO sakal check if need to manually call renderer update or if shown prop is enough
+        if (!this._componentRef) {
+            return;
+        }
+
+        this._componentRef.update();
     };
 
     add = (): void => {
         log("debug", `plugin-v7::overlayUI.add()`, "executed");
-        this._cache.canvas = {
-            playerSize: getPlayerSize(this._options.playerAPI.kalturaPlayer),
-            videoSize: getVideoSize(this._options.playerAPI.kalturaPlayer)
-        };
+        this._isShown = true;
+        // TODO sakal check if need to manually call renderer update or if shown prop is enough
+        if (!this._componentRef) {
+            return;
+        }
 
-        this._presetItem.show();
+        this._componentRef.update();
     };
 
     /**
@@ -89,6 +49,14 @@ export class OverlayItem<TRoot> {
         log("debug", `plugin-v7::overlayUI.destroy()`, "executed");
         this._destroyed = true;
         this.remove();
+    }
+
+    render(props: OverlayItemProps) {
+        // TODO sakal check if should rename 'name' to 'label'
+        const {name} = this._options.data;
+
+       return <ManagedComponent label={name} renderChildren={() => this._options.data.renderer(props)} shown={this._isShown} ref={ref => (this._componentRef = ref)}>
+        </ManagedComponent>;
     }
 
     private _addPlayerBindings() {
@@ -104,14 +72,5 @@ export class OverlayItem<TRoot> {
         if (data.mode === OverlayUIModes.FirstPlay) {
             eventManager.listenOnce(kalturaPlayer, kalturaPlayer.Event.FIRST_PLAY, this.add);
         }
-
-        eventManager.listen(kalturaPlayer, kalturaPlayer.Event.TIME_UPDATE, () => {
-            this._presetItem.setProps(this._getRendererProps({}));
-        });
-
-        eventManager.listen(kalturaPlayer, kalturaPlayer.Event.RESIZE, () => {
-            this._updateCachedCanvas();
-            this._presetItem.setProps(this._getRendererProps({}));
-        });
     }
 }

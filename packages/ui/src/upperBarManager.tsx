@@ -3,7 +3,7 @@ import { UpperBarItem } from "./upperBarItem";
 import { UpperBarItemData } from "./upperBarItemData";
 import { UpperBar } from "./components/upper-bar";
 import { PresetManager } from "./presetManager";
-import { PlayerPresets, PresetAreas } from "./presetItemData";
+import { PresetNames } from "./presetItemData";
 import { PlayerContribServices } from "@playkit-js-contrib/common";
 import { PlayerAPI } from "@playkit-js-contrib/common";
 import { PresetItem } from "./presetItem";
@@ -27,14 +27,14 @@ export class UpperBarManager {
 
     private _items: UpperBarItem[] = [];
     private _options: UpperBarManagerOptions;
-    private _upperBar: PresetItem<UpperBarRendererProps>;
+    private _upperBar: PresetItem<UpperBarRendererProps> | null;
 
     constructor(options: UpperBarManagerOptions) {
         this._options = options;
         this._upperBar = this._options.presetManager.add({
             label: "upper-bar-manager",
-            preset: PlayerPresets.playback,
-            area: PresetAreas.topBarRightControls,
+            presets: [PresetNames.Playback, PresetNames.Live],
+            container: { name: 'topBar', position: 'right'},
             renderer: this._renderUpperBar,
             initialProps: {}
         });

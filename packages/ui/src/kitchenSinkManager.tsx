@@ -1,10 +1,10 @@
 import { ComponentChild, h } from "preact";
 import { KitchenSinkItemData } from "./kitchenSinkItemData";
 import { KitchenSinkItem } from "./kitchenSinkItem";
-import { UpperBarManager, UpperBarRendererProps } from "./upperBarManager";
+import { UpperBarManager } from "./upperBarManager";
 import { PresetManager } from "./presetManager";
 import { PlayerAPI, PlayerContribServices } from "@playkit-js-contrib/common";
-import { PlayerPresets, PresetAreas } from "./presetItemData";
+import { PresetNames } from "./presetItemData";
 import { KitchenSink } from "./components/kitchen-sink/kitchenSink";
 import { PresetItem } from "./presetItem";
 
@@ -24,7 +24,7 @@ export class KitchenSinkManager {
         return playerContribServices.register(ResourceToken, 1, creator);
     }
 
-    private _kitchenSink: PresetItem<any>;
+    private _kitchenSink: PresetItem<any> | null;
     private _items: KitchenSinkItem[] = [];
     private _options: KitchenSinkManagerOptions;
 
@@ -33,8 +33,8 @@ export class KitchenSinkManager {
         this._kitchenSink = this.options.presetManager.add({
             label: "kitchen-sink-manager",
             fitToContainer: true,
-            preset: PlayerPresets.playback,
-            area: PresetAreas.sidePanel,
+            presets: [PresetNames.Playback, PresetNames.Live],
+            container: { name: 'sidePanel', position: 'right'},
             renderer: this._render,
             initialProps: this._getRenderProps()
         });

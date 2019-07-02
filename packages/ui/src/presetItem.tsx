@@ -1,7 +1,8 @@
 import { ComponentChild, h } from "preact";
 import { log, PlayerAPI } from "@playkit-js-contrib/common";
-import { PresetAreas, PresetItemData } from "./presetItemData";
+import { PresetItemData, PresetContainer } from "./presetItemData";
 import { PresetItem as PresetItemComponent } from "./components/preset-item";
+import { ManagedComponent } from './components/managed-component';
 
 export interface PresetItemOptions<TProps extends Record<string, any>> {
     playerAPI: PlayerAPI;
@@ -10,75 +11,105 @@ export interface PresetItemOptions<TProps extends Record<string, any>> {
 
 export interface PresetItemProps {}
 
+export interface KalturaPlayerPresetComponent {
+    presets: string[],
+    container: string,
+    render: () => ComponentChild
+}
+
+function getPlayerPresetContainer(container: PresetContainer): string {
+    if (typeof container === 'string') {
+        return container;
+    }
+    if (container.name === 'bottomBar') {
+        return `bottom-bar__${container.position}-controls`
+    }
+    if (container.name === 'topBar') {
+        return `top-bar__${container.position}-controls`
+    }
+    if (container.name === 'sidePanel') {
+        return 'side-panel';
+    }
+    if (container.name === 'video') {
+        return 'player-gui';
+    }
+    return '';
+}
+
 export class PresetItem<TProps extends Record<string, any>> {
     private _options: PresetItemOptions<TProps>;
     private _props: TProps;
+    private _componentRef: ManagedComponent | null = null;
+    private _isShown: boolean;
 
-    constructor(options: PresetItemOptions<TProps>) {
+
+    constructor(options: PresetItemOptions<TProps> & { shown?: boolean}) {
         this._options = options;
         log("debug", `contrib-ui::PresetItem:ctor()`, "executed", { options });
         this._props = this._options.data.initialProps;
-        this._addPresetComponent();
+        this._isShown = options.shown || true;
     }
 
     setProps(props: TProps) {
         this._props = props;
     }
 
-    show() {}
+    remove = (): void => {
+        log("debug", `plugin-v7::overlayUI.remove()`, "executed");
+        this._isShown = false;
 
-    hide() {}
-
-    private _getPresetContainer(): string | null {
-        const { area } = this._options.data;
-        if (area === PresetAreas.videoOverlay) {
-            return "player-gui";
+        // TODO sakal check if need to manually call renderer update or if shown prop is enough
+        if (!this._componentRef) {
+            return;
         }
 
-        if (area === PresetAreas.topBarRightControls) {
-            return "top-bar__right-controls";
+        this._componentRef.update();
+    };
+
+    add = (): void => {
+
+        log("debug", `plugin-v7::PresetItem.add()`, "executed");
+        this._isShown = true;
+
+        // TODO sakal check if need to manually call renderer update or if shown prop is enough
+        if (!this._componentRef) {
+            return;
         }
 
-        if (area === PresetAreas.sidePanel) {
-            return "side-panel";
-        }
+        this._componentRef.update();
+    };
 
-        return null;
-    }
-
-    private _addPresetComponent(): void {
-        const containerName = this._getPresetContainer();
+    get playerConfig(): KalturaPlayerPresetComponent | null {
+        const containerName = getPlayerPresetContainer(this._options.data.container);
 
         if (!containerName) {
             log(
                 "warn",
-                `contrib-ui::_addPresetComponent()`,
-                `failed to match container for area ${this._options.data.area} `
+                `c_addPresetComponent()`,
+                `unknown container requested`
             );
-            return;
+            return null;
         }
 
-        // TODO options and dedicated parent         if (this._presetParentMapping[])
-        // TODO replace with actual api
-        // this is a workaround until the player external preset component support will be added
-        const { kalturaPlayer } = this._options.playerAPI;
-        const externalPlayerId = kalturaPlayer.config.targetId;
-        const externalPlayer = KalturaPlayer.getPlayer(externalPlayerId);
-        externalPlayer.addExternalPresetComponent({
-            presets: ["playbackUI", "liveUI"],
+        // TODO sakal change in @playkit-js/playkit-js-ui render to renderChild
+        return {
+            presets: this._options.data.presets,
             container: containerName,
-            component: this._render
-        });
+            render: this._render
+        }
+    }
+
+    private _renderChild = (): ComponentChild => {
+        const {label, renderer} = this._options.data;
+        return <ManagedComponent label={label} renderChildren={() => renderer(this._props)} shown={this._isShown}
+                                 ref={(ref) => this._componentRef = ref}/>
     }
 
     public _render = (): ComponentChild => {
-        const { label, renderer, fitToContainer } = this._options.data;
-        const children = renderer(this._props);
+        const { label, fitToContainer } = this._options.data;
         // TODO set here actual name of plugin
         return (
-            <PresetItemComponent label={label} fitToContainer={fitToContainer}>
-                {children}
-            </PresetItemComponent>
+            <PresetItemComponent label={label} fitToContainer={fitToContainer} renderChild={this._renderChild} />
         );
     };
 }

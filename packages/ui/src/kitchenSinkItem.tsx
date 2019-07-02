@@ -32,10 +32,10 @@ export class KitchenSinkItem {
     }
 
     public render = (props: KitchenSinkItemRenderProps): ComponentChild => {
-        const { contentRenderer } = this._options.data;
+        const {
+            contentRenderer } = this._options.data;
         return (
-            <ManagedComponent ref={ref => (this._componentRef = ref)}>
-                {contentRenderer(props)}
+            <ManagedComponent label={'kitchen sink'} renderChildren={() => contentRenderer(props)} shown={true} ref={ref => (this._componentRef = ref)}>
             </ManagedComponent>
         );
     };

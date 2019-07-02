@@ -1,11 +1,13 @@
-import { h, Component } from "preact";
+import { h, Component, ComponentChild, ComponentChildren } from "preact";
 import { getFirstChild } from "./utils";
 
 type State = {
     toggler: boolean;
 };
 type Props = {
-    children: any;
+    shown: boolean;
+    renderChildren: () => ComponentChildren;
+    label: string
 };
 
 export class ManagedComponent extends Component<Props, State> {
@@ -24,8 +26,13 @@ export class ManagedComponent extends Component<Props, State> {
     }
 
     render() {
-        const { toggler } = this.state;
-        console.log(">>>>> managed component render", { toggler: this.state.toggler });
-        return getFirstChild(this.props.children);
+        if (!this.props.shown) {
+            return null;
+        }
+
+        console.log(`[contrib] [ManagedComponent(${this.props.label}).render()]: executed`);
+        return <div>
+            {this.props.renderChildren()}
+        </div>;
     }
 }
