@@ -71,6 +71,32 @@ export class PresetItem {
 
     private _onDestroy = (options: { context?: any, parent: HTMLElement }): void => {
         // TODO sakal handle destroy
+        if (!options.parent) {
+            log(
+                "warn",
+                "presetItem()._onDestroy()",
+                "missing parent argument, aborting element removal"
+            )
+            return;
+        }
+
+        const {label} = this._options.data;
+
+        if (!this._element) {
+            log(
+                "warn",
+                `presetItem()._onDestroy(${label})`,
+                "missing injected component reference, aborting element removal"
+            )
+            return;
+        }
+
+        log(
+            "log",
+            `presetItem()._onDestroy(${label})`,
+            "remove injected contrib preset component"
+        )
+        this._element = render(null, options.parent, this._element);
     }
 
     private _create = (options: { context?: any, parent: HTMLElement }): void => {
@@ -78,9 +104,9 @@ export class PresetItem {
         if (!options.parent) {
             log(
                 "warn",
-                "presetItem().create()",
+                "presetItem()._create()",
                 "missing parent argument, aborting element creation"
-            )
+            );
             return;
         }
         const {label} = this._options.data;
@@ -89,13 +115,17 @@ export class PresetItem {
         if (!child) {
             log(
                 "warn",
-                "presetItem().create()",
+                `presetItem()._create(${label})`,
                 "child renderer result is invalid, expected element got undefined|null"
-            )
+            );
             return;
         }
 
+        log(
+            "log",
+            `presetItem()._create(${label})`,
+            "inject contrib preset component"
+        )
         this._element = render(child, options.parent);
-        return;
     }
 }
