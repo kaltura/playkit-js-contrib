@@ -121,13 +121,19 @@ export class OverlayManager {
             this._componentRef.update();
         });
 
+        eventManager.listen(kalturaPlayer, kalturaPlayer.Event.MEDIA_LOADED, () => {
+            if (!this._componentRef) {
+                return;
+            }
+            this._updateCachedCanvas();
+            this._componentRef.update();
+        });
+
         eventManager.listen(kalturaPlayer, kalturaPlayer.Event.RESIZE, () => {
             if (!this._componentRef) {
                 return;
             }
-
             this._updateCachedCanvas();
-
             this._componentRef.update();
         });
     }
