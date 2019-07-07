@@ -99,6 +99,9 @@ export class ClientApi {
                     "doMultiRegistrationRequest Error: failed to multirequest the queueNameHash and queueKeyHash",
                     err
                 );
+                throw new Error(
+                    "Error: failed to multirequest of register requests" + JSON.stringify(err)
+                );
             });
     }
 
