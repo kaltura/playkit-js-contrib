@@ -35,6 +35,7 @@ export class KitchenSinkItem {
         const { contentRenderer } = this._options.data;
         return (
             <ManagedComponent
+                children={/* todo remove this and handle error */ ""}
                 ref={ref => (this._componentRef = ref)}
                 renderer={() => contentRenderer(props)}
             />
