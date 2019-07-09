@@ -1,7 +1,8 @@
 import { ComponentChild, h, render } from "preact";
-import { log, PlayerAPI } from "@playkit-js-contrib/common";
+import { getContribLogger, PlayerAPI } from "@playkit-js-contrib/common";
 import { PresetItemData, PresetContainer } from "./presetItemData";
 import { ManagedComponent } from './components/managed-component';
+import { ContribLogger } from '@playkit-js-contrib/common';
 
 export interface PresetItemOptions {
     playerAPI: PlayerAPI;
@@ -41,21 +42,33 @@ export class PresetItem {
     private _options: PresetItemOptions;
     private _componentRef: ManagedComponent | null = null;
     private _element: Element | null = null;
+    private _logger: ContribLogger;
 
     constructor(options: PresetItemOptions & { shown?: boolean }) {
         this._options = options;
-        log("debug", `contrib-ui::PresetItem:ctor()`, "executed", {options});
+        this._logger = getContribLogger({
+            module: 'contrib-ui',
+            class: 'PresetItem',
+            context: options.data.label
+        });
+        this._logger.debug('executed', {
+            method: 'constructor',
+            data: {
+                options
+            }
+        });
+        this._logger.info(`created item ${options.data.label}`, {
+            method: 'constructor'
+        });
     }
 
     get playerConfig(): KalturaPlayerPresetComponent | null {
         const containerName = getPlayerPresetContainer(this._options.data.container);
 
         if (!containerName) {
-            log(
-                "warn",
-                `c_addPresetComponent()`,
-                `unknown container requested`
-            );
+            this._logger.warn(`unknown container requested`, {
+                method: 'playerConfig'
+            });
             return null;
         }
 
@@ -72,60 +85,47 @@ export class PresetItem {
     private _onDestroy = (options: { context?: any, parent: HTMLElement }): void => {
         // TODO sakal handle destroy
         if (!options.parent) {
-            log(
-                "warn",
-                "presetItem()._onDestroy()",
-                "missing parent argument, aborting element removal"
-            )
+            this._logger.warn(`missing parent argument, aborting element removal`, {
+                method: '_onDestroy'
+            });
             return;
         }
-
-        const {label} = this._options.data;
 
         if (!this._element) {
-            log(
-                "warn",
-                `presetItem()._onDestroy(${label})`,
-                "missing injected component reference, aborting element removal"
-            )
+            this._logger.warn(`missing injected component reference, aborting element removal`, {
+                method: '_onDestroy'
+            });
             return;
         }
 
-        log(
-            "log",
-            `presetItem()._onDestroy(${label})`,
-            "remove injected contrib preset component"
-        )
+        this._logger.info(`remove injected contrib preset component`, {
+            method: '_onDestroy'
+        });
+
         this._element = render(null, options.parent, this._element);
     }
 
     private _create = (options: { context?: any, parent: HTMLElement }): void => {
 
+
         if (!options.parent) {
-            log(
-                "warn",
-                "presetItem()._create()",
-                "missing parent argument, aborting element creation"
-            );
+            this._logger.warn(`missing parent argument, aborting element creation`, {
+                method: '_create'
+            });
             return;
         }
-        const {label} = this._options.data;
         const child = this._options.data.renderChild();
 
         if (!child) {
-            log(
-                "warn",
-                `presetItem()._create(${label})`,
-                "child renderer result is invalid, expected element got undefined|null"
-            );
+            this._logger.warn(`child renderer result is invalid, expected element got undefined|null`, {
+                method: '_create'
+            });
             return;
         }
 
-        log(
-            "log",
-            `presetItem()._create(${label})`,
-            "inject contrib preset component"
-        )
+        this._logger.info(`inject contrib preset component`, {
+            method: '_create'
+        });
         this._element = render(child, options.parent);
     }
 }

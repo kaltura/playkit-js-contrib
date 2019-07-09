@@ -6,7 +6,7 @@ import {
     RegisterRequestResponse
 } from "./client-api";
 import { SocketWrapper } from "./socket-wrapper";
-import { PlayerAPI, log } from "@playkit-js-contrib/common";
+import { PlayerAPI, getContribLogger } from "@playkit-js-contrib/common";
 
 export interface EventParams extends Record<string, any> {
     entryId: string;
@@ -40,12 +40,13 @@ export function isAPINotificationResponse(
     return response.objectType === "KalturaPushNotificationData";
 }
 
+const logger = getContribLogger('pushNotification');
+
 export class PushNotifications {
     private static instancePool: any = {}; // Todo by @Eran_Sakal register singleton per player (and remove this line)
 
     private _socketPool: any = {};
     private _clientApi: any;
-    private _logger = this._getLogger("PushNotifications");
 
     // Todo: should use plugin instance
     static getInstance(options: PushNotificationsOptions): PushNotifications {
@@ -72,12 +73,6 @@ export class PushNotifications {
                 this.reset();
             }
         );
-    }
-
-    private _getLogger(context: string) {
-        return (level: "debug" | "log" | "warn" | "error", message: string, ...args: any[]) => {
-            log(level, context, message, ...args);
-        };
     }
 
     public reset() {
@@ -143,8 +138,7 @@ export class PushNotifications {
         result: APIResponse
     ): Promise<void> {
         if (isAPIErrorResponse(result)) {
-            this._logger(
-                "error",
+            logger.error(
                 `processResult: Error fetching registration info from service ${
                     registerRequest.eventName
                 }, message:${result.message} (${result.code})`

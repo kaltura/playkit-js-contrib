@@ -1,7 +1,8 @@
 import { h, ComponentChild, Ref } from "preact";
-import { log } from "@playkit-js-contrib/common";
+import { getContribLogger } from "@playkit-js-contrib/common";
 import { KitchenSinkItemData } from "./kitchenSinkItemData";
 import { ManagedComponent } from "./components/managed-component";
+import { ContribLogger } from '@playkit-js-contrib/common';
 
 export interface KitchenSinkItemOptions {
     data: KitchenSinkItemData;
@@ -14,9 +15,25 @@ export interface KitchenSinkItemRenderProps {
 export class KitchenSinkItem {
     private _options: KitchenSinkItemOptions;
     private _componentRef: ManagedComponent | null = null;
+    private _logger: ContribLogger;
+
     constructor(options: KitchenSinkItemOptions) {
         this._options = options;
-        log("debug", `contrib-ui::KitchenSinkItem:ctor()`, "executed", { options });
+        this._logger = getContribLogger({
+            module: 'contrib-ui',
+            class: 'KitchenSinkItem',
+            context: options && options.data && options.data.label
+        });
+        this._logger.debug('executed', {
+            method: 'constructor',
+            data: {
+                options
+            }
+        });
+
+        this._logger.info(`created item ${options.data.label}`, {
+            method: 'constructor'
+        });
     }
 
     get displayName() {

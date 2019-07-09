@@ -1,5 +1,6 @@
 import { h, Component, ComponentChild, ComponentChildren } from "preact";
-import { getFirstChild } from "./utils";
+import { getContribLogger } from '@playkit-js-contrib/common';
+import { ContribLogger } from '@playkit-js-contrib/common';
 
 type State = {
     toggler: boolean;
@@ -11,6 +12,8 @@ type Props = {
 };
 
 export class ManagedComponent extends Component<Props, State> {
+    private _logger: ContribLogger | null = null;
+
     update() {
         this.setState((prev: State) => {
             return {
@@ -20,8 +23,26 @@ export class ManagedComponent extends Component<Props, State> {
     }
 
     componentDidMount(): void {
+        this._logger = getContribLogger({
+            module: 'contrib-ui',
+            class: 'ManagedComponent',
+            context: this.props.label
+        });
+        this._logger.info(`mount component`, {
+            method: 'componentDidMount'
+        });
         this.setState({
             toggler: false
+        });
+    }
+
+    componentWillUnmount(): void {
+        if (!this._logger) {
+            return;
+        }
+
+        this._logger.info(`unmount component`, {
+            method: 'componentWillUnmount'
         });
     }
 
@@ -30,7 +51,12 @@ export class ManagedComponent extends Component<Props, State> {
             return null;
         }
 
-        console.log(`[contrib] [ManagedComponent(${this.props.label}).render()]: executed`);
+        if (this._logger) {
+            this._logger.trace(`render component`, {
+                method: 'render'
+            });
+        }
+
         return <div data-contrib-item={this.props.label}>
             {this.props.renderChildren()}
         </div>;

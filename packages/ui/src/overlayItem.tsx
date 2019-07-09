@@ -1,7 +1,8 @@
 import { h } from "preact";
-import { log, PlayerAPI } from "@playkit-js-contrib/common";
+import { getContribLogger, PlayerAPI } from "@playkit-js-contrib/common";
 import { OverlayItemData, OverlayItemProps, OverlayUIModes } from "./overlayItemData";
 import { ManagedComponent } from "./components/managed-component";
+import { ContribLogger } from '@playkit-js-contrib/common';
 
 export interface OverlayItemOptions {
     playerAPI: PlayerAPI;
@@ -13,15 +14,32 @@ export class OverlayItem {
     private _options: OverlayItemOptions;
     private _isShown = false;
     private _componentRef: ManagedComponent | null = null;
+    private _logger: ContribLogger;
 
     constructor(options: OverlayItemOptions) {
         this._options = options;
-        log("debug", `contrib-ui::OverlayItem:ctor()`, "executed", { options: options });
+        this._logger = getContribLogger({
+            module: 'contrib-ui',
+            class: 'OverlayItem',
+            context: options.data.label
+        });
+        this._logger.debug('executed', {
+            method: 'constructor',
+            data: {
+                options
+            }
+        });
+        this._logger.info(`created item ${options.data.label}`, {
+            method: 'constructor'
+        });
+
         this._addPlayerBindings();
     }
 
     remove = (): void => {
-        log("debug", `plugin-v7::overlayUI.remove()`, "executed");
+        this._logger.info('remove item from player', {
+            method: 'remove'
+        });
         this._isShown = false;
         // TODO sakal check if need to manually call renderer update or if shown prop is enough
         if (!this._componentRef) {
@@ -32,7 +50,9 @@ export class OverlayItem {
     };
 
     add = (): void => {
-        log("debug", `plugin-v7::overlayUI.add()`, "executed");
+        this._logger.info('add item to player', {
+            method: 'add'
+        });
         this._isShown = true;
         // TODO sakal check if need to manually call renderer update or if shown prop is enough
         if (!this._componentRef) {
@@ -46,7 +66,9 @@ export class OverlayItem {
      * destory the ui item
      */
     destroy(): void {
-        log("debug", `plugin-v7::overlayUI.destroy()`, "executed");
+        this._logger.info('destroy item', {
+            method: 'destroy'
+        });
         this._destroyed = true;
         this.remove();
     }

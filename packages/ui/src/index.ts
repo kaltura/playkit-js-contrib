@@ -14,3 +14,4 @@ export * from "./presetManager";
 export * from "./scaleVideo";
 export * from "./cuepointOverlayEngine";
 export * from "./common.types";
+export * from "./components/logger"

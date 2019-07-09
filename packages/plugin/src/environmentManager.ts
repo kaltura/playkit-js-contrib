@@ -1,4 +1,4 @@
-import { enableLog, PlayerAPI, PlayerContribServices } from "@playkit-js-contrib/common";
+import { PlayerAPI, PlayerContribServices } from "@playkit-js-contrib/common";
 import {
     OverlayManager,
     UIManager,
@@ -6,6 +6,7 @@ import {
     KitchenSinkManager,
     PresetManager
 } from "@playkit-js-contrib/ui";
+import { enableLogIfNeeded } from '@playkit-js-contrib/common';
 
 export interface EnvironmentManagerOptions {
     playerAPI: PlayerAPI;
@@ -14,6 +15,9 @@ export interface EnvironmentManagerOptions {
 function getPlayerContribServices(kalturaPlayer: any): PlayerContribServices {
     return PlayerContribServices.get(kalturaPlayer);
 }
+
+// TODO SAKAL find more suitable location
+enableLogIfNeeded();
 
 export class EnvironmentManager {
     static get(options: EnvironmentManagerOptions): EnvironmentManager {
@@ -27,8 +31,6 @@ export class EnvironmentManager {
         private _playerContribServices: PlayerContribServices,
         private _options: EnvironmentManagerOptions
     ) {
-        // TODO hook log to player log flags
-        enableLog(name);
     }
 
     private registerResources() {}

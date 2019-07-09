@@ -1,6 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { APIResponse } from "../lib";
-import { log } from "@playkit-js-contrib/common";
+import { getContribLogger } from '@playkit-js-contrib/common';
 
 export interface APIResponse {
     objectType: string;
@@ -53,10 +52,11 @@ export function isAPIResponse(response: any): response is APIResponse {
     return "objectType" in response;
 }
 
+const logger = getContribLogger("push-notification");
+
 export class ClientApi {
     private readonly _baseParams: BaseRequestParams;
     private _serviceUrl: string;
-    private _logger = this._getLogger("ClientApi");
 
     constructor(options: ClientApiOptions) {
         this._serviceUrl = options.serviceUrl + "/index.php";
@@ -68,12 +68,6 @@ export class ClientApi {
             clientTag: options.clientTag,
             ks: options.ks,
             kalsig: "" // Todo: MD5 hash code for the params object.
-        };
-    }
-
-    private _getLogger(context: string) {
-        return (level: "debug" | "log" | "warn" | "error", message: string, ...args: any[]) => {
-            log(level, context, message, ...args);
         };
     }
 
@@ -94,9 +88,8 @@ export class ClientApi {
                 return res.data as RegisterRequestResponse[];
             })
             .catch(err => {
-                this._logger(
-                    "error",
-                    "doMultiRegistrationRequest Error: failed to multirequest the queueNameHash and queueKeyHash",
+                logger.error(
+                    "[ClientAPI().doMultiRegistrationRequest()] failed to multirequest the queueNameHash and queueKeyHash",
                     err
                 );
             });

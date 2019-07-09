@@ -1,6 +1,6 @@
 import * as io from "socket.io-client";
 import Socket = SocketIOClient.Socket;
-import { log } from "@playkit-js-contrib/common";
+import { getContribLogger } from "@playkit-js-contrib/common";
 
 export interface ListenKeysObject {
     eventName: string;
@@ -11,6 +11,8 @@ export interface ListenKeysObject {
     onReconnect?: Function;
 }
 
+const logger = getContribLogger('pushNotification');
+
 export class SocketWrapper {
     public static CONNECTION_TIMEOUT: number = 10 * 60 * 1000;
 
@@ -19,19 +21,12 @@ export class SocketWrapper {
     private _listenKeys: Record<string, ListenKeysObject> = {};
     private _messageKeyToQueueKeyMap: Record<string, string> = {};
     private _connected: boolean = false;
-    private _logger = this._getLogger("SocketWrapper");
 
     constructor({ key, url }: { key: string; url: string }) {
         this._key = key;
 
-        this._logger("log", `c'tor: Connecting to socket for ${url}`);
+        logger.log(`c'tor: Connecting to socket for ${url}`);
         this._registerSocket(url);
-    }
-
-    private _getLogger(context: string) {
-        return (level: "debug" | "log" | "warn" | "error", message: string, ...args: any[]) => {
-            log(level, context, message, ...args);
-        };
     }
 
     public destroy() {
@@ -46,7 +41,7 @@ export class SocketWrapper {
     }
 
     private _registerSocket(url: string) {
-        this._logger("log", "RegisterSocket: io connection to socket");
+        logger.log("RegisterSocket: io connection to socket");
 
         this._socket = io.connect(url, {
             forceNew: true,
@@ -57,8 +52,7 @@ export class SocketWrapper {
             this._connected = true;
 
             for (let key in this._listenKeys) {
-                this._logger(
-                    "log",
+                logger.log(
                     `registerSocket: on Validated: Emit listen' to url ${url}`,
                     this._listenKeys[key]
                 );
@@ -73,13 +67,11 @@ export class SocketWrapper {
         this._socket.on("connected", (messageKey: string, queueKey: string) => {
             if (this._listenKeys[queueKey]) {
                 this._messageKeyToQueueKeyMap[messageKey] = queueKey;
-                this._logger(
-                    "log",
+                logger.log(
                     `on Connected: Listening to queueKey ${messageKey} and \n queueKeyHash ${queueKey}`
                 );
             } else {
-                this._logger(
-                    "error",
+                logger.error(
                     `on Connected: Cannot listen to queueKey ${messageKey} \n queueKeyHash ${queueKey} queueKeyHash not found`,
                     "info"
                 );
@@ -87,8 +79,7 @@ export class SocketWrapper {
         });
 
         this._socket.on("message", (messageKey: string, msg: any) => {
-            this._logger(
-                "log",
+            logger.log(
                 `on Message: queueKey ${messageKey} message is: `,
                 ...(Array.isArray(msg) ? msg : [msg])
             );
@@ -99,15 +90,14 @@ export class SocketWrapper {
             ) {
                 this._listenKeys[this._messageKeyToQueueKeyMap[messageKey]].onMessage(msg);
             } else {
-                this._logger(
-                    "error",
+                logger.error(
                     `onMessage: Error couldn't find queueKey in map. queueKey ${messageKey} `
                 );
             }
         });
 
         this._socket.on("disconnect", (e: any) => {
-            this._logger("log", "on Disconnect: push server was disconnected");
+            logger.log("on Disconnect: push server was disconnected");
             for (let key in this._listenKeys) {
                 let onDisconnect = this._listenKeys[key].onDisconnect;
                 if (onDisconnect) onDisconnect(e);
@@ -115,7 +105,7 @@ export class SocketWrapper {
         });
 
         this._socket.on("reconnect", (e: any) => {
-            this._logger("log", "on Reconnect: push server was reconnected");
+            logger.log("on Reconnect: push server was reconnected");
             for (let key in this._listenKeys) {
                 let onReconnect = this._listenKeys[key].onReconnect;
                 if (onReconnect) onReconnect(e);
@@ -123,11 +113,11 @@ export class SocketWrapper {
         });
 
         this._socket.on("reconnect_error", (e: any) => {
-            this._logger("log", "on Reconnect_error: reconnection failed ", e);
+            logger.log("on Reconnect_error: reconnection failed ", e);
         });
 
         this._socket.on("errorMsg", (msg: any) => {
-            this._logger("error", "on ErrorMsg", msg);
+            logger.error("on ErrorMsg", msg);
         });
     }
 
@@ -149,8 +139,7 @@ export class SocketWrapper {
         };
 
         if (this._connected) {
-            this._logger(
-                "log",
+            logger.log(
                 `Listening to ${eventName} queueNameHash ${queueNameHash} queueKeyHash ${queueKeyHash}`
             );
             this._socket.emit("listen", queueNameHash, queueKeyHash);
