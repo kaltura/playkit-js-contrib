@@ -2,13 +2,13 @@
 import {Component} from 'preact';
 import { getContribLogger, NoopLogger, ContribLogger } from '@playkit-js-contrib/common';
 
-interface Props {
+interface LoggerProviderProps {
   kalturaPlayer: any,
   type?: string; // TODO sakal change to module
   context: string
 }
 
-export class LoggerProvider extends Component<Props> {
+export class LoggerProvider extends Component<LoggerProviderProps> {
 
   private _logger: ContribLogger = new NoopLogger();
 

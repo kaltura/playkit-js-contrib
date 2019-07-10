@@ -2,20 +2,20 @@ import { h, Component, ComponentChild, ComponentChildren } from "preact";
 import { getContribLogger } from '@playkit-js-contrib/common';
 import { ContribLogger } from '@playkit-js-contrib/common';
 
-type State = {
+type ManagedComponentState = {
     toggler: boolean;
 };
-type Props = {
+type ManagedComponentProps = {
     isShown: () => boolean;
     renderChildren: () => ComponentChildren;
     label: string
 };
 
-export class ManagedComponent extends Component<Props, State> {
+export class ManagedComponent extends Component<ManagedComponentProps, ManagedComponentState> {
     private _logger: ContribLogger | null = null;
 
     update() {
-        this.setState((prev: State) => {
+        this.setState((prev: ManagedComponentState) => {
             return {
                 toggler: !prev.toggler
             };
