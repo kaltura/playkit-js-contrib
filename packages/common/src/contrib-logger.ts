@@ -5,11 +5,11 @@ function isJSLogger(logger: any): logger is  JSLogger {
 }
 
 export interface ContribLogger {
-	debug(message: string, context: LoggerContext, ): void;
-	info(message: string, context: LoggerContext): void;
-	trace(message: string, context: LoggerContext): void;
-	warn(message: string, context: LoggerContext): void;
-	error(message: string, context: LoggerContext): void;
+	debug(message: string, context: MessageOptions, ): void;
+	info(message: string, context: MessageOptions): void;
+	trace(message: string, context: MessageOptions): void;
+	warn(message: string, context: MessageOptions): void;
+	error(message: string, context: MessageOptions): void;
 }
 
 
@@ -41,11 +41,11 @@ function getPlayerLogger(options: { kalturaPlayer?: any, loggerName?: string}): 
 }
 
 export class NoopLogger implements ContribLogger {
-	debug(message: string, context: LoggerContext): void {}
-	info(message: string, context: LoggerContext): void {}
-	trace(message: string, context: LoggerContext): void {}
-	warn(message: string, context: LoggerContext): void {}
-	error(message: string, context: LoggerContext): void {}
+	debug(message: string, context: MessageOptions): void {}
+	info(message: string, context: MessageOptions): void {}
+	trace(message: string, context: MessageOptions): void {}
+	warn(message: string, context: MessageOptions): void {}
+	error(message: string, context: MessageOptions): void {}
 }
 
 const globalLogger = getPlayerLogger({});
@@ -55,17 +55,16 @@ interface JSLogger extends ILogger {}
 type LoggerMethods = "debug" | "trace" | "warn" | "error" | "info";
 
 export class ProxyLogger implements ContribLogger {
-	constructor(private _logger: JSLogger, private _defaultOptions: { class?: string,
-		module?: string, context?: string}) {
+	constructor(private _logger: JSLogger, private _defaultOptions: LoggerOptions) {
 	}
 
-	private _log (loggerMethod: LoggerMethods, level: ILogLevel, message: string, messageContext: LoggerContext): void {
+	private _log (loggerMethod: LoggerMethods, level: ILogLevel, message: string, messageContext: MessageOptions): void {
 		if (!this._logger.enabledFor(level))
 		{
 			return;
 		}
 
-		const className = this._defaultOptions.class || messageContext.class;
+		const className = messageContext.class || this._defaultOptions.class || '_';
 		const module = this._defaultOptions.module || '';
 		const method = messageContext.method ? `.${messageContext.method}()` : '';
 		const context = this._defaultOptions.context ? `'${this._defaultOptions.context}'` : '';
@@ -80,31 +79,31 @@ export class ProxyLogger implements ContribLogger {
 		}
 	}
 
-	debug(message: string, context: LoggerContext): void {
+	debug(message: string, context: MessageOptions): void {
 		if (!globalLogger) {
 			return;
 		}
 		this._log('debug', globalLogger.DEBUG, message, context);
 	}
-	info(message: string, context: LoggerContext): void {
+	info(message: string, context: MessageOptions): void {
 		if (!globalLogger) {
 			return;
 		}
 		this._log('info', globalLogger.INFO, message, context);
 	}
-	trace(message: string, context: LoggerContext): void {
+	trace(message: string, context: MessageOptions): void {
 		if (!globalLogger) {
 			return;
 		}
 		this._log('trace', globalLogger.TRACE, message, context);
 	}
-	warn(message: string, context: LoggerContext): void {
+	warn(message: string, context: MessageOptions): void {
 		if (!globalLogger) {
 			return;
 		}
 		this._log('warn', globalLogger.WARN, message, context);
 	}
-	error(message: string, context: LoggerContext): void {
+	error(message: string, context: MessageOptions): void {
 		if (!globalLogger) {
 			return;
 		}
@@ -112,18 +111,20 @@ export class ProxyLogger implements ContribLogger {
 	}
 }
 
-export interface LoggerContext {
+export interface LoggerOptions {
+	class?: string,
+	module?: string,
+	context?: string
+}
+
+export interface MessageOptions {
 	class?: string,
 	method?: string,
 	data?: Record<string, any>
 }
 
 
-export function getContribLogger(options: LoggerContext & {
-	class?: string,
-	module?: string,
-	kalturaPlayer?: any,
-} = {}): ContribLogger {
+export function getContribLogger(options: {kalturaPlayer?: any} & LoggerOptions = {}): ContribLogger {
 	const {kalturaPlayer} = options;
 
 	const loggerName = `${kalturaPlayer ? kalturaPlayer._playerId : 'global'}_contrib`;

@@ -40,7 +40,12 @@ export function isAPINotificationResponse(
     return response.objectType === "KalturaPushNotificationData";
 }
 
-const logger = getContribLogger('pushNotification');
+
+const logger = getContribLogger({
+    module: 'contrib-push-notifications',
+    class: 'PushNotifications'
+});
+
 
 export class PushNotifications {
     private static instancePool: any = {}; // Todo by @Eran_Sakal register singleton per player (and remove this line)
@@ -138,11 +143,14 @@ export class PushNotifications {
         result: APIResponse
     ): Promise<void> {
         if (isAPIErrorResponse(result)) {
-            logger.error(
-                `processResult: Error fetching registration info from service ${
-                    registerRequest.eventName
-                }, message:${result.message} (${result.code})`
-            );
+            logger.error(`Error fetching registration info from service ${registerRequest.eventName}`,
+                {
+                    method: `_processResult`,
+                    data: {
+                        errorMessage: result.message,
+                        errorCode: result.code
+                    }
+                });
             return Promise.reject(new Error(result.message));
         }
 

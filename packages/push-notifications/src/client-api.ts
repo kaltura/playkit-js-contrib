@@ -52,7 +52,10 @@ export function isAPIResponse(response: any): response is APIResponse {
     return "objectType" in response;
 }
 
-const logger = getContribLogger("push-notification");
+const logger = getContribLogger({
+    module: 'contrib-push-notifications',
+    class: 'ClientApi'
+});
 
 export class ClientApi {
     private readonly _baseParams: BaseRequestParams;
@@ -88,10 +91,13 @@ export class ClientApi {
                 return res.data as RegisterRequestResponse[];
             })
             .catch(err => {
-                logger.error(
-                    "[ClientAPI().doMultiRegistrationRequest()] failed to multirequest the queueNameHash and queueKeyHash",
-                    err
-                );
+                logger.error('failed to multirequest the queueNameHash and queueKeyHash',
+                    {
+                        method: `doMultiRegisterRequest`,
+                        data: {
+                            error: err
+                        }
+                    });
             });
     }
 
