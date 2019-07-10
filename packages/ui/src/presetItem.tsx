@@ -4,6 +4,9 @@ import { PresetItemData, PresetContainer } from "./presetItemData";
 import { ManagedComponent } from './components/managed-component';
 import { ContribLogger } from '@playkit-js-contrib/common';
 
+// get 'InjectedComponent' from playkit-js exported artifects
+const InjectedComponent = KalturaPlayer && KalturaPlayer.ui && KalturaPlayer.ui.Components && KalturaPlayer.ui.Components.InjectedComponent;
+
 export interface PresetItemOptions {
     playerAPI: PlayerAPI;
     data: PresetItemData;
@@ -15,8 +18,7 @@ export interface KalturaPlayerPresetComponent {
     label: string,
     presets: string[],
     container: string,
-    create: (options: { context?: any, parent: HTMLElement }) => void,
-    onDestroy: (options: { context?: any, parent: HTMLElement }) => void
+    render: () => ManagedComponent
 }
 
 function getPlayerPresetContainer(container: PresetContainer): string {
@@ -77,11 +79,20 @@ export class PresetItem {
             label: this._options.data.label,
             presets: this._options.data.presets,
             container: containerName,
-            create: this._create,
-            onDestroy: this._onDestroy
+            render: this._render
         }
     }
 
+    private _render = (): any => {
+        if (!InjectedComponent) {
+            this._logger.warn(`expected playkit-js to expose 'InjectedComponent' component in namespace 'global.KalturaPlayer.ui.Component'. cannot inject preset component`, {
+                data: {
+                    method: '_render'
+                }
+            });
+        }
+        return <InjectedComponent label={this._options.data.label} create={this._onCreate} destroy={this._onDestroy} />;
+    }
     private _onDestroy = (options: { context?: any, parent: HTMLElement }): void => {
         // TODO sakal handle destroy
         if (!options.parent) {
@@ -105,9 +116,7 @@ export class PresetItem {
         this._element = render(null, options.parent, this._element);
     }
 
-    private _create = (options: { context?: any, parent: HTMLElement }): void => {
-
-
+    private _onCreate = (options: { context?: any, parent: HTMLElement }): void => {
         if (!options.parent) {
             this._logger.warn(`missing parent argument, aborting element creation`, {
                 method: '_create'
