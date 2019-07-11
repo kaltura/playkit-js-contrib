@@ -91,14 +91,20 @@ export class ClientApi {
         return axios
             .post(`${this._serviceUrl}?service=multirequest`, data, options)
             .then(res => {
+                this._logger("error", "Post Request Error Error: fail request", err);
+                if (!res || !res.data || res.data.objectType === "KalturaAPIException") {
+                    throw new Error("Error: multirequest request failed");
+                }
+
                 return res.data as RegisterRequestResponse[];
             })
             .catch(err => {
                 this._logger(
                     "error",
-                    "doMultiRegistrationRequest Error: failed to multirequest the queueNameHash and queueKeyHash",
+                    "Post Request Error: failed to multirequest the queueNameHash and queueKeyHash",
                     err
                 );
+
                 throw new Error(
                     "Error: failed to multirequest of register requests" + JSON.stringify(err)
                 );
