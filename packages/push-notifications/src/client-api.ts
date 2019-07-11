@@ -91,7 +91,7 @@ export class ClientApi {
         return axios
             .post(`${this._serviceUrl}?service=multirequest`, data, options)
             .then(res => {
-                this._logger("error", "Post Request Error Error: fail request", err);
+                this._logger("error", "Post Request Error Error: fail request", res);
                 if (!res || !res.data || res.data.objectType === "KalturaAPIException") {
                     throw new Error("Error: multirequest request failed");
                 }
