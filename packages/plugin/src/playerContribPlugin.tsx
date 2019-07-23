@@ -63,7 +63,7 @@ export abstract class PlayerContribPlugin extends (KalturaPlayer as any).core.Ba
         }
     });
 
-    getPresetComponents(): any[] {
+    getUIComponents(): any[] {
         if (hasOnRegisterUI(this)) {
             try {
                 this.onRegisterUI(this._environment.uiManager);
