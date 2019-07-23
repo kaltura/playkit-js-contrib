@@ -16,17 +16,20 @@ export interface ContribLogger {
 declare global {
 	interface Window {
 		KalturaPlayer?: {
-			core?: {
-				getLogger: (name: string) => ContribLogger
+			ui?: {
+				Utils?: {
+					getLogger: (name: string) => ContribLogger
+				}
 			}
-		}; }
+		};
+	}
 }
 
 function getPlayerLogger(options: { kalturaPlayer?: any, loggerName?: string}): JSLogger | null {
 	const {kalturaPlayer, loggerName} = options;
 
 	const getLoggerFn = kalturaPlayer ? kalturaPlayer.getLogger
-		: (window.KalturaPlayer && window.KalturaPlayer.core) ? window.KalturaPlayer.core.getLogger : null;
+		: (window.KalturaPlayer && window.KalturaPlayer.ui && window.KalturaPlayer.ui.Utils) ? window.KalturaPlayer.ui.Utils.getLogger : null;
 
 	if (!getLoggerFn) {
 		return null;
