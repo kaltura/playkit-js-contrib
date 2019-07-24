@@ -48,7 +48,7 @@ export class EnvironmentManager {
                     presetManager: this.presetManager,
                     upperBarManager: this.upperBarManager,
                     kitchenSinkManager: this.kitchenSinkManager,
-                    overlayManager: this.overlayManager
+                    overlayManager: this.overlayManager,
                 };
 
                 return new UIManager(options);
