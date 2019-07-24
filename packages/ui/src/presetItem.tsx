@@ -1,11 +1,8 @@
-import { ComponentChild, h, render } from "preact";
+import { h, render } from "preact";
 import { getContribLogger, PlayerAPI } from "@playkit-js-contrib/common";
 import { PresetItemData, PresetContainer } from "./presetItemData";
 import { ManagedComponent } from './components/managed-component';
 import { ContribLogger } from '@playkit-js-contrib/common';
-
-// get 'InjectedComponent' from playkit-js exported artifects
-const InjectedComponent = KalturaPlayer && KalturaPlayer.ui && KalturaPlayer.ui.Components && KalturaPlayer.ui.Components.InjectedComponent;
 
 export interface PresetItemOptions {
     playerAPI: PlayerAPI;
@@ -84,15 +81,20 @@ export class PresetItem {
     }
 
     private _render = (): any => {
-        if (!InjectedComponent) {
-            this._logger.warn(`expected playkit-js to expose 'InjectedComponent' component in namespace 'global.KalturaPlayer.ui.Component'. cannot inject preset component`, {
-                data: {
-                    method: '_render'
-                }
-            });
+        if (this._options.data.shareAdvancedPlayerAPI) {
+            return this._options.data.renderChild();
         }
-        return <InjectedComponent label={this._options.data.label} create={this._onCreate} destroy={this._onDestroy} />;
+
+
+        const InjectedComponent = h(KalturaPlayer.ui.Components.InjectedComponent, {
+            label: this._options.data.label,
+            onCreate: this._onCreate,
+            onDestroy:this._onDestroy
+        });
+
+        return InjectedComponent;
     }
+
     private _onDestroy = (options: { context?: any, parent: HTMLElement }): void => {
         // TODO sakal handle destroy
         if (!options.parent) {
@@ -117,24 +119,30 @@ export class PresetItem {
     }
 
     private _onCreate = (options: { context?: any, parent: HTMLElement }): void => {
-        if (!options.parent) {
-            this._logger.warn(`missing parent argument, aborting element creation`, {
+        try {
+            if (!options.parent) {
+                this._logger.warn(`missing parent argument, aborting element creation`, {
+                    method: '_create'
+                });
+                return;
+            }
+            const child = this._options.data.renderChild();
+
+            if (!child) {
+                this._logger.warn(`child renderer result is invalid, expected element got undefined|null`, {
+                    method: '_create'
+                });
+                return;
+            }
+
+            this._logger.info(`inject contrib preset component`, {
                 method: '_create'
             });
-            return;
+            this._element = render(child, options.parent);
+        } catch(error) {
+            this._logger.error(`failed to create injected component.`, {
+                method: '_onCreate'
+            })
         }
-        const child = this._options.data.renderChild();
-
-        if (!child) {
-            this._logger.warn(`child renderer result is invalid, expected element got undefined|null`, {
-                method: '_create'
-            });
-            return;
-        }
-
-        this._logger.info(`inject contrib preset component`, {
-            method: '_create'
-        });
-        this._element = render(child, options.parent);
     }
 }

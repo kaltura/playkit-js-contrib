@@ -8,9 +8,12 @@
         "strict": true,
         "allowSyntheticDefaultImports": true,
         "preserveSymlinks": true,
+        "rootDir": "./",
         "baseUrl": "./src",
         "paths": {
-            "*": ["../node_modules/*"]
+            "*": [
+                "../node_modules/*"
+            ]
         }
     }
 }

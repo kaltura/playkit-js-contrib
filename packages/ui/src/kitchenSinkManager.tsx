@@ -46,13 +46,14 @@ export class KitchenSinkManager {
     }
 
     private _onClose = () => {
+        // TODO sakal
         // TODO replace with actual api
         // this is a workaround until the player external preset component support will be added
         const { kalturaPlayer } = this._options.playerAPI;
         const externalPlayerId = kalturaPlayer.config.targetId;
-        const externalPlayer = KalturaPlayer.getPlayer(externalPlayerId);
-
-        externalPlayer.setSidePanelMode("COLLAPSED");
+        // const externalPlayer = KalturaPlayer.getPlayer(externalPlayerId);
+        //
+        // externalPlayer.setSidePanelMode("COLLAPSED");
     };
 
     /**
@@ -87,18 +88,18 @@ export class KitchenSinkManager {
     reset(): void {}
 
     private _onUpperBarClick(item: KitchenSinkItem) {
-        // TODO replace with actual api
-        // this is a workaround until the player external preset component support will be added
-        const { kalturaPlayer } = this._options.playerAPI;
-        const externalPlayerId = kalturaPlayer.config.targetId;
-        const externalPlayer = KalturaPlayer.getPlayer(externalPlayerId);
-
-        // TODO use enum that should be exposed by player
-        if (externalPlayer.getSidePanelMode() === "COLLAPSED") {
-            externalPlayer.setSidePanelMode("EXPANDED");
-            return;
-        }
-
-        externalPlayer.setSidePanelMode("COLLAPSED");
+        // TODO sakal replace with actual api
+        // // this is a workaround until the player external preset component support will be added
+        // const { kalturaPlayer } = this._options.playerAPI;
+        // const externalPlayerId = kalturaPlayer.config.targetId;
+        // const externalPlayer = KalturaPlayer.getPlayer(externalPlayerId);
+        //
+        // // TODO use enum that should be exposed by player
+        // if (externalPlayer.getSidePanelMode() === "COLLAPSED") {
+        //     externalPlayer.setSidePanelMode("EXPANDED");
+        //     return;
+        // }
+        //
+        // externalPlayer.setSidePanelMode("COLLAPSED");
     }
 }

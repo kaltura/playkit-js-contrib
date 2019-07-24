@@ -15,7 +15,8 @@ export enum PresetNames {
 export interface PresetItemData {
     label: string;
     fitToContainer?: boolean;
-    presets: PresetNames[];
+    presets: (PresetNames | string)[];
     container: PresetContainer;
+    shareAdvancedPlayerAPI?: boolean;
     renderChild: () => ComponentChild;
 }

@@ -2,11 +2,13 @@ import { UpperBarManager } from "./upperBarManager";
 import { OverlayManager } from "./overlayManager";
 import { KitchenSinkManager } from "./kitchenSinkManager";
 import { PlayerContribServices } from "@playkit-js-contrib/common";
+import { PresetManager } from './presetManager';
 
 export interface UIManagerOptions {
     upperBarManager: UpperBarManager;
     overlayManager: OverlayManager;
     kitchenSinkManager: KitchenSinkManager;
+    presetManager: PresetManager;
 }
 
 const ResourceToken = "UIManager-v1";
@@ -28,6 +30,12 @@ export class UIManager {
 
     get kitchenSink(): KitchenSinkManager {
         return this._options.kitchenSinkManager;
+    }
+
+    get playerUIComponents(): {add: PresetManager["add"]}  {
+        return {
+            add: this._options.presetManager.add.bind(this._options.presetManager)
+        };
     }
 
     reset(): void {
