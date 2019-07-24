@@ -1,5 +1,4 @@
 import { ILogger, ILogLevel } from './js-logger.types';
-
 function isJSLogger(logger: any): logger is  JSLogger {
 	return logger && 'setLevel' in logger;
 }
@@ -13,23 +12,11 @@ export interface ContribLogger {
 }
 
 
-declare global {
-	interface Window {
-		KalturaPlayer?: {
-			ui?: {
-				Utils?: {
-					getLogger: (name: string) => ContribLogger
-				}
-			}
-		};
-	}
-}
-
 function getPlayerLogger(options: { kalturaPlayer?: any, loggerName?: string}): JSLogger | null {
 	const {kalturaPlayer, loggerName} = options;
 
 	const getLoggerFn = kalturaPlayer ? kalturaPlayer.getLogger
-		: (window.KalturaPlayer && window.KalturaPlayer.ui && window.KalturaPlayer.ui.Utils) ? window.KalturaPlayer.ui.Utils.getLogger : null;
+		: KalturaPlayer.ui.Utils.getLogger;
 
 	if (!getLoggerFn) {
 		return null;

@@ -12,5 +12,8 @@
         "paths": {
             "*": ["../node_modules/*"]
         }
-    }
+    },
+    "exclude": [
+        "./lib"
+    ]
 }

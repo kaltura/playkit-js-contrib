@@ -5,8 +5,8 @@ const config = {
   entries: [
     {
       filePath: './src/index.ts',
-      outFile: './lib/index.d.ts',
-    }
+      outFile: './lib/index.d.ts'
+}
   ],
 
 };
