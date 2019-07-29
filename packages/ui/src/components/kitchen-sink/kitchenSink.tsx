@@ -8,9 +8,9 @@ export interface KitchenSinkRendererProps {
 }
 
 export enum SidePanelModes {
-    Expanded = "EXPANDED",
-    Collapsed = "COLLAPSED",
-    Partial = "PARTIAL"
+    AlongSideTheVideo = "ALONG_SIDE_THE_VIDEO",
+    Hidden = "HIDDEN",
+    OverTheVideo = "OVER_THE_VIDEO"
 }
 
 @KalturaPlayer.ui.redux.connect(
@@ -49,15 +49,15 @@ export class KitchenSink extends Component<KitchenSinkRendererProps> {
     }
 
     public expand(mode: KitchenSinkExpandModes) {
-        let sidePanelMode = SidePanelModes.Partial;
-        if (mode === KitchenSinkExpandModes.SideToVideo) {
-            sidePanelMode = SidePanelModes.Expanded;
+        let sidePanelMode = SidePanelModes.OverTheVideo;
+        if (mode === KitchenSinkExpandModes.AlongSideTheVideo) {
+            sidePanelMode = SidePanelModes.AlongSideTheVideo;
         }
         this.props.updateSidePanelMode(sidePanelMode);
     }
 
     public collapse() {
-        this.props.updateSidePanelMode(SidePanelModes.Collapsed);
+        this.props.updateSidePanelMode(SidePanelModes.Hidden);
     }
 
     render(props: any) {

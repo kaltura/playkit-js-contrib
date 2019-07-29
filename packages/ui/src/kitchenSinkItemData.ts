@@ -5,8 +5,8 @@ export interface KitchenSinkContentRendererProps {
 }
 
 export enum KitchenSinkExpandModes {
-    SideToVideo,
-    OnTopOfVideo
+    AlongSideTheVideo,
+    OverTheVideo
 }
 
 export enum KitchenSinkPositions {
