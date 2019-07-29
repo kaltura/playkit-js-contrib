@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "experimentalDecorators": true,
         "target": "es2015",
         "module": "commonjs",
         "jsx": "react",
@@ -11,9 +12,7 @@
         "rootDir": "./",
         "baseUrl": "./src",
         "paths": {
-            "*": [
-                "../node_modules/*"
-            ]
+            "*": ["../node_modules/*"]
         }
     }
 }

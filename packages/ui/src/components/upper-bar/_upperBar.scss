@@ -2,4 +2,11 @@
   :global(.icon--clickable) {
     cursor: pointer;
   }
+
+  display: flex;
+  flex-direction: row;
+
+  &>* {
+    margin-left: 10px; // TODO sakal improve
+  }
 }
