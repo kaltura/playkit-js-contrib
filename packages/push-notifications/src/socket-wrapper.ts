@@ -1,31 +1,37 @@
 import * as io from "socket.io-client";
 import Socket = SocketIOClient.Socket;
 import { log } from "@playkit-js-contrib/common";
+import { Utils } from "./utils";
 
 export interface ListenKeysObject {
     eventName: string;
     queueNameHash: string;
     queueKeyHash: string;
     onMessage: Function;
-    onDisconnect?: Function;
-    onReconnect?: Function;
+}
+
+export interface SocketWrapperParams {
+    key: string;
+    url: string;
+    onSocketDisconnect?: Function | undefined;
+    onSocketReconnect?: Function | undefined;
 }
 
 export class SocketWrapper {
     public static CONNECTION_TIMEOUT: number = 10 * 60 * 1000;
 
     private _socket: Socket | any;
-    private _key: string;
+    private _key: string | null;
     private _listenKeys: Record<string, ListenKeysObject> = {};
     private _messageKeyToQueueKeyMap: Record<string, string> = {};
     private _connected: boolean = false;
     private _logger = this._getLogger("SocketWrapper");
 
-    constructor({ key, url }: { key: string; url: string }) {
-        this._key = key;
+    constructor(socketWrapperParams: SocketWrapperParams) {
+        this._key = socketWrapperParams.key;
 
-        this._logger("log", `c'tor: Connecting to socket for ${url}`);
-        this._registerSocket(url);
+        this._logger("log", `c'tor: Connecting to socket for ${socketWrapperParams.url}`);
+        this._connectAndListenToSocket(socketWrapperParams);
     }
 
     private _getLogger(context: string) {
@@ -43,12 +49,13 @@ export class SocketWrapper {
         this._listenKeys = {};
         this._messageKeyToQueueKeyMap = {};
         this._connected = false;
+        this._key = null;
     }
 
-    private _registerSocket(url: string) {
-        this._logger("log", "RegisterSocket: io connection to socket");
+    private _connectAndListenToSocket(socketWrapperParams: SocketWrapperParams) {
+        this._logger("log", "connectAndListenToSocket: io connection to socket");
 
-        this._socket = io.connect(url, {
+        this._socket = io.connect(socketWrapperParams.url, {
             forceNew: true,
             timeout: SocketWrapper.CONNECTION_TIMEOUT
         });
@@ -59,7 +66,7 @@ export class SocketWrapper {
             for (let key in this._listenKeys) {
                 this._logger(
                     "log",
-                    `registerSocket: on Validated: Emit listen' to url ${url}`,
+                    `registerSocket: on Validated: Emit listen' to url ${socketWrapperParams.url}`,
                     this._listenKeys[key]
                 );
                 this._socket.emit(
@@ -108,17 +115,17 @@ export class SocketWrapper {
 
         this._socket.on("disconnect", (e: any) => {
             this._logger("log", "on Disconnect: push server was disconnected");
-            for (let key in this._listenKeys) {
-                let onDisconnect = this._listenKeys[key].onDisconnect;
-                if (onDisconnect) onDisconnect(e);
+            if (!Utils.isEmptyObject(this._listenKeys)) {
+                const onSocketDisconnect = socketWrapperParams.onSocketDisconnect;
+                if (onSocketDisconnect) onSocketDisconnect(e);
             }
         });
 
         this._socket.on("reconnect", (e: any) => {
             this._logger("log", "on Reconnect: push server was reconnected");
-            for (let key in this._listenKeys) {
-                let onReconnect = this._listenKeys[key].onReconnect;
-                if (onReconnect) onReconnect(e);
+            if (!Utils.isEmptyObject(this._listenKeys)) {
+                const onSocketReconnect = socketWrapperParams.onSocketReconnect;
+                if (onSocketReconnect) onSocketReconnect(e);
             }
         });
 
@@ -135,17 +142,13 @@ export class SocketWrapper {
         eventName: string,
         queueNameHash: string,
         queueKeyHash: string,
-        onMessage: Function,
-        onDisconnect: Function,
-        onReconnect: Function
+        onMessage: Function
     ) {
         this._listenKeys[queueKeyHash] = {
             eventName: eventName,
             queueNameHash: queueNameHash,
             queueKeyHash: queueKeyHash,
-            onMessage: onMessage,
-            onDisconnect: onDisconnect,
-            onReconnect: onReconnect
+            onMessage: onMessage
         };
 
         if (this._connected) {
