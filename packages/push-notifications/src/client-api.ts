@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { getContribLogger } from '@playkit-js-contrib/common';
+import { getContribLogger } from "@playkit-js-contrib/common";
+import { APIResponse } from "../lib";
 
 export interface APIResponse {
     objectType: string;
@@ -53,8 +54,8 @@ export function isAPIResponse(response: any): response is APIResponse {
 }
 
 const logger = getContribLogger({
-    module: 'contrib-push-notifications',
-    class: 'ClientApi'
+    module: "contrib-push-notifications",
+    class: "ClientApi"
 });
 
 export class ClientApi {
@@ -88,16 +89,23 @@ export class ClientApi {
         return axios
             .post(`${this._serviceUrl}?service=multirequest`, data, options)
             .then(res => {
+                if (!res || !res.data || res.data.objectType === "KalturaAPIException") {
+                    throw new Error("Error: multirequest request failed");
+                }
+
                 return res.data as RegisterRequestResponse[];
             })
             .catch(err => {
-                logger.error('failed to multirequest the queueNameHash and queueKeyHash',
-                    {
-                        method: `doMultiRegisterRequest`,
-                        data: {
-                            error: err
-                        }
-                    });
+                logger.error("failed to multirequest the queueNameHash and queueKeyHash", {
+                    method: `doMultiRegisterRequest`,
+                    data: {
+                        error: err
+                    }
+                });
+
+                throw new Error(
+                    "Error: failed to multirequest of register requests" + JSON.stringify(err)
+                );
             });
     }
 
