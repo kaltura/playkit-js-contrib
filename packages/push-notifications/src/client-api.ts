@@ -1,5 +1,4 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { APIResponse } from "../lib";
 import { log } from "@playkit-js-contrib/common";
 
 export interface APIResponse {
