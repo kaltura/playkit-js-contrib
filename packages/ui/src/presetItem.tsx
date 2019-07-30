@@ -1,6 +1,6 @@
 import preact, { h, render } from "preact";
 import { getContribLogger, PlayerAPI } from "@playkit-js-contrib/common";
-import { PresetItemData, PresetContainer } from "./presetItemData";
+import { PresetItemData, PredefinedContainers } from "./presetItemData";
 import { ManagedComponent } from "./components/managed-component";
 import { ContribLogger } from "@playkit-js-contrib/common";
 
@@ -18,7 +18,7 @@ export interface KalturaPlayerPresetComponent {
     render: () => ManagedComponent;
 }
 
-function getPlayerPresetContainer(container: PresetContainer): string {
+function getPlayerPresetContainer(container: PredefinedContainers): string {
     if (typeof container === "string") {
         return container;
     }
@@ -29,7 +29,10 @@ function getPlayerPresetContainer(container: PresetContainer): string {
         return `top-bar__${container.position}-controls`;
     }
     if (container.name === "sidePanel") {
-        return "side-panel";
+        return `side-panel-${container.position}`;
+    }
+    if (container.name === "overlay") {
+        return "player-overlay";
     }
     if (container.name === "video") {
         return "player-gui";
