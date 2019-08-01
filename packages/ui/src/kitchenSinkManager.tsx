@@ -1,11 +1,16 @@
 import { ComponentChild, h } from "preact";
-import { KitchenSinkExpandModes, KitchenSinkItemData } from "./kitchenSinkItemData";
+import {
+    KitchenSinkExpandModes,
+    KitchenSinkItemData,
+    KitchenSinkPositions
+} from "./kitchenSinkItemData";
 import { KitchenSinkItem, KitchenSinkItemRenderProps } from "./kitchenSinkItem";
 import { UpperBarManager } from "./upperBarManager";
 import { PresetManager } from "./presetManager";
 import { PlayerAPI, PlayerContribServices } from "@playkit-js-contrib/common";
 import { PresetNames } from "./presetItemData";
 import { KitchenSink } from "./components/kitchen-sink/kitchenSink";
+import { KitchenSinkAdapter } from "./components/kitchen-sink-adapter";
 
 export interface KitchenSinkManagerOptions {
     playerAPI: PlayerAPI;
@@ -23,20 +28,42 @@ export class KitchenSinkManager {
         return playerContribServices.register(ResourceToken, 1, creator);
     }
 
-    private _items: KitchenSinkItem[] = [];
+    private _items: Record<KitchenSinkPositions, KitchenSinkItem[]> = {
+        [KitchenSinkPositions.Bottom]: [],
+        [KitchenSinkPositions.Right]: [],
+        [KitchenSinkPositions.Top]: [],
+        [KitchenSinkPositions.Left]: []
+    };
     private _options: KitchenSinkManagerOptions;
-    // TODO sakal fix reference by connect
-    private _kitchenSinkRef: { _component: KitchenSink } | null = null;
+    private _kitchenSinkServiceRef: { _component: KitchenSinkAdapter } | null = null;
 
     constructor(private options: KitchenSinkManagerOptions) {
         this._options = options;
+        this.options.presetManager.add({
+            label: "kitchen-sink-right",
+            fitToContainer: true,
+            shareAdvancedPlayerAPI: true,
+            presets: [PresetNames.Playback, PresetNames.Live],
+            container: { name: "sidePanel", position: "right" },
+            renderChild: this._renderChild.bind(this, KitchenSinkPositions.Right)
+        });
+
+        this.options.presetManager.add({
+            label: "kitchen-sink-bottom",
+            fitToContainer: true,
+            shareAdvancedPlayerAPI: true,
+            presets: [PresetNames.Playback, PresetNames.Live],
+            container: { name: "sidePanel", position: "bottom" },
+            renderChild: this._renderChild.bind(this, KitchenSinkPositions.Bottom)
+        });
+
         this.options.presetManager.add({
             label: "kitchen-sink-manager",
             fitToContainer: true,
             shareAdvancedPlayerAPI: true,
             presets: [PresetNames.Playback, PresetNames.Live],
             container: { name: "sidePanel", position: "right" },
-            renderChild: this._renderChild
+            renderChild: () => <KitchenSinkAdapter ref={this._setRef} />
         });
     }
 
@@ -49,7 +76,7 @@ export class KitchenSinkManager {
             data
         };
         const item = new KitchenSinkItem(itemOptions);
-        this._items.push(item);
+        this._items[data.position].push(item);
 
         this.options.upperBarManager.add({
             label: data.label,
@@ -60,16 +87,16 @@ export class KitchenSinkManager {
         return item;
     }
 
-    private _renderChild = (): ComponentChild => {
+    private _renderChild = (position: KitchenSinkPositions): ComponentChild => {
         const itemProps: KitchenSinkItemRenderProps = {
-            onClose: this._handleOnClose
+            onClose: this._handleOnClose.bind(this, position)
         };
-        const items = this._items.map(item => item.renderContentChild(itemProps));
-        return <KitchenSink ref={this._setRef}>{items}</KitchenSink>;
+        const items = this._items[position].map(item => item.renderContentChild(itemProps));
+        return <KitchenSink>{items}</KitchenSink>;
     };
 
-    private _setRef = (ref: { _component: KitchenSink } | null) => {
-        this._kitchenSinkRef = ref;
+    private _setRef = (ref: { _component: KitchenSinkAdapter } | null) => {
+        this._kitchenSinkServiceRef = ref;
     };
 
     /**
@@ -77,20 +104,19 @@ export class KitchenSinkManager {
      */
     reset(): void {}
 
-    private _handleOnClose = () => {
-        if (!this._kitchenSinkRef) {
+    private _handleOnClose = (position: KitchenSinkPositions) => {
+        if (!this._kitchenSinkServiceRef) {
             return;
         }
 
-        this._kitchenSinkRef._component.collapse();
+        this._kitchenSinkServiceRef._component.collapse(position);
     };
 
     private _handleIconClick = (item: KitchenSinkItem) => {
-        if (!this._kitchenSinkRef) {
+        if (!this._kitchenSinkServiceRef) {
             return;
         }
 
-        // TODO sakal fix reference by connect
-        this._kitchenSinkRef._component.expand(item.data.expandMode);
+        this._kitchenSinkServiceRef._component.expand(item.data.position, item.data.expandMode);
     };
 }
