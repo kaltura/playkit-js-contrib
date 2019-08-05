@@ -1,7 +1,7 @@
 {
     "name": "@playkit-js-contrib/plugin",
     "private": false,
-    "version": "2.0.0",
+    "version": "2.0.1-next.0",
     "license": "AGPL-3.0",
     "author": "Kaltura",
     "repository": {
@@ -41,7 +41,7 @@
         "CHANGELOG.md"
     ],
     "dependencies": {
-        "@playkit-js-contrib/common": "*",
-        "@playkit-js-contrib/ui": "*"
+        "@playkit-js-contrib/common": "^2.0.1-next.0",
+        "@playkit-js-contrib/ui": "^2.0.1-next.0"
     }
 }

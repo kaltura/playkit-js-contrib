@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.1-next.0](https://github.com/kaltura/playkit-js-contrib/compare/v2.0.0...v2.0.1-next.0) (2019-08-05)
+
+
+### Bug Fixes
+
+* **build-dev:** fixed wrong import ([5e3d193](https://github.com/kaltura/playkit-js-contrib/commit/5e3d193))
+
+
+### Features
+
+* add tiny event manager ([e9240dc](https://github.com/kaltura/playkit-js-contrib/commit/e9240dc))
+
+
+
+
+
 # [2.0.0](https://github.com/kaltura/playkit-js-contrib/compare/v0.1.1...v2.0.0) (2019-06-02)
 
 

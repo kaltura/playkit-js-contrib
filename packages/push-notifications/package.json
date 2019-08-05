@@ -1,7 +1,7 @@
 {
     "name": "@playkit-js-contrib/push-notifications",
     "private": false,
-    "version": "2.0.0",
+    "version": "2.0.1-next.0",
     "license": "AGPL-3.0",
     "author": "Kaltura",
     "repository": {
@@ -33,7 +33,6 @@
         "webpack-merge": "^4.2.1",
         "webpack-node-externals": "^1.7.2"
     },
-    "peerDependencies": {},
     "publishConfig": {
         "access": "public"
     },
@@ -43,7 +42,7 @@
         "CHANGELOG.md"
     ],
     "dependencies": {
-        "@playkit-js-contrib/common": "*",
+        "@playkit-js-contrib/common": "^2.0.1-next.0",
         "axios": "^0.18.0",
         "core-js": "^3.1.4",
         "socket.io-client": "2.2.0"

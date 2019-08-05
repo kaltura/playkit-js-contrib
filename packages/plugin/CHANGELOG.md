@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.1-next.0](https://github.com/kaltura/playkit-js-contrib/compare/v2.0.0...v2.0.1-next.0) (2019-08-05)
+
+
+### Bug Fixes
+
+* **build-dev:** fixed wrong import ([5e3d193](https://github.com/kaltura/playkit-js-contrib/commit/5e3d193))
+
+
+### Features
+
+* add plugin setup interceptor ([e3925b9](https://github.com/kaltura/playkit-js-contrib/commit/e3925b9))
+* **push-notification:** add push ovp push notifications library WEBC-1482 ([93dd644](https://github.com/kaltura/playkit-js-contrib/commit/93dd644))
+
+
+
+
+
 # [2.0.0](https://github.com/kaltura/playkit-js-contrib/compare/v0.1.1...v2.0.0) (2019-06-02)
 
 
