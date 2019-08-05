@@ -62,7 +62,7 @@ export class KitchenSinkManager {
             fitToContainer: true,
             shareAdvancedPlayerAPI: true,
             presets: [PresetNames.Playback, PresetNames.Live],
-            container: { name: "sidePanel", position: "right" },
+            container: { name: "overlay" },
             renderChild: () => <KitchenSinkAdapter ref={this._setRef} />
         });
     }
