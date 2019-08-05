@@ -1,17 +1,18 @@
 import { h, Component } from "preact";
-import * as styles from "./_upperBar.scss";
+import * as styles from "./_overlayContainer.scss";
 import { getContribLogger } from "@playkit-js-contrib/common";
 import { ContribLogger } from '@playkit-js-contrib/common';
 
-export interface UpperBarProps {}
+export interface KitchenSinkRendererProps {
+}
 
-export class UpperBar extends Component<UpperBarProps> {
+export class OverlayContainer extends Component<KitchenSinkRendererProps> {
     private _logger: ContribLogger | null = null;
 
     componentDidMount(): void {
         this._logger = getContribLogger({
             module: 'contrib-ui',
-            class: 'UpperBar',
+            class: 'OverlayContainer',
         });
         this._logger.info(`mount component`, {
             method: 'componentDidMount'

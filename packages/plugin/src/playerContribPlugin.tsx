@@ -29,6 +29,7 @@ function hasOnPluginSetup(plugin: any): plugin is OnPluginSetup {
 export interface OnMediaLoadConfig {
     entryId: string;
 }
+
 export interface OnMediaLoad {
     onMediaLoad(config: OnMediaLoadConfig): void;
 }
@@ -62,6 +63,20 @@ export abstract class PlayerContribPlugin extends (KalturaPlayer as any).core.Ba
         }
     });
 
+    getUIComponents(): any[] {
+        if (hasOnRegisterUI(this)) {
+            try {
+                this.onRegisterUI(this._environment.uiManager);
+            } catch (e) {
+                console.error(`failed to register contrib ui items for plugin`, {
+                    error: e.message
+                });
+            }
+        }
+
+        return this._environment.presetManager.registerComponents();
+    }
+
     loadMedia(): void {
         this.eventManager.listenOnce(this.player, this.player.Event.MEDIA_LOADED, () => {
             if (!this._wasSetupExecuted) {
@@ -81,16 +96,6 @@ export abstract class PlayerContribPlugin extends (KalturaPlayer as any).core.Ba
 
             if (this._wasSetupFailed) {
                 return;
-            }
-
-            if (hasOnRegisterUI(this)) {
-                try {
-                    this.onRegisterUI(this._environment.uiManager);
-                } catch (e) {
-                    console.error(`failed to register contrib ui items for plugin`, {
-                        error: e.message
-                    });
-                }
             }
 
             if (hasOnMediaLoad(this)) {

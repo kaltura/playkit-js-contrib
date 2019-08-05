@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { log } from "@playkit-js-contrib/common";
+import { getContribLogger } from "@playkit-js-contrib/common";
+import { APIResponse } from "../lib";
 
 export interface APIResponse {
     objectType: string;
@@ -52,10 +53,14 @@ export function isAPIResponse(response: any): response is APIResponse {
     return "objectType" in response;
 }
 
+const logger = getContribLogger({
+    module: "contrib-push-notifications",
+    class: "ClientApi"
+});
+
 export class ClientApi {
     private readonly _baseParams: BaseRequestParams;
     private _serviceUrl: string;
-    private _logger = this._getLogger("ClientApi");
 
     constructor(options: ClientApiOptions) {
         this._serviceUrl = options.serviceUrl + "/index.php";
@@ -67,12 +72,6 @@ export class ClientApi {
             clientTag: options.clientTag,
             ks: options.ks,
             kalsig: "" // Todo: MD5 hash code for the params object.
-        };
-    }
-
-    private _getLogger(context: string) {
-        return (level: "debug" | "log" | "warn" | "error", message: string, ...args: any[]) => {
-            log(level, context, message, ...args);
         };
     }
 
@@ -90,7 +89,6 @@ export class ClientApi {
         return axios
             .post(`${this._serviceUrl}?service=multirequest`, data, options)
             .then(res => {
-                this._logger("error", "Post Request Error Error: fail request", res);
                 if (!res || !res.data || res.data.objectType === "KalturaAPIException") {
                     throw new Error("Error: multirequest request failed");
                 }
@@ -98,11 +96,12 @@ export class ClientApi {
                 return res.data as RegisterRequestResponse[];
             })
             .catch(err => {
-                this._logger(
-                    "error",
-                    "Post Request Error: failed to multirequest the queueNameHash and queueKeyHash",
-                    err
-                );
+                logger.error("failed to multirequest the queueNameHash and queueKeyHash", {
+                    method: `doMultiRegisterRequest`,
+                    data: {
+                        error: err
+                    }
+                });
 
                 throw new Error(
                     "Error: failed to multirequest of register requests" + JSON.stringify(err)

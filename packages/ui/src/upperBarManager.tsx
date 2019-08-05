@@ -3,7 +3,7 @@ import { UpperBarItem } from "./upperBarItem";
 import { UpperBarItemData } from "./upperBarItemData";
 import { UpperBar } from "./components/upper-bar";
 import { PresetManager } from "./presetManager";
-import { PlayerPresets, PresetAreas } from "./presetItemData";
+import { PresetNames } from "./presetItemData";
 import { PlayerContribServices } from "@playkit-js-contrib/common";
 import { PlayerAPI } from "@playkit-js-contrib/common";
 import { PresetItem } from "./presetItem";
@@ -12,8 +12,6 @@ export interface UpperBarManagerOptions {
     playerAPI: PlayerAPI;
     presetManager: PresetManager;
 }
-
-export interface UpperBarRendererProps {}
 
 const ResourceToken = "UpperBarManager-v1";
 
@@ -27,21 +25,20 @@ export class UpperBarManager {
 
     private _items: UpperBarItem[] = [];
     private _options: UpperBarManagerOptions;
-    private _upperBar: PresetItem<UpperBarRendererProps>;
+    private _upperBar: PresetItem | null;
 
     constructor(options: UpperBarManagerOptions) {
         this._options = options;
         this._upperBar = this._options.presetManager.add({
             label: "upper-bar-manager",
-            preset: PlayerPresets.playback,
-            area: PresetAreas.topBarRightControls,
-            renderer: this._renderUpperBar,
-            initialProps: {}
+            presets: [PresetNames.Playback, PresetNames.Live],
+            container: { name: 'topBar', position: 'right'},
+            renderChild: this._renderChild,
         });
     }
 
-    private _renderUpperBar = (props: UpperBarRendererProps): ComponentChild => {
-        const items = this._items.map(item => item.render({}));
+    private _renderChild = (): ComponentChild => {
+        const items = this._items.map(item => item.renderChild({}));
         return <UpperBar>{items}</UpperBar>;
     };
 

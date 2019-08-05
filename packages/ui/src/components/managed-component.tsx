@@ -1,17 +1,21 @@
-import { h, Component, ComponentChild } from "preact";
-import { getFirstChild } from "./utils";
+import { h, Component, ComponentChild, ComponentChildren } from "preact";
+import { getContribLogger } from '@playkit-js-contrib/common';
+import { ContribLogger } from '@playkit-js-contrib/common';
 
-type State = {
+type ManagedComponentState = {
     toggler: boolean;
 };
-type Props = {
-    children: any;
-    renderer?: () => ComponentChild;
+type ManagedComponentProps = {
+    isShown: () => boolean;
+    renderChildren: () => ComponentChildren;
+    label: string
 };
 
-export class ManagedComponent extends Component<Props, State> {
+export class ManagedComponent extends Component<ManagedComponentProps, ManagedComponentState> {
+    private _logger: ContribLogger | null = null;
+
     update() {
-        this.setState((prev: State) => {
+        this.setState((prev: ManagedComponentState) => {
             return {
                 toggler: !prev.toggler
             };
@@ -19,13 +23,42 @@ export class ManagedComponent extends Component<Props, State> {
     }
 
     componentDidMount(): void {
-        this.setState(() => {
-            return { toggler: false };
+        this._logger = getContribLogger({
+            module: 'contrib-ui',
+            class: 'ManagedComponent',
+            context: this.props.label
+        });
+        this._logger.info(`mount component`, {
+            method: 'componentDidMount'
+        });
+        this.setState({
+            toggler: false
+        });
+    }
+
+    componentWillUnmount(): void {
+        if (!this._logger) {
+            return;
+        }
+
+        this._logger.info(`unmount component`, {
+            method: 'componentWillUnmount'
         });
     }
 
     render() {
-        const { renderer } = this.props;
-        return renderer ? renderer() : getFirstChild(this.props.children);
+        if (!this.props.isShown()) {
+            return null;
+        }
+
+        if (this._logger) {
+            this._logger.trace(`render component`, {
+                method: 'render'
+            });
+        }
+
+        return <div data-contrib-item={this.props.label}>
+            {this.props.renderChildren()}
+        </div>;
     }
 }

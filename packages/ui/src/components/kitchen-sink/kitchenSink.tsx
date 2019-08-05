@@ -1,21 +1,43 @@
-import { h, Component } from "preact";
+import { Component, h } from "preact";
 import * as styles from "./_kitchenSink.scss";
-import { log } from "@playkit-js-contrib/common";
+import { ContribLogger, getContribLogger } from "@playkit-js-contrib/common";
 
-export interface KitchenSinkRendererProps {
-    onClose: () => void;
-}
+export interface KitchenSinkRendererProps {}
 
 export class KitchenSink extends Component<KitchenSinkRendererProps> {
+    static defaultProps = {
+        updateSidePanelMode: () => {}
+    };
+
+    private _logger: ContribLogger | null = null;
+
     componentDidMount(): void {
-        log(`debug`, "KitchenSink", "componentDidMount");
+        this._logger = getContribLogger({
+            module: "contrib-ui",
+            class: "KitchenSink"
+        });
+        this._logger.info(`mount component`, {
+            method: "componentDidMount"
+        });
     }
 
     componentWillUnmount(): void {
-        log(`debug`, "KitchenSink", "componentWillUnmount");
+        if (!this._logger) {
+            return;
+        }
+
+        this._logger.info(`unmount component`, {
+            method: "componentWillUnmount"
+        });
     }
 
     render(props: any) {
+        if (this._logger) {
+            this._logger.trace(`render component`, {
+                method: "render"
+            });
+        }
+
         return <div className={styles.root}>{this.props.children}</div>;
     }
 }

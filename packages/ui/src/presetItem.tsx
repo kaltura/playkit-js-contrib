@@ -1,84 +1,152 @@
-import { ComponentChild, h } from "preact";
-import { log, PlayerAPI } from "@playkit-js-contrib/common";
-import { PresetAreas, PresetItemData } from "./presetItemData";
-import { PresetItem as PresetItemComponent } from "./components/preset-item";
+import preact, { h, render } from "preact";
+import { getContribLogger, PlayerAPI } from "@playkit-js-contrib/common";
+import { PresetItemData, PredefinedContainers } from "./presetItemData";
+import { ManagedComponent } from "./components/managed-component";
+import { ContribLogger } from "@playkit-js-contrib/common";
 
-export interface PresetItemOptions<TProps extends Record<string, any>> {
+export interface PresetItemOptions {
     playerAPI: PlayerAPI;
-    data: PresetItemData<TProps>;
+    data: PresetItemData;
 }
 
 export interface PresetItemProps {}
 
-export class PresetItem<TProps extends Record<string, any>> {
-    private _options: PresetItemOptions<TProps>;
-    private _props: TProps;
+export interface KalturaPlayerPresetComponent {
+    label: string;
+    presets: string[];
+    container: string;
+    render: () => ManagedComponent;
+}
 
-    constructor(options: PresetItemOptions<TProps>) {
+function getPlayerPresetContainer(container: PredefinedContainers): string {
+    if (typeof container === "string") {
+        return container;
+    }
+    if (container.name === "bottomBar") {
+        return `bottom-bar__${container.position}-controls`;
+    }
+    if (container.name === "topBar") {
+        return `top-bar__${container.position}-controls`;
+    }
+    if (container.name === "sidePanel") {
+        return `side-panel-${container.position}`;
+    }
+    if (container.name === "overlay") {
+        return "player-overlay";
+    }
+    if (container.name === "video") {
+        return "player-gui";
+    }
+    return "";
+}
+
+export class PresetItem {
+    private _options: PresetItemOptions;
+    private _element: Element | null = null;
+    private _logger: ContribLogger;
+
+    constructor(options: PresetItemOptions & { shown?: boolean }) {
         this._options = options;
-        log("debug", `contrib-ui::PresetItem:ctor()`, "executed", { options });
-        this._props = this._options.data.initialProps;
-        this._addPresetComponent();
-    }
-
-    setProps(props: TProps) {
-        this._props = props;
-    }
-
-    show() {}
-
-    hide() {}
-
-    private _getPresetContainer(): string | null {
-        const { area } = this._options.data;
-        if (area === PresetAreas.videoOverlay) {
-            return "player-gui";
-        }
-
-        if (area === PresetAreas.topBarRightControls) {
-            return "top-bar__right-controls";
-        }
-
-        if (area === PresetAreas.sidePanel) {
-            return "side-panel";
-        }
-
-        return null;
-    }
-
-    private _addPresetComponent(): void {
-        const containerName = this._getPresetContainer();
-
-        if (!containerName) {
-            log(
-                "warn",
-                `contrib-ui::_addPresetComponent()`,
-                `failed to match container for area ${this._options.data.area} `
-            );
-            return;
-        }
-
-        // TODO options and dedicated parent         if (this._presetParentMapping[])
-        // TODO replace with actual api
-        // this is a workaround until the player external preset component support will be added
-        const { kalturaPlayer } = this._options.playerAPI;
-        const externalPlayerId = kalturaPlayer.config.targetId;
-        const externalPlayer = KalturaPlayer.getPlayer(externalPlayerId);
-        externalPlayer.addExternalPresetComponent({
-            presets: ["playbackUI", "liveUI"],
-            container: containerName,
-            component: this._render
+        this._logger = getContribLogger({
+            module: "contrib-ui",
+            class: "PresetItem",
+            context: options.data.label
+        });
+        this._logger.debug("executed", {
+            method: "constructor",
+            data: {
+                options
+            }
+        });
+        this._logger.info(`created item ${options.data.label}`, {
+            method: "constructor"
         });
     }
 
-    public _render = (): ComponentChild => {
-        const { label, renderer, fitToContainer } = this._options.data;
-        const children = renderer(this._props);
-        // TODO set here actual name of plugin
-        return (
-            <PresetItemComponent label={label} fitToContainer={fitToContainer}>
-                {children}
-            </PresetItemComponent>
-        );
+    get playerConfig(): KalturaPlayerPresetComponent | null {
+        const containerName = getPlayerPresetContainer(this._options.data.container);
+
+        if (!containerName) {
+            this._logger.warn(`unknown container requested`, {
+                method: "playerConfig"
+            });
+            return null;
+        }
+
+        // TODO sakal change in @playkit-js/playkit-js-ui render to renderChild
+        return {
+            label: this._options.data.label,
+            presets: this._options.data.presets,
+            container: containerName,
+            render: this._render
+        };
+    }
+
+    private _render = (): any => {
+        if (this._options.data.shareAdvancedPlayerAPI) {
+            return this._options.data.renderChild();
+        }
+
+        const InjectedComponent = h(KalturaPlayer.ui.components.InjectedComponent, {
+            label: this._options.data.label,
+            onCreate: this._onCreate,
+            onDestroy: this._onDestroy
+        });
+
+        return InjectedComponent;
+    };
+
+    private _onDestroy = (options: { context?: any; parent: HTMLElement }): void => {
+        // TODO sakal handle destroy
+        if (!options.parent) {
+            this._logger.warn(`missing parent argument, aborting element removal`, {
+                method: "_onDestroy"
+            });
+            return;
+        }
+
+        if (!this._element) {
+            this._logger.warn(`missing injected component reference, aborting element removal`, {
+                method: "_onDestroy"
+            });
+            return;
+        }
+
+        this._logger.info(`remove injected contrib preset component`, {
+            method: "_onDestroy"
+        });
+
+        this._element = render(null, options.parent, this._element);
+    };
+
+    private _onCreate = (options: { context?: any; parent: HTMLElement }): void => {
+        try {
+            if (!options.parent) {
+                this._logger.warn(`missing parent argument, aborting element creation`, {
+                    method: "_create"
+                });
+                return;
+            }
+            const child = this._options.data.renderChild();
+
+            if (!child) {
+                this._logger.warn(
+                    `child renderer result is invalid, expected element got undefined|null`,
+                    {
+                        method: "_create"
+                    }
+                );
+                return;
+            }
+
+            this._logger.info(`inject contrib preset component`, {
+                method: "_create"
+            });
+            this._element = render(child, options.parent);
+        } catch (error) {
+            this._logger.error(`failed to create injected component.`, {
+                method: "_onCreate"
+            });
+        }
     };
 }

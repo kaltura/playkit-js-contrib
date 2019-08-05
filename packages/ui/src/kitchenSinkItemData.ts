@@ -1,9 +1,25 @@
+import { ComponentChild } from "preact";
+
 export interface KitchenSinkContentRendererProps {
     onClose: () => void;
 }
 
+export enum KitchenSinkExpandModes {
+    AlongSideTheVideo,
+    OverTheVideo
+}
+
+export enum KitchenSinkPositions {
+    Top = "top",
+    Left = "left",
+    Right = "right",
+    Bottom = "bottom"
+}
+
 export interface KitchenSinkItemData {
-    name: string;
-    iconRenderer: () => JSX.Element;
-    contentRenderer: (props: KitchenSinkContentRendererProps) => JSX.Element;
+    label: string;
+    renderIcon: () => ComponentChild;
+    expandMode: KitchenSinkExpandModes;
+    position: KitchenSinkPositions;
+    renderContent: (props: KitchenSinkContentRendererProps) => ComponentChild;
 }

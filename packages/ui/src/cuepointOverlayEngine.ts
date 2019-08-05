@@ -1,7 +1,8 @@
 // TODO remove dependency on logger as it is relevant to v2 only
 import { ScaleCalculation, scaleVideo } from "./scaleVideo";
-import { CuepointEngine, log } from "@playkit-js-contrib/common";
+import { CuepointEngine } from "@playkit-js-contrib/common";
 import { PlayerSize, VideoSize } from "./common.types";
+import { getContribLogger } from '@playkit-js-contrib/common';
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
@@ -43,6 +44,11 @@ export type RawOverlayCuepoint = Omit<OverlayCuepoint, "layout">;
 
 export interface OverlayCuepoint extends RawOverlayCuepoint {}
 
+const logger = getContribLogger({
+    module: 'contrib-ui',
+    class: 'CuepointOverlayEngine'
+});
+
 export class CuepointOverlayEngine<
     TRaw extends RawOverlayCuepoint,
     T extends OverlayCuepoint
@@ -73,18 +79,14 @@ export class CuepointOverlayEngine<
     }
 
     private recalculateCuepointLayout(): void {
-        log(
-            "debug",
-            "CuepointLayoutEngine::recalculateCuepointLayout",
-            `calculating cuepoint layout based on video/player sizes`
-        );
+        logger.debug('calculating cuepoint layout based on video/player sizes', {
+            method: 'recalculateCuepointLayout'
+        });
 
         if (!this.playerSize || !this.videoSize) {
-            log(
-                "debug",
-                "CuepointLayoutEngine::recalculateCuepointLayout",
-                `missing video/player sizes, hide all cuepoint`
-            );
+            logger.warn('missing video/player sizes, hide all cuepoint', {
+                method: 'recalculateCuepointLayout'
+            });
             this.enabled = false;
             return;
         }
@@ -94,11 +96,9 @@ export class CuepointOverlayEngine<
         const canCalcaulateLayout = playerWidth && playerHeight && videoWidth && videoHeight;
 
         if (!canCalcaulateLayout) {
-            log(
-                "debug",
-                "CuepointLayoutEngine::recalculateCuepointLayout",
-                `missing video/player sizes, hide all cuepoint`
-            );
+            logger.warn('missing video/player sizes, hide all cuepoint', {
+                method: 'recalculateCuepointLayout'
+            });
             this.enabled = false;
             return;
         }
@@ -111,12 +111,12 @@ export class CuepointOverlayEngine<
             true
         );
 
-        log(
-            "debug",
-            "CuepointLayoutEngine::recalculateCuepointLayout",
-            `recalculate cuepoint layout based on new sizes`,
-            scaleCalculation
-        );
+        logger.debug('recalculate cuepoint layout based on new sizes', {
+            method: 'recalculateCuepointLayout',
+            data: {
+                scaleCalculation
+            }
+        });
 
         (this.cuepoints || []).forEach(cuepoint => {
             cuepoint.layout = this._calculateLayout(cuepoint as any, scaleCalculation);

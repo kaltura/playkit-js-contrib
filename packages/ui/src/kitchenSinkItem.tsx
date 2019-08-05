@@ -1,7 +1,8 @@
 import { h, ComponentChild, Ref } from "preact";
-import { log } from "@playkit-js-contrib/common";
+import { getContribLogger } from "@playkit-js-contrib/common";
 import { KitchenSinkItemData } from "./kitchenSinkItemData";
 import { ManagedComponent } from "./components/managed-component";
+import { ContribLogger } from "@playkit-js-contrib/common";
 
 export interface KitchenSinkItemOptions {
     data: KitchenSinkItemData;
@@ -14,13 +15,33 @@ export interface KitchenSinkItemRenderProps {
 export class KitchenSinkItem {
     private _options: KitchenSinkItemOptions;
     private _componentRef: ManagedComponent | null = null;
+    private _logger: ContribLogger;
+
     constructor(options: KitchenSinkItemOptions) {
         this._options = options;
-        log("debug", `contrib-ui::KitchenSinkItem:ctor()`, "executed", { options });
+        this._logger = getContribLogger({
+            module: "contrib-ui",
+            class: "KitchenSinkItem",
+            context: options && options.data && options.data.label
+        });
+        this._logger.debug("executed", {
+            method: "constructor",
+            data: {
+                options
+            }
+        });
+
+        this._logger.info(`created item ${options.data.label}`, {
+            method: "constructor"
+        });
+    }
+
+    get data() {
+        return this._options.data;
     }
 
     get displayName() {
-        return this._options.data.name;
+        return this._options.data.label;
     }
 
     public update() {
@@ -31,13 +52,14 @@ export class KitchenSinkItem {
         this._componentRef.update();
     }
 
-    public render = (props: KitchenSinkItemRenderProps): ComponentChild => {
-        const { contentRenderer } = this._options.data;
+    public renderContentChild = (props: KitchenSinkItemRenderProps): ComponentChild => {
+        const { renderContent, label } = this._options.data;
         return (
             <ManagedComponent
-                children={/* todo remove this and handle error */ ""}
+                label={label}
+                renderChildren={() => renderContent(props)}
+                isShown={() => true}
                 ref={ref => (this._componentRef = ref)}
-                renderer={() => contentRenderer(props)}
             />
         );
     };

@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
-        "target": "es2015",
+        "experimentalDecorators": true,
+        "target": "ES5",
         "module": "commonjs",
         "jsx": "react",
         "jsxFactory": "h",
@@ -8,6 +9,7 @@
         "strict": true,
         "allowSyntheticDefaultImports": true,
         "preserveSymlinks": true,
+        "rootDir": "./",
         "baseUrl": "./src",
         "paths": {
             "*": ["../node_modules/*"]

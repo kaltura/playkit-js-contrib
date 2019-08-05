@@ -1,21 +1,23 @@
 import { ComponentChild } from "preact";
 
-export enum PresetAreas {
-    videoOverlay = "videoOverlay",
-    sidePanel = "sidePanel",
-    topBarRightControls = "topBarRightControls"
+export type PredefinedContainers =
+    | { name: "overlay" }
+    | { name: "bottomBar"; position: "left" }
+    | { name: "topBar"; position: "right" }
+    | { name: "sidePanel"; position: "right" | "bottom" }
+    | { name: "video"; isModal: boolean }
+    | string;
+
+export enum PresetNames {
+    Playback = "playback",
+    Live = "live"
 }
 
-export enum PlayerPresets {
-    playback = "playback",
-    live = "live"
-}
-
-export interface PresetItemData<TProps extends Record<string, any>> {
+export interface PresetItemData {
     label: string;
     fitToContainer?: boolean;
-    preset: PlayerPresets;
-    area: PresetAreas;
-    renderer: (props: any) => ComponentChild;
-    initialProps: TProps;
+    presets: (PresetNames | string)[];
+    container: PredefinedContainers;
+    shareAdvancedPlayerAPI?: boolean;
+    renderChild: () => ComponentChild;
 }

@@ -1,4 +1,4 @@
-/// <reference path="./custom.d.ts" />
+/// <reference path="./global.d.ts" />
 
 export * from "./uiManager";
 export * from "./overlayItem";
@@ -14,3 +14,5 @@ export * from "./presetManager";
 export * from "./scaleVideo";
 export * from "./cuepointOverlayEngine";
 export * from "./common.types";
+export * from "./components/logger"
+export * from "./presetItemData";
