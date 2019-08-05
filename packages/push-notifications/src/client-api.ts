@@ -1,6 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { getContribLogger } from "@playkit-js-contrib/common";
-import { APIResponse } from "../lib";
 
 export interface APIResponse {
     objectType: string;
@@ -12,7 +11,7 @@ export interface RegisterRequestResponse extends APIResponse {
     url: string;
 }
 
-export interface APIErrorResponse extends APIResponse {
+export interface APIErrorResponse extends RegisterRequestResponse {
     objectType: string;
     code: string;
     message: string;
@@ -45,7 +44,9 @@ interface BaseRequestParams extends Record<string, any> {
     kalsig: string;
 }
 
-export function isAPIErrorResponse(response: APIResponse): response is APIErrorResponse {
+export function isAPIErrorResponse(
+    response: RegisterRequestResponse
+): response is APIErrorResponse {
     return response.objectType === "KalturaAPIException";
 }
 
