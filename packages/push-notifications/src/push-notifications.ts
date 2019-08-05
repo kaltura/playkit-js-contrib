@@ -149,7 +149,7 @@ export class PushNotifications {
 
     private _processResult(
         registerRequest: PrepareRegisterRequestConfig,
-        result: APIResponse,
+        result: RegisterRequestResponse,
         onSocketDisconnect?: Function,
         onSocketReconnect?: Function
     ): Promise<void> {
