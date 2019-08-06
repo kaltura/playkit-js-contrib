@@ -42,7 +42,6 @@ export class KitchenSinkManager {
         this.options.presetManager.add({
             label: "kitchen-sink-right",
             fitToContainer: true,
-            shareAdvancedPlayerAPI: true,
             presets: [PresetNames.Playback, PresetNames.Live],
             container: { name: "sidePanel", position: "right" },
             renderChild: this._renderChild.bind(this, KitchenSinkPositions.Right)
@@ -51,7 +50,6 @@ export class KitchenSinkManager {
         this.options.presetManager.add({
             label: "kitchen-sink-bottom",
             fitToContainer: true,
-            shareAdvancedPlayerAPI: true,
             presets: [PresetNames.Playback, PresetNames.Live],
             container: { name: "sidePanel", position: "bottom" },
             renderChild: this._renderChild.bind(this, KitchenSinkPositions.Bottom)
