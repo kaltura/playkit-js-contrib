@@ -35,7 +35,7 @@ function getPlayerPresetContainer(container: PredefinedContainers): string {
         return "player-overlay";
     }
     if (container.name === "video") {
-        return "player-gui";
+        return "preset-gui";
     }
     return "";
 }
@@ -89,6 +89,7 @@ export class PresetItem {
 
         const InjectedComponent = h(KalturaPlayer.ui.components.InjectedComponent, {
             label: this._options.data.label,
+            fillContainer: this._options.data.fillContainer,
             onCreate: this._onCreate,
             onDestroy: this._onDestroy
         });

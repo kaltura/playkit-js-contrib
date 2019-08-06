@@ -10,14 +10,14 @@ type ManagedComponentProps = {
     isShown: () => boolean;
     renderChildren: () => ComponentChildren;
     label: string;
-    fitToContainer: boolean;
+    fillContainer: boolean;
 };
 
 export class ManagedComponent extends Component<ManagedComponentProps, ManagedComponentState> {
     private _logger: ContribLogger | null = null;
 
     static defaultProps = {
-        fitToContainer: false
+        fillContainer: false
     };
 
     update() {
@@ -53,7 +53,7 @@ export class ManagedComponent extends Component<ManagedComponentProps, ManagedCo
     }
 
     render() {
-        const { fitToContainer, isShown } = this.props;
+        const { fillContainer, isShown } = this.props;
         if (!isShown()) {
             return null;
         }
@@ -67,7 +67,7 @@ export class ManagedComponent extends Component<ManagedComponentProps, ManagedCo
         return (
             <div
                 data-contrib-item={this.props.label}
-                className={fitToContainer ? styles.fillContainer : ""}
+                className={fillContainer ? styles.fillContainer : ""}
             >
                 {this.props.renderChildren()}
             </div>

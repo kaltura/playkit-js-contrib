@@ -53,12 +53,12 @@ export class KitchenSinkItem {
     }
 
     public renderContentChild = (props: KitchenSinkItemRenderProps): ComponentChild => {
-        const { renderContent, label, fitToContainer } = this._options.data;
+        const { renderContent, label, fillContainer } = this._options.data;
 
         return (
             <ManagedComponent
                 label={label}
-                fitToContainer={typeof fitToContainer === "boolean" ? fitToContainer : true}
+                fillContainer={typeof fillContainer === "boolean" ? fillContainer : true}
                 renderChildren={() => renderContent(props)}
                 isShown={() => true}
                 ref={ref => (this._componentRef = ref)}

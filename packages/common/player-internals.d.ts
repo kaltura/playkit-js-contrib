@@ -19,6 +19,7 @@ interface InjectedComponentProps {
     label: string;
     onCreate: (options: { context?: any; parent: HTMLElement }) => void;
     onDestroy: (options: { context?: any; parent: HTMLElement }) => void;
+    fillContainer?: boolean;
 }
 
 declare global {
