@@ -58,4 +58,7 @@
   line-height: 1.21;
   letter-spacing: normal;
   color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
