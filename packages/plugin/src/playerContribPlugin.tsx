@@ -79,6 +79,14 @@ export abstract class PlayerContribPlugin extends (KalturaPlayer as any).core.Ba
         return this._environment.presetManager.registerComponents();
     }
 
+    get environment(): EnvironmentManager {
+        return this._environment;
+    }
+
+    get uiManager(): UIManager {
+        return this._environment.uiManager;
+    }
+
     loadMedia(): void {
         this.eventManager.listenOnce(this.player, this.player.Event.MEDIA_LOADED, () => {
             if (!this._wasSetupExecuted) {
