@@ -1,0 +1,61 @@
+.root {
+  width: 100%;
+  height: 100%;
+}
+
+.announcementWrapper {
+  padding: 16px;
+}
+
+.iconContainer {
+  height: 100%;
+  width: 64px;
+  float: left;
+}
+
+.iconWrapper {
+  position: relative;
+  height: 48px;
+  width: 48px;
+  background-color: #222222;
+  border-radius: 50%;
+}
+
+.icon {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  left: calc(50% - 16px);
+  top: calc(50% - 16px);
+  background-image: url('./assets/announcement.svg');
+  background-repeat: no-repeat;
+}
+
+.announcementBody {
+  width: 100%;
+  height: 100%;
+}
+
+.title {
+  opacity: 0.9;
+  font-family: Lato;
+  font-size: 14px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  color: #ebebeb;
+}
+
+.text {
+  opacity: 0.9;
+  font-family: Lato;
+  font-size: 24px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1.21;
+  letter-spacing: normal;
+  color: #ffffff;
+}
