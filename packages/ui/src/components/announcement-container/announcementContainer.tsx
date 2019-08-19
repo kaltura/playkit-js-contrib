@@ -34,7 +34,7 @@ export class AnnouncementContainer extends Component<AnnouncementContainerProps>
             });
         }
         return (
-            <div className={styles.root}>
+            <div className={styles.announcementContainerRoot}>
                 <div className={styles.announcementContainer}>
                     <button className={styles.closeButton} />
                     {this.props.children}

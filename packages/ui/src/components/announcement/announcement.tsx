@@ -39,7 +39,7 @@ export class Announcement extends Component<AnnouncementProps> {
             });
         }
         return (
-            <div className={styles.root + " " + styles.announcementWrapper}>
+            <div className={styles.defaultAnnouncementRoot + " " + styles.announcementWrapper}>
                 <div className={styles.iconContainer}>
                     <div className={styles.iconWrapper}>{icon}</div>
                 </div>
@@ -52,6 +52,6 @@ export class Announcement extends Component<AnnouncementProps> {
     }
 
     private _defaultIcon() {
-        return <div className={styles.icon} />;
+        return <div className={styles.iconImage} />;
     }
 }
