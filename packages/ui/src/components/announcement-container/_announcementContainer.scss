@@ -11,19 +11,22 @@
 div[class*=playkit-size-md] {
   div[class*=announcementContainerRoot]  {
     height: 68px;
-  }
-  button[class*=closeButton] {
-    top: 8px;
-    right: 8px;
-    width: 10px;
-    height: 10px;
-    background-image: url('./assets/close_small.svg');
+
+    button[class*=closeButton] {
+      top: 8px;
+      right: 8px;
+      width: 10px;
+      height: 10px;
+      background-image: url('./assets/close_small.svg');
+    }
   }
 }
 
 div[class*=playkit-size-sm], div[class*=playkit-size-xs], div[class*=playkit-size-ty] {
   div[class*=announcementContainerRoot] {
     display: none;
+    width: 0;
+    height: 0;
   }
 }
 
