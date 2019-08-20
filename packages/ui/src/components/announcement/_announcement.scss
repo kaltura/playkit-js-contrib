@@ -68,41 +68,38 @@
   transition: all .5s ease;
 }
 
-div[class*=playkit-size-md] div[class*=defaultAnnouncementRoot] {
-
-  div[class*=announcementWrapper] {
-    padding: 10px 16px 13px;
-  }
-
-  div[class*=iconContainer] {
-    width: 44px;
-  }
-
-  div[class*=iconWrapper] {
-    height: 32px;
-    width: 32px;
-  }
-
-  div[class*=iconImage] {
-    width: 20px;
-    height: 20px;
-    left: calc(50% - 10px);
-    top: calc(50% - 10px);
-    background-image: url('./assets/announcement_small.svg');
-  }
-
-  div[class*=announcementBody] {
-    width: calc(100% - 44px);
-  }
-
-  div[class*=title] {
-    font-size: 12px;
-    font-weight: bold;
-    line-height: 1.17;
-  }
-
-  div[class*=text] {
-    font-size: 15px;
-    line-height: 1.27;
+:global {
+  .playkit-size-md {
+    :local {
+      .announcementWrapper {
+        padding: 10px 16px 13px
+      }
+      .iconContainer {
+        width: 44px;
+      }
+      .iconWrapper {
+        height: 32px;
+        width: 32px;
+      }
+      .iconImage {
+        width: 20px;
+        height: 20px;
+        left: calc(50% - 10px);
+        top: calc(50% - 10px);
+        background-image: url('./assets/announcement_small.svg');
+      }
+      .announcementBody {
+        width: calc(100% - 44px);
+      }
+      .title {
+        font-size: 12px;
+        font-weight: bold;
+        line-height: 1.17;
+      }
+      .text {
+        font-size: 15px;
+        line-height: 1.27;
+      }
+    }
   }
 }
