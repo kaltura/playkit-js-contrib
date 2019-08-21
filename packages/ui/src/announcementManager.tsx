@@ -5,6 +5,7 @@ import { OverlayItemProps, OverlayPositions, OverlayUIModes } from "./overlayIte
 import { ComponentChild, h } from "preact";
 import { Announcement } from "./components/announcement";
 import { AnnouncementContainer } from "./components/announcement-container";
+import { AnnouncementContainerProps } from "./components/announcement-container/announcementContainer";
 
 export interface AnnouncementContent {
     text: string;
@@ -54,7 +55,9 @@ export class AnnouncementManager {
             label: "announcement",
             mode: OverlayUIModes.Immediate,
             position: OverlayPositions.VisibleArea,
-            renderContent: this._renderAnnouncement(props)
+            renderContent: this._renderAnnouncement(props, {
+                handleCloseEvent: this._handleCloseEvent.bind(this)
+            })
         });
         if (props.autoClose) {
             this._startDurationTimer(props.duration);
@@ -73,10 +76,13 @@ export class AnnouncementManager {
         this.remove();
     }
 
-    private _renderAnnouncement({ content, renderContent }: AnnouncementProps) {
+    private _renderAnnouncement(
+        { content, renderContent }: AnnouncementProps,
+        { handleCloseEvent }: AnnouncementContainerProps
+    ) {
         function _renderContent(overlayItemProps: OverlayItemProps) {
             return (
-                <AnnouncementContainer>
+                <AnnouncementContainer handleCloseEvent={handleCloseEvent}>
                     {renderContent ? (
                         renderContent(overlayItemProps)
                     ) : (
@@ -86,6 +92,10 @@ export class AnnouncementManager {
             );
         }
         return _renderContent;
+    }
+
+    private _handleCloseEvent(event: any) {
+        this.remove();
     }
 
     private _startDurationTimer(displayDuration: number = DefaultDuration) {

@@ -32,6 +32,10 @@
   background-repeat: no-repeat;
 }
 
+.closeButton:hover, .closeButton:active {
+  cursor: pointer;
+}
+
 :global {
   .playkit-size-md {
     :local {
