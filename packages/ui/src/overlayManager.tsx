@@ -38,7 +38,7 @@ export class OverlayManager {
         this._overlayContainer = this.options.presetManager.add({
             label: "overlay-manager",
             presets: [PresetNames.Playback, PresetNames.Live],
-            container: { name: "video", isModal: false },
+            container: { name: "VideoOverlay" },
             renderChild: this._renderChild
         });
         this._addPlayerBindings();

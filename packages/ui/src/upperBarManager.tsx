@@ -32,8 +32,8 @@ export class UpperBarManager {
         this._upperBar = this._options.presetManager.add({
             label: "upper-bar-manager",
             presets: [PresetNames.Playback, PresetNames.Live],
-            container: { name: 'topBar', position: 'right'},
-            renderChild: this._renderChild,
+            container: { name: "TopBar", position: "Right" },
+            renderChild: this._renderChild
         });
     }
 

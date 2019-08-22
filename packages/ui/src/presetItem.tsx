@@ -1,6 +1,6 @@
 import preact, { h, render } from "preact";
 import { getContribLogger, PlayerAPI } from "@playkit-js-contrib/common";
-import { PresetItemData, PredefinedContainers } from "./presetItemData";
+import { PresetItemData, PredefinedContainers, RelativeToTypes } from "./presetItemData";
 import { ManagedComponent } from "./components/managed-component";
 import { ContribLogger } from "@playkit-js-contrib/common";
 
@@ -22,20 +22,27 @@ function getPlayerPresetContainer(container: PredefinedContainers): string {
     if (typeof container === "string") {
         return container;
     }
-    if (container.name === "bottomBar") {
-        return `bottom-bar__${container.position}-controls`;
+
+    if (container.name === "BottomBar") {
+        return `BottomBar${container.position}Controls`;
     }
-    if (container.name === "topBar") {
+    if (container.name === "TopBar") {
         return `top-bar__${container.position}-controls`;
     }
-    if (container.name === "sidePanel") {
+    if (container.name === "SidePanel") {
         return `side-panel-${container.position}`;
     }
-    if (container.name === "overlay") {
-        return "player-overlay";
+    if (container.name === "PresetOverlay") {
+        return "PresetOverlay";
     }
-    if (container.name === "video") {
-        return "preset-gui";
+    if (container.name === "VideoOverlay") {
+        return "VideoOverlay";
+    }
+    if (container.name === "PlayerOverlay") {
+        return "VideoOverlay";
+    }
+    if (container.name === "PresetMiddleArea") {
+        return "PresetMiddleArea";
     }
     return "";
 }
@@ -65,6 +72,7 @@ export class PresetItem {
 
     get playerConfig(): KalturaPlayerPresetComponent | null {
         const containerName = getPlayerPresetContainer(this._options.data.container);
+        const { relativeTo } = this._options.data;
 
         if (!containerName) {
             this._logger.warn(`unknown container requested`, {
@@ -74,12 +82,28 @@ export class PresetItem {
         }
 
         // TODO sakal change in @playkit-js/playkit-js-ui render to renderChild
-        return {
+        const result: any = {
             label: this._options.data.label,
             presets: this._options.data.presets,
             container: containerName,
             render: this._render
         };
+
+        if (relativeTo) {
+            switch (relativeTo.type) {
+                case RelativeToTypes.After:
+                    result["afterComponent"] = relativeTo.name;
+                    break;
+                case RelativeToTypes.Before:
+                    result["beforeComponent"] = relativeTo.name;
+                    break;
+                case RelativeToTypes.Replace:
+                    result["replaceComponent"] = relativeTo.name;
+                    break;
+            }
+        }
+
+        return result;
     }
 
     private _render = (): any => {

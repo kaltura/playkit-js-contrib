@@ -43,7 +43,7 @@ export class KitchenSinkManager {
             label: "kitchen-sink-right",
             fillContainer: true,
             presets: [PresetNames.Playback, PresetNames.Live],
-            container: { name: "sidePanel", position: "right" },
+            container: { name: "SidePanel", position: "Right" },
             renderChild: this._renderChild.bind(this, KitchenSinkPositions.Right)
         });
 
@@ -51,7 +51,7 @@ export class KitchenSinkManager {
             label: "kitchen-sink-bottom",
             fillContainer: true,
             presets: [PresetNames.Playback, PresetNames.Live],
-            container: { name: "sidePanel", position: "bottom" },
+            container: { name: "SidePanel", position: "Bottom" },
             renderChild: this._renderChild.bind(this, KitchenSinkPositions.Bottom)
         });
 
@@ -59,7 +59,7 @@ export class KitchenSinkManager {
             label: "kitchen-sink-manager",
             shareAdvancedPlayerAPI: true,
             presets: [PresetNames.Playback, PresetNames.Live],
-            container: { name: "overlay" },
+            container: { name: "PlayerOverlay" },
             renderChild: () => <KitchenSinkAdapter ref={this._setRef} />
         });
     }

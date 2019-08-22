@@ -38,6 +38,7 @@ declare global {
                 InjectedComponentProps: InjectedComponentProps;
                 InjectedComponent: ContribPreact.ComponentFactory<InjectedComponentProps>;
             };
+            EventTypes: any;
         };
         core: {
             registerPlugin(name: string, component: any): void;

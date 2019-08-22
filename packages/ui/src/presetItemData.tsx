@@ -1,16 +1,27 @@
 import { ComponentChild } from "preact";
 
+export type VerticalPositions = "Top" | "Bottom";
+export type HorizontalPositions = "Left" | "Right";
+
 export type PredefinedContainers =
-    | { name: "overlay" }
-    | { name: "bottomBar"; position: "left" }
-    | { name: "topBar"; position: "right" }
-    | { name: "sidePanel"; position: "right" | "bottom" }
-    | { name: "video"; isModal: boolean }
+    | { name: "PresetOverlay" }
+    | { name: "BottomBar"; position: HorizontalPositions }
+    | { name: "TopBar"; position: HorizontalPositions }
+    | { name: "SidePanel"; position: HorizontalPositions | VerticalPositions }
+    | { name: "VideoOverlay" }
+    | { name: "PresetMiddleArea" }
+    | { name: "PlayerOverlay" }
     | string;
 
 export enum PresetNames {
-    Playback = "playback",
-    Live = "live"
+    Playback = "Playback",
+    Live = "Live"
+}
+
+export enum RelativeToTypes {
+    Before = "Before",
+    After = "After",
+    Replace = "Replace"
 }
 
 export interface PresetItemData {
@@ -20,4 +31,8 @@ export interface PresetItemData {
     container: PredefinedContainers;
     shareAdvancedPlayerAPI?: boolean;
     renderChild: () => ComponentChild;
+    relativeTo?: {
+        type: RelativeToTypes;
+        name: string;
+    };
 }
