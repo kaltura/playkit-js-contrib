@@ -15,7 +15,7 @@ module.exports = (env, options) => {
     )],
     resolve: {
       extensions: [".ts", ".tsx", ".js", ".jsx", ".scss"],
-      modules: [path.resolve(__dirname, "node_modules")],
+      modules: [path.resolve(__dirname, "../../node_modules"), path.resolve(__dirname, "node_modules")],
       symlinks: false
     },
     output: {
@@ -31,6 +31,9 @@ module.exports = (env, options) => {
         {
           test: /\.tsx?$/,
           loader: "ts-loader",
+          options: {
+            configFile: "tsconfig.build.json"
+          },
           exclude: /node_modules/
         },
         {

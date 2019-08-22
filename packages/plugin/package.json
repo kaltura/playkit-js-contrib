@@ -15,7 +15,6 @@
         "build": "webpack --mode production && npm run build:declaration",
         "build:dev": "webpack --mode development && npm run build:declaration",
         "build:declaration": "dts-bundle-generator --config dts-config.js",
-        "setup": "npm link",
         "reset": "npm run clean && rm -rf node_modules",
         "analyze": "npm run build && npx source-map-explorer lib/index.js"
     },
