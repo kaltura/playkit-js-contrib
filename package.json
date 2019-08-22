@@ -15,7 +15,7 @@
     "publish:next": "npm run clean && npm run build &&  lerna version prerelease --preid next --conventional-commits && lerna publish from-package --dist-tag next",
     "fix-npm-next-tag": "lerna exec --no-bail --no-private --no-sort --stream -- '[ -n \"$(npm v . dist-tags.next)\" -a \"$(npm v . dist-tags.next)\" != \"$(npm v . dist.tags.latest)\" ] && npm dist-tag add ${LERNA_PACKAGE_NAME}@$(npm v . dist-tags.latest) next'",
     "reset": "lerna run reset && rm -rf node_modules",
-    "setup": "npm i && lerna bootstrap && lerna run setup && lerna link",
+    "setup": "npm i && lerna bootstrap --hoist && lerna run setup && lerna link",
     "lerna": "lerna"
   },
   "devDependencies": {
