@@ -26,7 +26,7 @@
         "@types/socket.io-client": "^1.4.32",
         "dts-bundle-generator": "^3.0.0",
         "fs-extra": "^7.0.1",
-        "ts-loader": "^5.3.3",
+        "ts-loader": "^6.0.4",
         "typescript": "^3.2.2",
         "webpack": "^4.29.6",
         "webpack-cli": "^3.3.0",
