@@ -2,7 +2,11 @@
     "extends": "../../tsconfig.build.json",
 
     "compilerOptions": {
-        "outDir": "./dist"
+        "outDir": "./lib",
+        "jsx": "react",
+        "jsxFactory": "h",
+        "declaration": true,
+        "experimentalDecorators": true
     },
 
     "include": ["src/**/*"]
