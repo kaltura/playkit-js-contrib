@@ -11,12 +11,24 @@ type ChangeData<T extends Cuepoint> = {
     cuePoint: T;
 };
 
-const defaultReasonableSeekThreshold = 2000;
+const DefaultReasonableSeekThreshold = 2000;
 
 export interface Cuepoint {
     id: string;
     startTime: number;
     endTime?: number;
+}
+
+export interface CuepointEngineOptions {
+    reasonableSeekThreshold: number;
+}
+
+export interface UpdateTimeResponse<T extends Cuepoint> {
+    snapshot?: T[];
+    delta?: {
+        show: T[];
+        hide: T[];
+    };
 }
 
 const logger = getContribLogger({
@@ -25,8 +37,7 @@ const logger = getContribLogger({
 });
 
 export class CuepointEngine<T extends Cuepoint> {
-    protected cuepoints: T[];
-
+    private _cuepoints: T[];
     private reasonableSeekThreshold: number;
     private isFirstTime = true;
     protected enabled = true;
@@ -35,16 +46,20 @@ export class CuepointEngine<T extends Cuepoint> {
     private nextTimeToHandle: number | null = null;
     private cuepointChanges: ChangeData<T>[] = [];
 
-    constructor(cuepoints: T[], reasonableSeekThreshold: number = defaultReasonableSeekThreshold) {
+    constructor(cuepoints: T[], options?: CuepointEngineOptions) {
         logger.debug("executed", {
             method: "ctor"
         });
         this.reasonableSeekThreshold = Math.max(
-            defaultReasonableSeekThreshold,
-            reasonableSeekThreshold
+            DefaultReasonableSeekThreshold,
+            (options && options.reasonableSeekThreshold) || 0
         );
-        this.cuepoints = cuepoints;
+        this._cuepoints = cuepoints;
         this.prepareCuepoint();
+    }
+
+    get cuepoints(): T[] {
+        return [...this._cuepoints];
     }
 
     public getSnapshot(time: number): T[] {
@@ -60,11 +75,9 @@ export class CuepointEngine<T extends Cuepoint> {
 
     public updateTime(
         currentTime: number,
-        forceSnapshot = false
-    ): {
-        snapshot?: T[];
-        delta?: { show: T[]; hide: T[] };
-    } {
+        forceSnapshot = false,
+        filter?: (item: T) => boolean
+    ): UpdateTimeResponse<T> {
         const { isFirstTime, lastHandledTime, nextTimeToHandle } = this;
 
         if (this.cuepointChanges.length === 0) {
@@ -94,7 +107,7 @@ export class CuepointEngine<T extends Cuepoint> {
         if (!hasChangesToHandle) {
             if (forceSnapshot) {
                 return {
-                    snapshot: this.createCuepointSnapshot(closestChangeIndex)
+                    snapshot: this.createCuepointSnapshot(closestChangeIndex, filter)
                 };
             }
 
@@ -122,13 +135,13 @@ export class CuepointEngine<T extends Cuepoint> {
                 data: { isFirstTime, userSeeked, forceSnapshot }
             });
 
-            const snapshot = this.createCuepointSnapshot(closestChangeIndex);
+            const snapshot = this.createCuepointSnapshot(closestChangeIndex, filter);
             this.updateInternals(closestChangeTime, closestChangeIndex);
 
             return { snapshot };
         }
 
-        const delta = this.createCuepointDelta(closestChangeIndex);
+        const delta = this.createCuepointDelta(closestChangeIndex, filter);
         this.updateInternals(closestChangeTime, closestChangeIndex);
 
         return { delta };
@@ -140,7 +153,7 @@ export class CuepointEngine<T extends Cuepoint> {
             : [];
     }
 
-    private createCuepointSnapshot(targetIndex: number): T[] {
+    private createCuepointSnapshot(targetIndex: number, filter?: (item: T) => boolean): T[] {
         if (
             !this.enabled ||
             targetIndex < 0 ||
@@ -158,7 +171,7 @@ export class CuepointEngine<T extends Cuepoint> {
             return [];
         }
 
-        const snapshot: T[] = [];
+        let snapshot: T[] = [];
 
         for (let index = 0; index <= targetIndex; index++) {
             const item = this.cuepointChanges[index];
@@ -178,10 +191,18 @@ export class CuepointEngine<T extends Cuepoint> {
             method: "createCuepointSnapshot",
             data: { snapshot }
         });
+
+        if (filter) {
+            snapshot = snapshot.filter(filter);
+        }
+
         return snapshot;
     }
 
-    private createCuepointDelta(targetIndex: number): { show: T[]; hide: T[] } {
+    private createCuepointDelta(
+        targetIndex: number,
+        filter?: (item: T) => boolean
+    ): { show: T[]; hide: T[] } {
         if (!this.enabled || !this.cuepointChanges || this.cuepointChanges.length === 0) {
             logger.debug(`resulted with empty delta`, {
                 method: "createCuepointDelta",
@@ -202,8 +223,8 @@ export class CuepointEngine<T extends Cuepoint> {
             return this.createEmptyDelta();
         }
 
-        const newCuepoint: T[] = [];
-        const removedCuepoint: T[] = [];
+        let newCuepoint: T[] = [];
+        let removedCuepoint: T[] = [];
 
         logger.info(`find cuepoint that were added or removed`, {
             method: "createCuepointDelta"
@@ -250,6 +271,11 @@ export class CuepointEngine<T extends Cuepoint> {
                 removedCuepoint
             }
         });
+
+        if (filter) {
+            newCuepoint = newCuepoint.filter(filter);
+            removedCuepoint = removedCuepoint.filter(filter);
+        }
 
         return { show: newCuepoint, hide: removedCuepoint };
     }
@@ -338,7 +364,7 @@ export class CuepointEngine<T extends Cuepoint> {
     }
 
     private prepareCuepoint() {
-        (this.cuepoints || []).forEach(cuepoint => {
+        (this._cuepoints || []).forEach(cuepoint => {
             if (
                 cuepoint.startTime !== null &&
                 typeof cuepoint.startTime !== "undefined" &&
