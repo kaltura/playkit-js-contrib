@@ -13,11 +13,14 @@ export interface AnnouncementContent {
     icon?: any;
 }
 
-export interface AnnouncementProps {
+export interface AnnouncementOptions {
     content: AnnouncementContent;
     autoClose?: boolean;
     duration?: number;
-    renderContent?: (overlayItemProps: OverlayItemProps) => ComponentChild;
+    renderContent?: (
+        content: AnnouncementContent,
+        overlayItemProps: OverlayItemProps
+    ) => ComponentChild;
 }
 
 export interface AnnouncementManagerOptions {
@@ -47,7 +50,7 @@ export class AnnouncementManager {
         this._options = options;
     }
 
-    add(props: AnnouncementProps) {
+    add(props: AnnouncementOptions) {
         if (this._overlayItem) {
             this.remove();
         }
@@ -55,8 +58,8 @@ export class AnnouncementManager {
             label: "announcement",
             mode: OverlayUIModes.Immediate,
             position: OverlayPositions.VisibleArea,
-            renderContent: this._renderAnnouncement(props, {
-                handleCloseEvent: this._handleCloseEvent.bind(this)
+            renderContent: this._createRenderAnnouncement(props, {
+                onClose: this._handleCloseEvent.bind(this)
             })
         });
         if (props.autoClose) {
@@ -76,15 +79,15 @@ export class AnnouncementManager {
         this.remove();
     }
 
-    private _renderAnnouncement(
-        { content, renderContent }: AnnouncementProps,
-        { handleCloseEvent }: AnnouncementContainerProps
+    private _createRenderAnnouncement(
+        { content, renderContent }: AnnouncementOptions,
+        { onClose }: AnnouncementContainerProps
     ) {
         function _renderContent(overlayItemProps: OverlayItemProps) {
             return (
-                <AnnouncementContainer handleCloseEvent={handleCloseEvent}>
+                <AnnouncementContainer onClose={onClose}>
                     {renderContent ? (
-                        renderContent(overlayItemProps)
+                        renderContent(content, overlayItemProps)
                     ) : (
                         <Announcement content={content} />
                     )}
