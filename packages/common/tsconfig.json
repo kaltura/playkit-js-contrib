@@ -1,17 +1,5 @@
 {
-    "compilerOptions": {
-        "target": "ES5",
-        "module": "commonjs",
-        "jsx": "react",
-        "jsxFactory": "h",
-        "declaration": false,
-        "strict": true,
-        "allowSyntheticDefaultImports": true,
-        "preserveSymlinks": true,
-        "baseUrl": "./src",
-        "paths": {
-            "*": ["../node_modules/*"]
-        }
-    },
-    "exclude": ["./lib"]
+    "extends": "../../tsconfig.json",
+
+    "compilerOptions": {}
 }

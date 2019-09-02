@@ -1,0 +1,11 @@
+{
+    "extends": "../../tsconfig.build.json",
+
+    "compilerOptions": {
+        "outDir": "./lib",
+        "declaration": true,
+        "lib": ["DOM", "ES5", "ScriptHost", "ES2015.Promise"]
+    },
+
+    "include": ["src/**/*"]
+}
