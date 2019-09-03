@@ -1,4 +1,4 @@
-import preact, { h, render } from "preact";
+import { h, render } from "preact";
 import { getContribLogger, PlayerAPI } from "@playkit-js-contrib/common";
 import { PresetItemData, PredefinedContainers } from "./presetItemData";
 import { ManagedComponent } from "./components/managed-component";

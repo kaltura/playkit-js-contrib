@@ -3,7 +3,7 @@ import { ContribLogger, getContribLogger } from "@playkit-js-contrib/common";
 import * as styles from "./_announcementContainer.scss";
 
 export interface AnnouncementContainerProps {
-    onClose: (event: any) => void;
+    onClose: () => void;
 }
 
 export class AnnouncementContainer extends Component<AnnouncementContainerProps> {

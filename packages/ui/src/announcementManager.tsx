@@ -44,7 +44,7 @@ export class AnnouncementManager {
 
     private _options: AnnouncementManagerOptions;
     private _overlayItem: OverlayItem | null = null;
-    private _timerSub: number | undefined = undefined;
+    private _timerSubscription: any | undefined = undefined;
 
     constructor(private options: AnnouncementManagerOptions) {
         this._options = options;
@@ -69,7 +69,7 @@ export class AnnouncementManager {
 
     remove() {
         if (this._overlayItem) {
-            if (this._timerSub) clearTimeout(this._timerSub);
+            if (this._timerSubscription) clearTimeout(this._timerSubscription);
             this._options.overlayManager.remove(this._overlayItem);
             this._overlayItem = null;
         }
@@ -102,6 +102,9 @@ export class AnnouncementManager {
     }
 
     private _startDurationTimer(displayDuration: number = DefaultDuration) {
-        this._timerSub = setTimeout(this.remove.bind(this), Math.max(MinDuration, displayDuration));
+        this._timerSubscription = setTimeout(
+            this.remove.bind(this),
+            Math.max(MinDuration, displayDuration)
+        );
     }
 }
