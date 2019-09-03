@@ -37,7 +37,7 @@ const logger = getContribLogger({
 });
 
 export class CuepointEngine<T extends Cuepoint> {
-    private _cuepoints: T[];
+    protected _cuepoints: T[];
     private reasonableSeekThreshold: number;
     private isFirstTime = true;
     protected enabled = true;
