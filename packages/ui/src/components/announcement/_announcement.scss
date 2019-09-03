@@ -1,0 +1,105 @@
+.defaultAnnouncementRoot {
+  max-width: 100%;
+  height: 100%;
+  transition: all .5s ease;
+}
+
+.announcementWrapper {
+  padding: 18px 17px 17px 16px;
+}
+
+.iconContainer {
+  height: 100%;
+  width: 64px;
+  float: left;
+}
+
+.iconWrapper {
+  position: relative;
+  height: 48px;
+  width: 48px;
+  background-color: #222222;
+  border-radius: 50%;
+  transition: all .5s ease;
+}
+
+.iconImage {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  left: calc(50% - 16px);
+  top: calc(50% - 16px);
+  background-image: url('./assets/announcement_large.svg');
+  background-repeat: no-repeat;
+  transition: all .5s ease;
+}
+
+.announcementBody {
+  width: calc(100% - 64px);
+  height: 100%;
+  float: left;
+}
+
+.title {
+  opacity: 0.9;
+  font-family: Lato;
+  font-size: 14px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  color: #ebebeb;
+}
+
+.text {
+  opacity: 0.9;
+  font-family: Lato;
+  font-size: 24px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1.21;
+  letter-spacing: normal;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: all .5s ease;
+}
+
+:global {
+  .playkit-size-md {
+    :local {
+      .announcementWrapper {
+        padding: 14px 16px 14px
+      }
+      .iconContainer {
+        width: 44px;
+      }
+      .iconWrapper {
+        height: 32px;
+        width: 32px;
+      }
+      .iconImage {
+        width: 20px;
+        height: 20px;
+        left: calc(50% - 10px);
+        top: calc(50% - 10px);
+        background-image: url('./assets/announcement_small.svg');
+      }
+      .announcementBody {
+        width: calc(100% - 44px);
+      }
+      .title {
+        font-size: 12px;
+        font-weight: bold;
+        line-height: 1.17;
+      }
+      .text {
+        font-size: 15px;
+        line-height: 1.27;
+      }
+    }
+  }
+}

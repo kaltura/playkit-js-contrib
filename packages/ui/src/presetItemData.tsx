@@ -6,6 +6,7 @@ export type PredefinedContainers =
     | { name: "topBar"; position: "right" }
     | { name: "sidePanel"; position: "right" | "bottom" }
     | { name: "video"; isModal: boolean }
+    | { name: "visibleArea"; isModal: boolean }
     | string;
 
 export enum PresetNames {

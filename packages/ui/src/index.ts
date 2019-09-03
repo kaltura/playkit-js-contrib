@@ -1,6 +1,7 @@
 /// <reference path="./global.d.ts" />
 
 export * from "./uiManager";
+export * from "./announcementManager";
 export * from "./overlayItem";
 export * from "./overlayItemData";
 export * from "./overlayManager";
@@ -14,5 +15,5 @@ export * from "./presetManager";
 export * from "./scaleVideo";
 export * from "./cuepointOverlayEngine";
 export * from "./common.types";
-export * from "./components/logger"
+export * from "./components/logger";
 export * from "./presetItemData";

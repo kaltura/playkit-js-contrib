@@ -4,7 +4,13 @@ import { PlayerSize, VideoSize } from "./common.types";
 export enum OverlayUIModes {
     MediaLoaded = "MediaLoaded",
     OnDemand = "OnDemand",
+    Immediate = "Immediate",
     FirstPlay = "FirstPlay"
+}
+
+export enum OverlayPositions {
+    Video = "video",
+    VisibleArea = "visibleArea"
 }
 
 export interface OverlayItemData {
@@ -12,6 +18,7 @@ export interface OverlayItemData {
     mode: OverlayUIModes;
     renderContent: (overlayItemProps: OverlayItemProps) => ComponentChild;
     className?: string;
+    position: OverlayPositions;
 }
 
 export interface OverlayItemProps {

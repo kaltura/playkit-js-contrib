@@ -14,7 +14,7 @@ module.exports = (env, options) => {
       }
     )],
     resolve: {
-      extensions: [".ts", ".tsx", ".js", ".jsx", ".scss"],
+      extensions: [".ts", ".tsx", ".js", ".jsx", ".scss", ".svg"],
       modules: [path.resolve(__dirname, "../../node_modules"), path.resolve(__dirname, "node_modules")],
       symlinks: false
     },
@@ -54,6 +54,13 @@ module.exports = (env, options) => {
               loader: 'sass-loader'
             }
           ]
+        },
+        {
+          test: /\.svg/,
+          use: {
+            loader: 'svg-url-loader',
+            options: {}
+          }
         }
       ]
     },
