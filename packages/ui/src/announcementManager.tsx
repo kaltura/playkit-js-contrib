@@ -97,7 +97,7 @@ export class AnnouncementManager {
         return _renderContent;
     }
 
-    private _handleCloseEvent(event: any) {
+    private _handleCloseEvent() {
         this.remove();
     }
 
