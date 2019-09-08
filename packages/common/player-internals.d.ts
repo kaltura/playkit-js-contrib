@@ -15,13 +15,6 @@ declare interface Logger {
     error(message: string, context: MessageOptions): void;
 }
 
-interface InjectedComponentProps {
-    label: string;
-    onCreate: (options: { context?: any; parent: HTMLElement }) => void;
-    onDestroy: (options: { context?: any; parent: HTMLElement }) => void;
-    fillContainer?: boolean;
-}
-
 declare global {
     const KalturaPlayer: {
         ui: {
@@ -34,10 +27,7 @@ declare global {
                 getLogger: (name: string) => Logger;
                 bindActions(actions: Record<string, unknown>[]): (...args: any) => void;
             };
-            components: {
-                InjectedComponentProps: InjectedComponentProps;
-                InjectedComponent: ContribPreact.ComponentFactory<InjectedComponentProps>;
-            };
+            components: {};
             EventTypes: any;
         };
         core: {

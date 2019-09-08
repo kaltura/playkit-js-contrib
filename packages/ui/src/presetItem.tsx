@@ -3,6 +3,7 @@ import { getContribLogger, PlayerAPI } from "@playkit-js-contrib/common";
 import { PresetItemData, PredefinedContainers, RelativeToTypes } from "./presetItemData";
 import { ManagedComponent } from "./components/managed-component";
 import { ContribLogger } from "@playkit-js-contrib/common";
+import { InjectedComponent } from "./components/injected-component/injected-component";
 
 export interface PresetItemOptions {
     playerAPI: PlayerAPI;
@@ -111,14 +112,18 @@ export class PresetItem {
             return this._options.data.renderChild();
         }
 
-        const InjectedComponent = h(KalturaPlayer.ui.components.InjectedComponent, {
-            label: this._options.data.label,
-            fillContainer: this._options.data.fillContainer,
-            onCreate: this._onCreate,
-            onDestroy: this._onDestroy
-        });
+        const {
+            data: { label, fillContainer }
+        } = this._options;
 
-        return InjectedComponent;
+        return (
+            <InjectedComponent
+                label={label}
+                fillContainer={fillContainer || false}
+                onCreate={this._onCreate}
+                onDestroy={this._onDestroy}
+            />
+        );
     };
 
     private _onDestroy = (options: { context?: any; parent: HTMLElement }): void => {
