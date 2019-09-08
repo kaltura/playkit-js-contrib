@@ -23,6 +23,7 @@ export class OverlayManager {
     }
 
     private _overlayContainer: PresetItem | null = null;
+    // TODO change _items to be a Record<OverlayPositions, OverlayItem[]> to support all kind of positions
     private _items: OverlayItem[] = [];
     private _componentRef: ManagedComponent | null = null;
     private _options: OverlayManagerOptions;
@@ -34,6 +35,8 @@ export class OverlayManager {
     } = { canvas: { playerSize: { width: 0, height: 0 }, videoSize: { width: 0, height: 0 } } };
 
     constructor(private options: OverlayManagerOptions) {
+        // TODO add representation
+        // TODO add two place holders, one for each OverlayPositions values.
         this._options = options;
         this._overlayContainer = this.options.presetManager.add({
             label: "overlay-manager",
@@ -49,6 +52,7 @@ export class OverlayManager {
      * initialize new overlay ui item
      * @param item
      */
+    //TODO push new item to relevant position array according to its' OverlayPositions value
     add(data: OverlayItemData): OverlayItem | null {
         const { presetManager } = this._options;
 
@@ -61,6 +65,16 @@ export class OverlayManager {
         const item = new OverlayItem(itemOptions);
         this._items.push(item);
         return item;
+    }
+
+    remove(item: OverlayItem) {
+        let itemIndex = this._items.indexOf(item);
+        if (itemIndex > -1) {
+            this._items[itemIndex].destroy();
+            this._items.splice(itemIndex, 1);
+        } else {
+            console.warn(`couldn't remove ${item} since it wasn't found`);
+        }
     }
 
     /**

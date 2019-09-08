@@ -1,0 +1,65 @@
+.announcementContainerRoot {
+  position: absolute;
+  max-width: 100%;
+  min-width: 270px;
+  padding: 0 16px 8px;
+  height: 88px;
+  bottom: 0;
+  left: 0;
+  transition: all .5s ease;
+}
+
+.announcementContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  opacity: 0.9;
+  border-radius: 4px;
+  background-color: #333333;
+  transition: all .5s ease;
+}
+
+.closeButton {
+  position: absolute;
+  background-color: transparent;
+  padding: 0;
+  border: none;
+  top: 0;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  background-image: url('./assets/close_large.svg');
+  background-repeat: no-repeat;
+}
+
+.closeButton:hover, .closeButton:active {
+  cursor: pointer;
+}
+
+:global {
+  .playkit-size-md {
+    :local {
+      .announcementContainerRoot {
+        height: 68px;
+        min-width: 230px;
+      }
+      .closeButton {
+        top: 8px;
+        right: 8px;
+        width: 10px;
+        height: 10px;
+        background-image: url('./assets/close_small.svg');
+      }
+    }
+  }
+}
+
+:global {
+  .playkit-size-sm, .playkit-size-xs, .playkit-size-ty {
+    :local .announcementContainerRoot {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+  }
+}

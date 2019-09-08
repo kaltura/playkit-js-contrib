@@ -82,8 +82,7 @@ export class ClientApi {
         let data = this._preparePostMultiData(apiRequests);
         let options: AxiosRequestConfig = {
             headers: {
-                "Content-Type": "application/json",
-                responseType: "application/json"
+                "Content-Type": "application/json"
             }
         };
 

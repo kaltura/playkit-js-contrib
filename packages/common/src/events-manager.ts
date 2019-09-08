@@ -1,11 +1,15 @@
-export type Handler = (event?: any) => void;
-export type WildcardHandler = (type?: string, event?: any) => void;
+export type Handler<T> = (event: T) => void;
+export type WildcardHandler = (event: any) => void;
 
-export class EventManager {
-    private _eventListeners: Record<string, Handler[]> = {};
+export interface Event {
+    type: string;
+}
+
+export class EventsManager<T extends Event> {
+    private _eventListeners: Record<string, Handler<any>[]> = {};
     private _wildcardEventListeners: WildcardHandler[] = [];
 
-    on(type: string, handler: Handler): void;
+    on<TEvent extends Event>(type: TEvent["type"], handler: Handler<TEvent>): void;
     on(type: "*", handler: WildcardHandler): void;
     on(type: string, handler: any): void {
         if (type === "*") {
@@ -16,7 +20,7 @@ export class EventManager {
         (this._eventListeners[type] || (this._eventListeners[type] = [])).push(handler);
     }
 
-    off(type: string, handler: Handler): void;
+    off<TEvent extends Event>(type: TEvent["type"], handler: Handler<TEvent>): void;
     off(type: "*", handler: WildcardHandler): void;
     off(type: string, handler: any): void {
         if (type === "*") {
@@ -36,12 +40,12 @@ export class EventManager {
         eventListeners.splice(eventListeners.indexOf(handler) >>> 0, 1);
     }
 
-    emit(type: string, event?: any): void {
-        (this._eventListeners[type] || []).slice().map(handler => {
+    emit(event: T): void {
+        (this._eventListeners[event.type] || []).slice().map(handler => {
             handler(event);
         });
         this._wildcardEventListeners.slice().map(handler => {
-            handler(type, event);
+            handler(event);
         });
     }
 }

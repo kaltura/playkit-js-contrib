@@ -11,7 +11,7 @@ type ChangeData<T extends Cuepoint> = {
     cuePoint: T;
 };
 
-const reasonableSeekThreshold = 2000;
+const DefaultReasonableSeekThreshold = 2000;
 
 export interface Cuepoint {
     id: string;
@@ -19,55 +19,72 @@ export interface Cuepoint {
     endTime?: number;
 }
 
+export interface CuepointEngineOptions {
+    reasonableSeekThreshold: number;
+}
+
+export interface UpdateTimeResponse<T extends Cuepoint> {
+    snapshot?: T[];
+    delta?: {
+        show: T[];
+        hide: T[];
+    };
+}
+
 const logger = getContribLogger({
-	module: 'contrib-common',
-	class: 'CuepointEngine'
+    module: "contrib-common",
+    class: "CuepointEngine"
 });
 
 export class CuepointEngine<T extends Cuepoint> {
-    protected cuepoints: T[];
-
+    protected _cuepoints: T[];
+    private reasonableSeekThreshold: number;
     private isFirstTime = true;
-    protected enabled = false;
+    protected enabled = true;
     private lastHandledTime: number | null = null;
     private lastHandledTimeIndex: number | null = null;
     private nextTimeToHandle: number | null = null;
     private cuepointChanges: ChangeData<T>[] = [];
 
-
-    constructor(cuepoints: T[]) {
-        logger.debug('executed', {
-	        method: 'ctor',
+    constructor(cuepoints: T[], options?: CuepointEngineOptions) {
+        logger.debug("executed", {
+            method: "ctor"
         });
-        this.cuepoints = cuepoints;
+        this.reasonableSeekThreshold = Math.max(
+            DefaultReasonableSeekThreshold,
+            (options && options.reasonableSeekThreshold) || 0
+        );
+        this._cuepoints = cuepoints;
         this.prepareCuepoint();
+    }
+
+    get cuepoints(): T[] {
+        return [...this._cuepoints];
     }
 
     public getSnapshot(time: number): T[] {
         const timeIndex = this.findClosestLastIndexByTime(time);
-	    logger.debug(`create snapshot based on time ${time}`, {
-		    method: 'getSnapshot',
-		    data: {
-			    timeIndex
-		    }
-	    });
+        logger.debug(`create snapshot based on time ${time}`, {
+            method: "getSnapshot",
+            data: {
+                timeIndex
+            }
+        });
         return this.createCuepointSnapshot(timeIndex);
     }
 
     public updateTime(
         currentTime: number,
-        forceSnapshot = false
-    ): {
-        snapshot?: T[];
-        delta?: { show: T[]; hide: T[] };
-    } {
+        forceSnapshot = false,
+        filter?: (item: T) => boolean
+    ): UpdateTimeResponse<T> {
         const { isFirstTime, lastHandledTime, nextTimeToHandle } = this;
 
         if (this.cuepointChanges.length === 0) {
             if (isFirstTime) {
-	            logger.info(`cuepoint list empty. will always return empty snapshot`, {
-		            method: 'updateTime'
-	            });
+                logger.info(`cuepoint list empty. will always return empty snapshot`, {
+                    method: "updateTime"
+                });
                 this.isFirstTime = false;
             }
             return { snapshot: [] };
@@ -78,7 +95,7 @@ export class CuepointEngine<T extends Cuepoint> {
             lastHandledTime !== null &&
             nextTimeToHandle !== null &&
             (lastHandledTime > currentTime ||
-                currentTime - nextTimeToHandle > reasonableSeekThreshold);
+                currentTime - nextTimeToHandle > this.reasonableSeekThreshold);
         const hasChangesToHandle =
             isFirstTime ||
             (this.lastHandledTime !== null && this.lastHandledTime > currentTime) ||
@@ -90,38 +107,41 @@ export class CuepointEngine<T extends Cuepoint> {
         if (!hasChangesToHandle) {
             if (forceSnapshot) {
                 return {
-                    snapshot: this.createCuepointSnapshot(closestChangeIndex)
+                    snapshot: this.createCuepointSnapshot(closestChangeIndex, filter)
                 };
             }
 
             return { delta: this.createEmptyDelta() };
         }
 
-	    logger.debug(`has changes to handle. check if need to return snapshot instead of delta based on provided new time`, {
-		    method: 'updateTime',
-		    data: {
-			    currentTime,
-			    closestChangeIndex,
-			    closestChangeTime,
-			    lastHandledTime,
-			    nextTimeToHandle,
-			    isFirstTime
-		    }
-	    });
+        logger.debug(
+            `has changes to handle. check if need to return snapshot instead of delta based on provided new time`,
+            {
+                method: "updateTime",
+                data: {
+                    currentTime,
+                    closestChangeIndex,
+                    closestChangeTime,
+                    lastHandledTime,
+                    nextTimeToHandle,
+                    isFirstTime
+                }
+            }
+        );
 
         if (isFirstTime || forceSnapshot || userSeeked) {
-	        logger.debug(`some conditions doesn't allow returning delta, return snapshot instead`, {
-		        method: 'updateTime',
-		        data: { isFirstTime, userSeeked, forceSnapshot }
-	        });
+            logger.debug(`some conditions doesn't allow returning delta, return snapshot instead`, {
+                method: "updateTime",
+                data: { isFirstTime, userSeeked, forceSnapshot }
+            });
 
-            const snapshot = this.createCuepointSnapshot(closestChangeIndex);
+            const snapshot = this.createCuepointSnapshot(closestChangeIndex, filter);
             this.updateInternals(closestChangeTime, closestChangeIndex);
 
             return { snapshot };
         }
 
-        const delta = this.createCuepointDelta(closestChangeIndex);
+        const delta = this.createCuepointDelta(closestChangeIndex, filter);
         this.updateInternals(closestChangeTime, closestChangeIndex);
 
         return { delta };
@@ -133,25 +153,25 @@ export class CuepointEngine<T extends Cuepoint> {
             : [];
     }
 
-    private createCuepointSnapshot(targetIndex: number): T[] {
+    private createCuepointSnapshot(targetIndex: number, filter?: (item: T) => boolean): T[] {
         if (
             !this.enabled ||
             targetIndex < 0 ||
             !this.cuepointChanges ||
             this.cuepointChanges.length === 0
         ) {
-	        logger.debug(`resulted with empty snapshot`, {
-		        method: 'createCuepointSnapshot',
-		        data: {
-			        targetIndex,
-			        enabled: this.enabled,
-			        cuepointCount: (this.cuepointChanges || []).length
-		        }
-	        });
+            logger.debug(`resulted with empty snapshot`, {
+                method: "createCuepointSnapshot",
+                data: {
+                    targetIndex,
+                    enabled: this.enabled,
+                    cuepointCount: (this.cuepointChanges || []).length
+                }
+            });
             return [];
         }
 
-        const snapshot: T[] = [];
+        let snapshot: T[] = [];
 
         for (let index = 0; index <= targetIndex; index++) {
             const item = this.cuepointChanges[index];
@@ -167,40 +187,48 @@ export class CuepointEngine<T extends Cuepoint> {
             }
         }
 
-	    logger.debug(`resulted snapshot`, {
-		    method: 'createCuepointSnapshot',
-		    data: { snapshot }
-	    });
+        logger.debug(`resulted snapshot`, {
+            method: "createCuepointSnapshot",
+            data: { snapshot }
+        });
+
+        if (filter) {
+            snapshot = snapshot.filter(filter);
+        }
+
         return snapshot;
     }
 
-    private createCuepointDelta(targetIndex: number): { show: T[]; hide: T[] } {
+    private createCuepointDelta(
+        targetIndex: number,
+        filter?: (item: T) => boolean
+    ): { show: T[]; hide: T[] } {
         if (!this.enabled || !this.cuepointChanges || this.cuepointChanges.length === 0) {
-	        logger.debug(`resulted with empty delta`, {
-		        method: 'createCuepointDelta',
-		        data: {
-			        enabled: this.enabled,
-			        cuepointCount: (this.cuepointChanges || []).length
-		        }
-	        });
+            logger.debug(`resulted with empty delta`, {
+                method: "createCuepointDelta",
+                data: {
+                    enabled: this.enabled,
+                    cuepointCount: (this.cuepointChanges || []).length
+                }
+            });
             return this.createEmptyDelta();
         }
 
         const { lastHandledTimeIndex } = this;
 
         if (lastHandledTimeIndex === null) {
-	        logger.debug(`invalid internal state. resulted with empty delta`, {
-		        method: 'createCuepointDelta'
-	        });
+            logger.debug(`invalid internal state. resulted with empty delta`, {
+                method: "createCuepointDelta"
+            });
             return this.createEmptyDelta();
         }
 
-        const newCuepoint: T[] = [];
-        const removedCuepoint: T[] = [];
+        let newCuepoint: T[] = [];
+        let removedCuepoint: T[] = [];
 
-	    logger.info(`find cuepoint that were added or removed`, {
-		    method: 'createCuepointDelta'
-	    });
+        logger.info(`find cuepoint that were added or removed`, {
+            method: "createCuepointDelta"
+        });
         for (let index = lastHandledTimeIndex + 1; index <= targetIndex; index++) {
             const item = this.cuepointChanges[index];
             const cuepointIndex = newCuepoint.indexOf(item.cuePoint);
@@ -210,33 +238,40 @@ export class CuepointEngine<T extends Cuepoint> {
                 }
             } else {
                 if (cuepointIndex !== -1) {
-	                logger.info(`cuepoint was marked with type ${item.type} at ${
-		                item.time
-		                }. remove from new cuepoint list as it wasn't visible yet`, {
-		                method: 'createCuepointDelta',
-		                data: { cuepoint: item.cuePoint }
-	                });
+                    logger.info(
+                        `cuepoint was marked with type ${item.type} at ${item.time}. remove from new cuepoint list as it wasn't visible yet`,
+                        {
+                            method: "createCuepointDelta",
+                            data: { cuepoint: item.cuePoint }
+                        }
+                    );
 
                     newCuepoint.splice(cuepointIndex, 1);
                 } else if (removedCuepoint.indexOf(item.cuePoint) === -1) {
-	                logger.info(`cuepoint was marked with type ${item.type} at ${
-		                item.time
-		                }. add to removed cuepoint list`, {
-		                method: 'createCuepointDelta',
-		                data: { cuepoint: item.cuePoint }
-	                });
+                    logger.info(
+                        `cuepoint was marked with type ${item.type} at ${item.time}. add to removed cuepoint list`,
+                        {
+                            method: "createCuepointDelta",
+                            data: { cuepoint: item.cuePoint }
+                        }
+                    );
                     removedCuepoint.push(item.cuePoint);
                 }
             }
         }
 
-	    logger.debug(`resulted delta`,  {
-		    method: 'createCuepointDelta',
-		    data: {
-			    newCuepoint,
-			    removedCuepoint
-		    }
-	    });
+        logger.debug(`resulted delta`, {
+            method: "createCuepointDelta",
+            data: {
+                newCuepoint,
+                removedCuepoint
+            }
+        });
+
+        if (filter) {
+            newCuepoint = newCuepoint.filter(filter);
+            removedCuepoint = removedCuepoint.filter(filter);
+        }
 
         return { show: newCuepoint, hide: removedCuepoint };
     }
@@ -258,14 +293,14 @@ export class CuepointEngine<T extends Cuepoint> {
             ? cuepointChanges[cuepointChanges.length - 1].time
             : cuepointChanges[timeIndex + 1].time;
         this.isFirstTime = false;
-	    logger.debug(`update inner state with new time and index`,  {
-		    method: 'updateInternals',
-		    data:  {
-			    lastHandledTime: this.lastHandledTime,
-			    lastHandledTimeIndex: this.lastHandledTimeIndex,
-			    nextTimeToHandle: this.nextTimeToHandle
-		    }
-	    });
+        logger.debug(`update inner state with new time and index`, {
+            method: "updateInternals",
+            data: {
+                lastHandledTime: this.lastHandledTime,
+                lastHandledTimeIndex: this.lastHandledTimeIndex,
+                nextTimeToHandle: this.nextTimeToHandle
+            }
+        });
     }
 
     private createEmptyDelta(): {
@@ -325,7 +360,7 @@ export class CuepointEngine<T extends Cuepoint> {
     }
 
     private prepareCuepoint() {
-        (this.cuepoints || []).forEach(cuepoint => {
+        (this._cuepoints || []).forEach(cuepoint => {
             if (
                 cuepoint.startTime !== null &&
                 typeof cuepoint.startTime !== "undefined" &&
@@ -355,11 +390,11 @@ export class CuepointEngine<T extends Cuepoint> {
             return a.time < b.time ? -1 : a.time === b.time ? 0 : 1;
         });
 
-	    logger.debug(`tracking ${this.cuepointChanges.length} changes`,  {
-		    method: 'prepareCuepoint',
-		    data: {
-			    changes: this.cuepointChanges
-		    }
-	    });
+        logger.debug(`tracking ${this.cuepointChanges.length} changes`, {
+            method: "prepareCuepoint",
+            data: {
+                changes: this.cuepointChanges
+            }
+        });
     }
 }

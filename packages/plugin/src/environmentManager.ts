@@ -4,9 +4,11 @@ import {
     UIManager,
     UpperBarManager,
     KitchenSinkManager,
-    PresetManager
+    PresetManager,
+    AnnouncementManager,
+    AnnouncementManagerOptions
 } from "@playkit-js-contrib/ui";
-import { enableLogIfNeeded } from '@playkit-js-contrib/common';
+import { enableLogIfNeeded } from "@playkit-js-contrib/common";
 
 export interface EnvironmentManagerOptions {
     playerAPI: PlayerAPI;
@@ -30,8 +32,7 @@ export class EnvironmentManager {
     constructor(
         private _playerContribServices: PlayerContribServices,
         private _options: EnvironmentManagerOptions
-    ) {
-    }
+    ) {}
 
     private registerResources() {}
 
@@ -49,6 +50,7 @@ export class EnvironmentManager {
                     upperBarManager: this.upperBarManager,
                     kitchenSinkManager: this.kitchenSinkManager,
                     overlayManager: this.overlayManager,
+                    announcementManager: this.announcementManager
                 };
 
                 return new UIManager(options);
@@ -97,6 +99,16 @@ export class EnvironmentManager {
             };
 
             return new OverlayManager(options);
+        });
+    }
+
+    public get announcementManager(): AnnouncementManager {
+        return AnnouncementManager.fromPlayer(this.playerContribServices, () => {
+            const options: AnnouncementManagerOptions = {
+                overlayManager: this.overlayManager
+            };
+
+            return new AnnouncementManager(options);
         });
     }
 }

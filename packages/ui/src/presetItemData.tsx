@@ -11,6 +11,7 @@ export type PredefinedContainers =
     | { name: "VideoOverlay" }
     | { name: "PresetMiddleArea" }
     | { name: "PlayerOverlay" }
+    | { name: "visibleArea"; isModal: boolean }
     | string;
 
 export enum PresetNames {

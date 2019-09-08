@@ -2,6 +2,6 @@
 
 export * from "./cuepointEngine";
 export * from "./playerContribServices";
-export * from "./eventManager";
+export * from "./events-manager";
 export * from "./common.types";
 export * from "./contrib-logger";

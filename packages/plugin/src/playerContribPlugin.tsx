@@ -7,6 +7,7 @@ export interface ContribConfig {
         ks: string;
         partnerId: number;
         serviceUrl: string;
+        userId?: string;
     };
 }
 
@@ -28,6 +29,7 @@ function hasOnPluginSetup(plugin: any): plugin is OnPluginSetup {
 
 export interface OnMediaLoadConfig {
     entryId: string;
+    entryType: string;
 }
 
 export interface OnMediaLoad {
@@ -77,6 +79,14 @@ export abstract class PlayerContribPlugin extends (KalturaPlayer as any).core.Ba
         return this._environment.presetManager.registerComponents();
     }
 
+    get environment(): EnvironmentManager {
+        return this._environment;
+    }
+
+    get uiManager(): UIManager {
+        return this._environment.uiManager;
+    }
+
     loadMedia(): void {
         this.eventManager.listenOnce(this.player, this.player.Event.MEDIA_LOADED, () => {
             if (!this._wasSetupExecuted) {
@@ -101,7 +111,8 @@ export abstract class PlayerContribPlugin extends (KalturaPlayer as any).core.Ba
             if (hasOnMediaLoad(this)) {
                 try {
                     const config = {
-                        entryId: this.player.config.sources.id
+                        entryId: this.player.config.sources.id,
+                        entryType: this.player.config.sources.type
                     };
 
                     this.onMediaLoad(config);
@@ -142,7 +153,8 @@ export abstract class PlayerContribPlugin extends (KalturaPlayer as any).core.Ba
             server: {
                 ks: this.player.config.session.ks,
                 serviceUrl: this.player.config.provider.env.serviceUrl,
-                partnerId: this.player.config.session.partnerId
+                partnerId: this.player.config.session.partnerId,
+                userId: this.player.config.session.userId
             }
         };
     }

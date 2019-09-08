@@ -14,8 +14,8 @@ module.exports = (env, options) => {
       }
     )],
     resolve: {
-      extensions: [".ts", ".tsx", ".js", ".jsx", ".scss"],
-      modules: [path.resolve(__dirname, "node_modules")],
+      extensions: [".ts", ".tsx", ".js", ".jsx", ".scss", ".svg"],
+      modules: [path.resolve(__dirname, "../../node_modules"), path.resolve(__dirname, "node_modules")],
       symlinks: false
     },
     output: {
@@ -31,6 +31,9 @@ module.exports = (env, options) => {
         {
           test: /\.tsx?$/,
           loader: "ts-loader",
+          options: {
+            configFile: "tsconfig.build.json"
+          },
           exclude: /node_modules/
         },
         {
@@ -51,6 +54,13 @@ module.exports = (env, options) => {
               loader: 'sass-loader'
             }
           ]
+        },
+        {
+          test: /\.svg/,
+          use: {
+            loader: 'svg-url-loader',
+            options: {}
+          }
         }
       ]
     },
