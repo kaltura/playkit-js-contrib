@@ -5,8 +5,8 @@ import {
     UpperBarManager,
     KitchenSinkManager,
     PresetManager,
-    AnnouncementManager,
-    AnnouncementManagerOptions
+    FloatingNotificationManager,
+    FloatingNotificationManagerOptions
 } from "@playkit-js-contrib/ui";
 import { enableLogIfNeeded } from "@playkit-js-contrib/common";
 
@@ -50,7 +50,7 @@ export class EnvironmentManager {
                     upperBarManager: this.upperBarManager,
                     kitchenSinkManager: this.kitchenSinkManager,
                     overlayManager: this.overlayManager,
-                    announcementManager: this.announcementManager
+                    floatingNotificationManager: this.floatingNotificationManager
                 };
 
                 return new UIManager(options);
@@ -102,13 +102,14 @@ export class EnvironmentManager {
         });
     }
 
-    public get announcementManager(): AnnouncementManager {
-        return AnnouncementManager.fromPlayer(this.playerContribServices, () => {
-            const options: AnnouncementManagerOptions = {
+    public get floatingNotificationManager(): FloatingNotificationManager {
+        return FloatingNotificationManager.fromPlayer(this.playerContribServices, () => {
+            const options: FloatingNotificationManagerOptions = {
+                playerApi: this._options.playerAPI,
                 overlayManager: this.overlayManager
             };
 
-            return new AnnouncementManager(options);
+            return new FloatingNotificationManager(options);
         });
     }
 }
