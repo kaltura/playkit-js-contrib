@@ -1,16 +1,16 @@
 import { Component, h } from "preact";
 import { ContribLogger, getContribLogger } from "@playkit-js-contrib/common";
-import { FloatingNotificationContent } from "../../floatingNotificationManager";
-import * as styles from "./_floatingNotification.scss";
+import { BannerContent } from "../../bannerManager";
+import * as styles from "./_banner.scss";
 
-export interface FloatingNotificationProps {
-    content: FloatingNotificationContent;
+export interface BannerProps {
+    content: BannerContent;
 }
 
-export class FloatingNotification extends Component<FloatingNotificationProps> {
+export class Banner extends Component<BannerProps> {
     private _logger: ContribLogger = getContribLogger({
         module: "contrib-ui",
-        class: "FloatingNotification"
+        class: "Banner"
     });
 
     componentDidMount(): void {
@@ -25,7 +25,7 @@ export class FloatingNotification extends Component<FloatingNotificationProps> {
         });
     }
 
-    render({ content }: FloatingNotificationProps) {
+    render({ content }: BannerProps) {
         const { text, title = "Audience asks:", icon = this._defaultIcon() } = content;
 
         this._logger.trace(`render component`, {
@@ -33,17 +33,11 @@ export class FloatingNotification extends Component<FloatingNotificationProps> {
         });
 
         return (
-            <div
-                className={
-                    styles.defaultFloatingNotificationRoot +
-                    " " +
-                    styles.floatingNotificationWrapper
-                }
-            >
+            <div className={styles.defaultBannerRoot + " " + styles.bannerWrapper}>
                 <div className={styles.iconContainer}>
                     <div className={styles.iconWrapper}>{icon}</div>
                 </div>
-                <div className={styles.floatingNotificationBody}>
+                <div className={styles.bannerBody}>
                     <div className={styles.title}>{title}</div>
                     <div className={styles.text}>{text}</div>
                 </div>

@@ -1,10 +1,10 @@
-.defaultFloatingNotificationRoot {
+.defaultBannerRoot {
   max-width: 100%;
   height: 100%;
   transition: all .5s ease;
 }
 
-.floatingNotificationWrapper {
+.bannerWrapper {
   padding: 18px 17px 17px 16px;
 }
 
@@ -34,7 +34,7 @@
   transition: all .5s ease;
 }
 
-.floatingNotificationBody {
+.bannerBody {
   width: calc(100% - 64px);
   height: 100%;
   float: left;
@@ -71,7 +71,7 @@
 :global {
   .playkit-size-md {
     :local {
-      .floatingNotificationWrapper {
+      .bannerWrapper {
         padding: 14px 16px 14px
       }
       .iconContainer {
@@ -88,7 +88,7 @@
         top: calc(50% - 10px);
         background-image: url('./assets/someone_asks_small.svg');
       }
-      .floatingNotificationBody {
+      .bannerBody {
         width: calc(100% - 44px);
       }
       .title {

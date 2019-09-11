@@ -3,33 +3,30 @@ import { OverlayManager } from "./overlayManager";
 import { PlayerAPI, PlayerContribServices } from "@playkit-js-contrib/common";
 import { OverlayItemProps, OverlayPositions, OverlayUIModes } from "./overlayItemData";
 import { ComponentChild, h } from "preact";
-import { FloatingNotification } from "./components/floating-notification";
-import { FloatingNotificationContainer } from "./components/floating-notification-container";
-import { FloatingNotificationContainerProps } from "./components/floating-notification-container/floatingNotificationContainer";
+import { Banner } from "./components/banner";
+import { BannerContainer } from "./components/banner-container";
+import { BannerContainerProps } from "./components/banner-container/bannerContainer";
 import { getPlayerSize } from "./playerUtils";
 
-export interface FloatingNotificationContent {
+export interface BannerContent {
     text: string;
     title?: string;
     icon?: any;
 }
 
-export interface FloatingNotificationOptions {
-    content: FloatingNotificationContent;
+export interface BannerOptions {
+    content: BannerContent;
     autoClose?: boolean;
     duration?: number;
-    renderContent?: (
-        content: FloatingNotificationContent,
-        overlayItemProps: OverlayItemProps
-    ) => ComponentChild;
+    renderContent?: (content: BannerContent, overlayItemProps: OverlayItemProps) => ComponentChild;
 }
 
-export interface FloatingNotificationManagerOptions {
+export interface BannerManagerOptions {
     overlayManager: OverlayManager;
     playerApi: PlayerAPI;
 }
 
-export interface FloatingNotificationState {
+export interface BannerState {
     visibilityMode: VisibilityMode;
 }
 
@@ -38,39 +35,36 @@ export enum VisibilityMode {
     HIDDEN = "HIDDEN"
 }
 
-const ResourceToken: string = "FloatingNotificationManager-v1";
+const ResourceToken: string = "BannerManager-v1";
 const MinPlayerWidth: number = 480;
 const DefaultDuration: number = 60 * 1000;
 const MinDuration: number = 5 * 1000;
 
 /**
- * FloatingNotification manager manages the display (add / remove) of a single floatingNotification in the player.
+ * banner manager manages the display (add / remove) of a single banner in the player.
  */
-export class FloatingNotificationManager {
-    static fromPlayer(
-        playerContribServices: PlayerContribServices,
-        creator: () => FloatingNotificationManager
-    ) {
+export class BannerManager {
+    static fromPlayer(playerContribServices: PlayerContribServices, creator: () => BannerManager) {
         return playerContribServices.register(ResourceToken, 1, creator);
     }
 
-    private _options: FloatingNotificationManagerOptions;
+    private _options: BannerManagerOptions;
     private _overlayItem: OverlayItem | null = null;
     private _timerSubscription: any | undefined = undefined;
 
-    constructor(private options: FloatingNotificationManagerOptions) {
+    constructor(private options: BannerManagerOptions) {
         this._options = options;
     }
 
-    add(props: FloatingNotificationOptions): FloatingNotificationState {
+    add(props: BannerOptions): BannerState {
         if (this._overlayItem) {
             this.remove();
         }
         this._overlayItem = this._options.overlayManager.add({
-            label: "floatingNotification",
+            label: "Banner",
             mode: OverlayUIModes.Immediate,
             position: OverlayPositions.VisibleArea,
-            renderContent: this._createRenderFloatingNotification(props, {
+            renderContent: this._createRenderBanner(props, {
                 onClose: this._handleCloseEvent.bind(this)
             })
         });
@@ -92,19 +86,19 @@ export class FloatingNotificationManager {
         this.remove();
     }
 
-    private _createRenderFloatingNotification(
-        { content, renderContent }: FloatingNotificationOptions,
-        { onClose }: FloatingNotificationContainerProps
+    private _createRenderBanner(
+        { content, renderContent }: BannerOptions,
+        { onClose }: BannerContainerProps
     ) {
         function _renderContent(overlayItemProps: OverlayItemProps) {
             return (
-                <FloatingNotificationContainer onClose={onClose}>
+                <BannerContainer onClose={onClose}>
                     {renderContent ? (
                         renderContent(content, overlayItemProps)
                     ) : (
-                        <FloatingNotification content={content} />
+                        <Banner content={content} />
                     )}
-                </FloatingNotificationContainer>
+                </BannerContainer>
             );
         }
         return _renderContent;
@@ -121,7 +115,7 @@ export class FloatingNotificationManager {
         );
     }
 
-    private _getState(): FloatingNotificationState {
+    private _getState(): BannerState {
         let playerSize = getPlayerSize(this._options.playerApi.kalturaPlayer);
         return {
             visibilityMode:

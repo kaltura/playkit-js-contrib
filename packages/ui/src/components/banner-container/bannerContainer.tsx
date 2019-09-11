@@ -1,15 +1,15 @@
 import { Component, h } from "preact";
 import { ContribLogger, getContribLogger } from "@playkit-js-contrib/common";
-import * as styles from "./_floatingNotificationContainer.scss";
+import * as styles from "./_bannerContainer.scss";
 
-export interface FloatingNotificationContainerProps {
+export interface BannerContainerProps {
     onClose: () => void;
 }
 
-export class FloatingNotificationContainer extends Component<FloatingNotificationContainerProps> {
+export class BannerContainer extends Component<BannerContainerProps> {
     private _logger: ContribLogger = getContribLogger({
         module: "contrib-ui",
-        class: "FloatingNotificationContainer"
+        class: "BannerContainer"
     });
 
     componentDidMount(): void {
@@ -24,13 +24,13 @@ export class FloatingNotificationContainer extends Component<FloatingNotificatio
         });
     }
 
-    render(props: FloatingNotificationContainerProps) {
+    render(props: BannerContainerProps) {
         this._logger.trace(`render component`, {
             method: "render"
         });
         return (
-            <div className={styles.floatingNotificationContainerRoot}>
-                <div className={styles.floatingNotificationContainer}>
+            <div className={styles.bannerContainerRoot}>
+                <div className={styles.bannerContainer}>
                     <button className={styles.closeButton} onClick={props.onClose} />
                     {this.props.children}
                 </div>

@@ -1,7 +1,7 @@
 /// <reference path="./global.d.ts" />
 
 export * from "./uiManager";
-export * from "./floatingNotificationManager";
+export * from "./bannerManager";
 export * from "./overlayItem";
 export * from "./overlayItemData";
 export * from "./overlayManager";

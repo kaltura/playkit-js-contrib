@@ -3,14 +3,14 @@ import { OverlayManager } from "./overlayManager";
 import { KitchenSinkManager } from "./kitchenSinkManager";
 import { PlayerContribServices } from "@playkit-js-contrib/common";
 import { PresetManager } from "./presetManager";
-import { FloatingNotificationManager } from "./floatingNotificationManager";
+import { BannerManager } from "./bannerManager";
 
 export interface UIManagerOptions {
     upperBarManager: UpperBarManager;
     overlayManager: OverlayManager;
     kitchenSinkManager: KitchenSinkManager;
     presetManager: PresetManager;
-    floatingNotificationManager: FloatingNotificationManager;
+    bannerManager: BannerManager;
 }
 
 const ResourceToken = "UIManager-v1";
@@ -34,8 +34,8 @@ export class UIManager {
         return this._options.kitchenSinkManager;
     }
 
-    get floatingNotification(): FloatingNotificationManager {
-        return this._options.floatingNotificationManager;
+    get banner(): BannerManager {
+        return this._options.bannerManager;
     }
 
     get playerUIComponents(): { add: PresetManager["add"] } {
@@ -48,7 +48,6 @@ export class UIManager {
         this._options.upperBarManager && this._options.upperBarManager.reset();
         this._options.overlayManager && this._options.overlayManager.reset();
         this._options.kitchenSinkManager && this._options.kitchenSinkManager.reset();
-        this._options.floatingNotificationManager &&
-            this._options.floatingNotificationManager.reset();
+        this._options.bannerManager && this._options.bannerManager.reset();
     }
 }
