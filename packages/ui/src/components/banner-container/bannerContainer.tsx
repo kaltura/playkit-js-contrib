@@ -1,15 +1,15 @@
 import { Component, h } from "preact";
 import { ContribLogger, getContribLogger } from "@playkit-js-contrib/common";
-import * as styles from "./_announcementContainer.scss";
+import * as styles from "./_bannerContainer.scss";
 
-export interface AnnouncementContainerProps {
+export interface BannerContainerProps {
     onClose: () => void;
 }
 
-export class AnnouncementContainer extends Component<AnnouncementContainerProps> {
+export class BannerContainer extends Component<BannerContainerProps> {
     private _logger: ContribLogger = getContribLogger({
         module: "contrib-ui",
-        class: "AnnouncementContainer"
+        class: "BannerContainer"
     });
 
     componentDidMount(): void {
@@ -24,13 +24,13 @@ export class AnnouncementContainer extends Component<AnnouncementContainerProps>
         });
     }
 
-    render(props: AnnouncementContainerProps) {
+    render(props: BannerContainerProps) {
         this._logger.trace(`render component`, {
             method: "render"
         });
         return (
-            <div className={styles.announcementContainerRoot}>
-                <div className={styles.announcementContainer}>
+            <div className={styles.bannerContainerRoot}>
+                <div className={styles.bannerContainer}>
                     <button className={styles.closeButton} onClick={props.onClose} />
                     {this.props.children}
                 </div>

@@ -1,70 +1,77 @@
 import { OverlayItem } from "./overlayItem";
 import { OverlayManager } from "./overlayManager";
-import { PlayerContribServices } from "@playkit-js-contrib/common";
+import { PlayerAPI, PlayerContribServices } from "@playkit-js-contrib/common";
 import { OverlayItemProps, OverlayPositions, OverlayUIModes } from "./overlayItemData";
 import { ComponentChild, h } from "preact";
-import { Announcement } from "./components/announcement";
-import { AnnouncementContainer } from "./components/announcement-container";
-import { AnnouncementContainerProps } from "./components/announcement-container/announcementContainer";
+import { Banner } from "./components/banner";
+import { BannerContainer } from "./components/banner-container";
+import { BannerContainerProps } from "./components/banner-container/bannerContainer";
+import { getPlayerSize } from "./playerUtils";
 
-export interface AnnouncementContent {
+export interface BannerContent {
     text: string;
     title?: string;
     icon?: any;
 }
 
-export interface AnnouncementOptions {
-    content: AnnouncementContent;
+export interface BannerOptions {
+    content: BannerContent;
     autoClose?: boolean;
     duration?: number;
-    renderContent?: (
-        content: AnnouncementContent,
-        overlayItemProps: OverlayItemProps
-    ) => ComponentChild;
+    renderContent?: (content: BannerContent, overlayItemProps: OverlayItemProps) => ComponentChild;
 }
 
-export interface AnnouncementManagerOptions {
+export interface BannerManagerOptions {
     overlayManager: OverlayManager;
+    playerApi: PlayerAPI;
 }
 
-const ResourceToken: string = "AnnouncementManager-v1";
+export interface BannerState {
+    visibilityMode: VisibilityMode;
+}
+
+export enum VisibilityMode {
+    VISIBLE = "VISIBLE",
+    HIDDEN = "HIDDEN"
+}
+
+const ResourceToken: string = "BannerManager-v1";
+const MinPlayerWidth: number = 480;
 const DefaultDuration: number = 60 * 1000;
 const MinDuration: number = 5 * 1000;
 
 /**
- * Announcement manager manages the display (add / remove) of a single announcement in the player.
+ * banner manager manages the display (add / remove) of a single banner in the player.
  */
-export class AnnouncementManager {
-    static fromPlayer(
-        playerContribServices: PlayerContribServices,
-        creator: () => AnnouncementManager
-    ) {
+export class BannerManager {
+    static fromPlayer(playerContribServices: PlayerContribServices, creator: () => BannerManager) {
         return playerContribServices.register(ResourceToken, 1, creator);
     }
 
-    private _options: AnnouncementManagerOptions;
+    private _options: BannerManagerOptions;
     private _overlayItem: OverlayItem | null = null;
     private _timerSubscription: any | undefined = undefined;
 
-    constructor(private options: AnnouncementManagerOptions) {
+    constructor(private options: BannerManagerOptions) {
         this._options = options;
     }
 
-    add(props: AnnouncementOptions) {
+    add(props: BannerOptions): BannerState {
         if (this._overlayItem) {
             this.remove();
         }
         this._overlayItem = this._options.overlayManager.add({
-            label: "announcement",
+            label: "Banner",
             mode: OverlayUIModes.Immediate,
             position: OverlayPositions.VisibleArea,
-            renderContent: this._createRenderAnnouncement(props, {
+            renderContent: this._createRenderBanner(props, {
                 onClose: this._handleCloseEvent.bind(this)
             })
         });
         if (props.autoClose) {
             this._startDurationTimer(props.duration);
         }
+        return this._getState();
     }
 
     remove() {
@@ -79,19 +86,19 @@ export class AnnouncementManager {
         this.remove();
     }
 
-    private _createRenderAnnouncement(
-        { content, renderContent }: AnnouncementOptions,
-        { onClose }: AnnouncementContainerProps
+    private _createRenderBanner(
+        { content, renderContent }: BannerOptions,
+        { onClose }: BannerContainerProps
     ) {
         function _renderContent(overlayItemProps: OverlayItemProps) {
             return (
-                <AnnouncementContainer onClose={onClose}>
+                <BannerContainer onClose={onClose}>
                     {renderContent ? (
                         renderContent(content, overlayItemProps)
                     ) : (
-                        <Announcement content={content} />
+                        <Banner content={content} />
                     )}
-                </AnnouncementContainer>
+                </BannerContainer>
             );
         }
         return _renderContent;
@@ -106,5 +113,15 @@ export class AnnouncementManager {
             this.remove.bind(this),
             Math.max(MinDuration, displayDuration)
         );
+    }
+
+    private _getState(): BannerState {
+        let playerSize = getPlayerSize(this._options.playerApi.kalturaPlayer);
+        return {
+            visibilityMode:
+                !playerSize || playerSize.width < MinPlayerWidth
+                    ? VisibilityMode.HIDDEN
+                    : VisibilityMode.VISIBLE
+        };
     }
 }
