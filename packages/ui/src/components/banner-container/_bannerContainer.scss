@@ -1,4 +1,4 @@
-.announcementContainerRoot {
+.bannerContainerRoot {
   position: absolute;
   max-width: 100%;
   min-width: 270px;
@@ -9,7 +9,7 @@
   transition: all .5s ease;
 }
 
-.announcementContainer {
+.bannerContainer {
   position: relative;
   width: 100%;
   height: 100%;
@@ -39,7 +39,7 @@
 :global {
   .playkit-size-md {
     :local {
-      .announcementContainerRoot {
+      .bannerContainerRoot {
         height: 68px;
         min-width: 230px;
       }
@@ -56,7 +56,7 @@
 
 :global {
   .playkit-size-sm, .playkit-size-xs, .playkit-size-ty {
-    :local .announcementContainerRoot {
+    :local .bannerContainerRoot {
       display: none;
       width: 0;
       height: 0;
