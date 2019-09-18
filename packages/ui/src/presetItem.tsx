@@ -16,7 +16,10 @@ export interface KalturaPlayerPresetComponent {
     label: string;
     presets: string[];
     container: string;
-    render: () => ManagedComponent;
+    get: () => () => ManagedComponent;
+    afterComponent?: string;
+    beforeComponent?: string;
+    replaceComponent?: string;
 }
 
 function getPlayerPresetContainer(container: PredefinedContainers): string {
@@ -82,12 +85,11 @@ export class PresetItem {
             return null;
         }
 
-        // TODO sakal change in @playkit-js/playkit-js-ui render to renderChild
-        const result: any = {
+        const result: KalturaPlayerPresetComponent = {
             label: this._options.data.label,
             presets: this._options.data.presets,
             container: containerName,
-            render: this._render
+            get: this._render
         };
 
         if (relativeTo) {
