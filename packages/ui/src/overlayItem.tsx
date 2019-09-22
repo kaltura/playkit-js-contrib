@@ -61,6 +61,14 @@ export class OverlayItem {
         this._componentRef.update();
     };
 
+    public update() {
+        if (!this._componentRef) {
+            return;
+        }
+
+        this._componentRef.update();
+    }
+
     /**
      * destory the ui item
      */
