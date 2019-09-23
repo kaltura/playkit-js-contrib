@@ -10,10 +10,17 @@ export interface ToastsManagerOptions {
     overlayManager: OverlayManager;
 }
 
+export enum ToastSeverity {
+    INFO = "INFO",
+    WARN = "WARN",
+    ERROR = "ERROR"
+}
+
 export interface ToastItemData {
     title: string;
     text: string;
     icon: any;
+    severity: ToastSeverity;
     duration: number;
     onClick: () => void;
 }

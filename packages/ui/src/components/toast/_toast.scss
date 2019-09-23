@@ -5,9 +5,20 @@
   height: 42px;
   border-radius: 4px;
   background-color: #222222;
-  border-left-color: #01accd;
   border-left-style: solid;
   border-left-width: 2px;
+}
+
+.infoToast {
+  border-left-color: #01accd;
+}
+
+.warnToast {
+  border-left-color: #cdc12d;
+}
+
+.errorToast {
+  border-left-color: #cd1008;
 }
 
 .closeButton {

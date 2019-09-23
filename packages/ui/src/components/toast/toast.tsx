@@ -1,11 +1,13 @@
 import { Component, h } from "preact";
 import * as styles from "./_toast.scss";
+import { ToastSeverity } from "../../toastsManager";
 
 export interface ToastProps {
     id: string;
     title: string;
     text: string;
     icon: any;
+    severity: ToastSeverity;
     onClose: (id: string) => void;
     onClick: () => void;
 }
@@ -29,11 +31,26 @@ export class Toast extends Component<ToastProps, ToastState> {
         this.props.onClose(this.props.id);
     };
 
+    private _getToastSeverityClass(): string {
+        switch (this.props.severity) {
+            case ToastSeverity.WARN:
+                return styles.warnToast;
+            case ToastSeverity.ERROR:
+                return styles.errorToast;
+            default:
+                //info
+                return styles.infoToast;
+        }
+    }
+
     render() {
         const { text, title, icon, onClick } = this.props;
 
         return (
-            <div className={styles.toastWrapper} onClick={onClick}>
+            <div
+                className={styles.toastWrapper + " " + this._getToastSeverityClass()}
+                onClick={onClick}
+            >
                 <button className={styles.closeButton} onClick={this._onClose}></button>
                 <div className={styles.iconContainer}>
                     <div className={styles.iconWrapper}>{icon}</div>
