@@ -4,6 +4,7 @@ import { KitchenSinkExpandModes, KitchenSinkPositions } from "../../kitchenSinkI
 
 export interface KitchenSinkAdapterProps {
     updateSidePanelMode: (position: SidePanelPositions, sidePanelMode: SidePanelModes) => void;
+    sidePanelsModes?: any;
 }
 
 export enum SidePanelPositions {
@@ -19,8 +20,14 @@ export enum SidePanelModes {
     OverTheVideo = "OVER_THE_VIDEO"
 }
 
+const mapStateToProps = state => {
+    return {
+        sidePanelsModes: state.shell.sidePanelsModes
+    };
+};
+
 @KalturaPlayer.ui.redux.connect(
-    null,
+    mapStateToProps,
     KalturaPlayer.ui.utils.bindActions(KalturaPlayer.ui.reducers.shell.actions),
     null,
     {
@@ -55,36 +62,43 @@ export class KitchenSinkAdapter extends KalturaPlayer.ui.preact.Component<Kitche
     }
 
     public expand(position: KitchenSinkPositions, mode: KitchenSinkExpandModes) {
-        const sidePanelPosition =
-            position === KitchenSinkPositions.Top
-                ? SidePanelPositions.Top
-                : position === KitchenSinkPositions.Bottom
-                ? SidePanelPositions.Bottom
-                : position === KitchenSinkPositions.Right
-                ? SidePanelPositions.Right
-                : SidePanelPositions.Left;
+        this.props.updateSidePanelMode(
+            this._convertToAdapterPositionEnum(position),
+            this._convertToAdapterModeEnum(mode)
+        );
+    }
 
-        const sidePanelMode =
-            mode === KitchenSinkExpandModes.AlongSideTheVideo
-                ? SidePanelModes.AlongSideTheVideo
-                : SidePanelModes.OverTheVideo;
-
-        this.props.updateSidePanelMode(sidePanelPosition, sidePanelMode);
+    public getSidePanelMode(position: KitchenSinkPositions): KitchenSinkExpandModes {
+        if (!this.props.sidePanelsModes) return KitchenSinkExpandModes.Hidden;
+        return this.props.sidePanelsModes[this._convertToAdapterPositionEnum(position)];
     }
 
     public collapse(position: KitchenSinkPositions) {
-        const sidePanelPosition =
-            position === KitchenSinkPositions.Top
-                ? SidePanelPositions.Top
-                : position === KitchenSinkPositions.Bottom
-                ? SidePanelPositions.Bottom
-                : position === KitchenSinkPositions.Right
-                ? SidePanelPositions.Right
-                : SidePanelPositions.Left;
-        this.props.updateSidePanelMode(sidePanelPosition, SidePanelModes.Hidden);
+        this.props.updateSidePanelMode(
+            this._convertToAdapterPositionEnum(position),
+            SidePanelModes.Hidden
+        );
     }
 
     render(props: any) {
         return null;
+    }
+
+    private _convertToAdapterPositionEnum(position: KitchenSinkPositions): SidePanelPositions {
+        return position === KitchenSinkPositions.Top
+            ? SidePanelPositions.Top
+            : position === KitchenSinkPositions.Bottom
+            ? SidePanelPositions.Bottom
+            : position === KitchenSinkPositions.Right
+            ? SidePanelPositions.Right
+            : SidePanelPositions.Left;
+    }
+
+    private _convertToAdapterModeEnum(mode: KitchenSinkExpandModes): SidePanelModes {
+        return mode === KitchenSinkExpandModes.AlongSideTheVideo
+            ? SidePanelModes.AlongSideTheVideo
+            : mode === KitchenSinkExpandModes.OverTheVideo
+            ? SidePanelModes.OverTheVideo
+            : SidePanelModes.Hidden;
     }
 }

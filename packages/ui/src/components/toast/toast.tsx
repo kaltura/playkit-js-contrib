@@ -21,12 +21,13 @@ export class Toast extends Component<ToastProps, ToastState> {
         isShown: true
     };
 
-    private _onClick = () => {
+    private _onClick = e => {
         this.props.onClick();
-        this._onClose();
+        this._onClose(e);
     };
 
-    private _onClose = () => {
+    private _onClose = e => {
+        e.stopPropagation();
         this.setState({ isShown: false });
         this.props.onClose(this.props.id);
     };
@@ -44,12 +45,12 @@ export class Toast extends Component<ToastProps, ToastState> {
     }
 
     render() {
-        const { text, title, icon, onClick } = this.props;
+        const { text, title, icon } = this.props;
 
         return (
             <div
                 className={styles.toastWrapper + " " + this._getToastSeverityClass()}
-                onClick={onClick}
+                onClick={this._onClick}
             >
                 <button className={styles.closeButton} onClick={this._onClose}></button>
                 <div className={styles.iconContainer}>

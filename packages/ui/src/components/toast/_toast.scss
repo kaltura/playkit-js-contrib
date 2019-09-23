@@ -32,6 +32,10 @@
   background-repeat: no-repeat;
   border: none;
   background-image: url("./assets/close.svg");
+
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .iconContainer {
