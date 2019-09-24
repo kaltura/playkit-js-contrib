@@ -4,7 +4,7 @@ import { KitchenSinkExpandModes, KitchenSinkPositions } from "../../kitchenSinkI
 
 export interface KitchenSinkAdapterProps {
     updateSidePanelMode: (position: SidePanelPositions, sidePanelMode: SidePanelModes) => void;
-    sidePanelsModes?: any;
+    sidePanelsModes?: SidePanelModes;
 }
 
 export enum SidePanelPositions {

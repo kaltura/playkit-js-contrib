@@ -11,9 +11,9 @@ export interface ToastsManagerOptions {
 }
 
 export enum ToastSeverity {
-    INFO = "INFO",
-    WARN = "WARN",
-    ERROR = "ERROR"
+    Info = "Info",
+    Warn = "Warn",
+    Error = "Error"
 }
 
 export interface ToastItemData {
