@@ -12,6 +12,7 @@ export interface ToastsManagerOptions {
 
 export enum ToastSeverity {
     Info = "Info",
+    Success = "Success",
     Warn = "Warn",
     Error = "Error"
 }

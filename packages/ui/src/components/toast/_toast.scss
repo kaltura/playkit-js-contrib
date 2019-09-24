@@ -10,15 +10,19 @@
 }
 
 .infoToast {
-  border-left-color: #01accd;
+  border-left-color: #01ACCD;
+}
+
+.successToast {
+  border-left-color: #009E48;
 }
 
 .warnToast {
-  border-left-color: #cdc12d;
+  border-left-color: #F9A71B;
 }
 
 .errorToast {
-  border-left-color: #cd1008;
+  border-left-color: #E7585D;
 }
 
 .closeButton {

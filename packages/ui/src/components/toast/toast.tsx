@@ -34,6 +34,8 @@ export class Toast extends Component<ToastProps, ToastState> {
 
     private _getToastSeverityClass(): string {
         switch (this.props.severity) {
+            case ToastSeverity.Success:
+                return styles.successToast;
             case ToastSeverity.Warn:
                 return styles.warnToast;
             case ToastSeverity.Error:
