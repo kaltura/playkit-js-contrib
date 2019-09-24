@@ -5,9 +5,9 @@ export interface KitchenSinkContentRendererProps {
 }
 
 export enum KitchenSinkExpandModes {
-    AlongSideTheVideo = "ALONG_SIDE_THE_VIDEO",
-    Hidden = "HIDDEN",
-    OverTheVideo = "OVER_THE_VIDEO"
+    AlongSideTheVideo = "AlongSideTheVideo",
+    Hidden = "Hidden",
+    OverTheVideo = "OverTheVideo"
 }
 
 export enum KitchenSinkPositions {

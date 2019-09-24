@@ -70,7 +70,9 @@ export class KitchenSinkAdapter extends KalturaPlayer.ui.preact.Component<Kitche
 
     public getSidePanelMode(position: KitchenSinkPositions): KitchenSinkExpandModes {
         if (!this.props.sidePanelsModes) return KitchenSinkExpandModes.Hidden;
-        return this.props.sidePanelsModes[this._convertToAdapterPositionEnum(position)];
+        return this._convertToKitchenSinkModeEnum(
+            this.props.sidePanelsModes[this._convertToAdapterPositionEnum(position)]
+        );
     }
 
     public collapse(position: KitchenSinkPositions) {
@@ -100,5 +102,13 @@ export class KitchenSinkAdapter extends KalturaPlayer.ui.preact.Component<Kitche
             : mode === KitchenSinkExpandModes.OverTheVideo
             ? SidePanelModes.OverTheVideo
             : SidePanelModes.Hidden;
+    }
+
+    private _convertToKitchenSinkModeEnum(mode: SidePanelModes): KitchenSinkExpandModes {
+        return mode === SidePanelModes.AlongSideTheVideo
+            ? KitchenSinkExpandModes.AlongSideTheVideo
+            : mode === SidePanelModes.OverTheVideo
+            ? KitchenSinkExpandModes.OverTheVideo
+            : KitchenSinkExpandModes.Hidden;
     }
 }
