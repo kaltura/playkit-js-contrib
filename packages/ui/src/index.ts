@@ -2,6 +2,7 @@
 
 export * from "./uiManager";
 export * from "./bannerManager";
+export * from "./toastsManager";
 export * from "./overlayItem";
 export * from "./overlayItemData";
 export * from "./overlayManager";
