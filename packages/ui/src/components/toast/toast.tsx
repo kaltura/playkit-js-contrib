@@ -55,11 +55,11 @@ export class Toast extends Component<ToastProps, ToastState> {
                 onClick={this._onClick}
             >
                 <button className={styles.closeButton} onClick={this._onClose}></button>
-                <div className={styles.iconContainer}>
-                    <div className={styles.iconWrapper}>{icon}</div>
-                </div>
+                <div className={styles.title}>{title}</div>
                 <div className={styles.toastBody}>
-                    <div className={styles.title}>{title}</div>
+                    <div className={styles.iconContainer}>
+                        <div className={styles.iconWrapper}>{icon}</div>
+                    </div>
                     <div className={styles.text}>{text}</div>
                 </div>
             </div>
