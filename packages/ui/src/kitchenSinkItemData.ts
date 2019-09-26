@@ -1,4 +1,5 @@
 import { ComponentChild } from "preact";
+import { KitchenSinkAdapter } from "./components/kitchen-sink-adapter";
 
 export interface KitchenSinkContentRendererProps {
     onClose: () => void;
