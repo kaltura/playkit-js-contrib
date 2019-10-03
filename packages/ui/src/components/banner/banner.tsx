@@ -2,7 +2,6 @@ import { Component, h } from "preact";
 import { ContribLogger, getContribLogger } from "@playkit-js-contrib/common";
 import { BannerContent } from "../../bannerManager";
 import * as styles from "./_banner.scss";
-import { LinkifyString } from "../../../../linkify/src";
 
 export interface BannerProps {
     content: BannerContent;
@@ -40,9 +39,7 @@ export class Banner extends Component<BannerProps> {
                 </div>
                 <div className={styles.bannerBody}>
                     <div className={styles.title}>{title}</div>
-                    <div className={styles.text}>
-                        <LinkifyString htmlString={text} />
-                    </div>
+                    <div className={styles.text}>{text}</div>
                 </div>
             </div>
         );
