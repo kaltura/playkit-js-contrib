@@ -3,7 +3,7 @@ import * as LinkifyIt from "linkify-it";
 import defaultComponentRenderer from "./decorators/defaultComponentRenderer";
 
 export interface LinkifyStringProps {
-    htmlString: string;
+    text: string;
     componentRenderer: (href: string, text: string, key: number) => ComponentChild;
 }
 
@@ -14,8 +14,8 @@ export class LinkifyString extends Component<LinkifyStringProps> {
 
     private _linkify: any = new LinkifyIt();
 
-    private parseString(inputString: string): Array<any> | string {
-        if (inputString === "" || inputString === null) {
+    private _parseString(inputString: string): Array<ComponentChild> | string {
+        if ((inputString || "").trim().length === 0) {
             return "";
         }
 
@@ -53,6 +53,6 @@ export class LinkifyString extends Component<LinkifyStringProps> {
     }
 
     render() {
-        return <span>{this.parseString(this.props.htmlString)}</span>;
+        return <span>{this._parseString(this.props.text)}</span>;
     }
 }
