@@ -37,7 +37,7 @@ export class KitchenSinkAdapter extends KalturaPlayer.ui.preact.Component<Kitche
     componentDidMount(): void {
         this._logger = getContribLogger({
             module: "contrib-ui",
-            class: "KitchenSinkManager"
+            class: "KitchenSinkAdapter"
         });
         this._logger.info(`mount component`, {
             method: "componentDidMount"

@@ -31,22 +31,23 @@ function getPlayerPresetContainer(container: PredefinedContainers): string {
         return `BottomBar${container.position}Controls`;
     }
     if (container.name === "TopBar") {
-        return `top-bar__${container.position}-controls`;
+        return `TopBar${container.position}Controls`;
     }
     if (container.name === "SidePanel") {
-        return `side-panel-${container.position}`;
+        return `SidePanel${container.position}`;
     }
-    if (container.name === "PresetOverlay") {
-        return "PresetOverlay";
+
+    if (container.name === "PresetArea") {
+        return "PresetArea";
     }
-    if (container.name === "VideoOverlay") {
-        return "VideoOverlay";
+    if (container.name === "VideoArea") {
+        return "VideoArea";
     }
-    if (container.name === "PlayerOverlay") {
-        return "VideoOverlay";
+    if (container.name === "PlayerArea") {
+        return "PlayerArea";
     }
-    if (container.name === "PresetMiddleArea") {
-        return "PresetMiddleArea";
+    if (container.name === "InteractiveArea") {
+        return "InteractiveArea";
     }
     return "";
 }

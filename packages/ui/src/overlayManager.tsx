@@ -1,13 +1,11 @@
 import { OverlayItem } from "./overlayItem";
-import { OverlayItemData, OverlayItemProps, OverlayUIModes } from "./overlayItemData";
+import { OverlayItemData, OverlayItemProps, OverlayPositions } from "./overlayItemData";
 import { PresetManager } from "./presetManager";
 import { PlayerAPI, PlayerContribServices } from "@playkit-js-contrib/common";
 import { PresetNames } from "./presetItemData";
-import { PresetItem } from "./presetItem";
 import { ComponentChild, h } from "preact";
 import { PlayerSize, VideoSize } from "./common.types";
 import { getPlayerSize, getVideoSize } from "./playerUtils";
-import { OverlayContainer } from "./components/overlay-container";
 import { ManagedComponent } from "./components/managed-component";
 
 export interface OverlayManagerOptions {
@@ -22,10 +20,16 @@ export class OverlayManager {
         return playerContribServices.register(ResourceToken, 1, creator);
     }
 
-    private _overlayContainer: PresetItem | null = null;
-    // TODO change _items to be a Record<OverlayPositions, OverlayItem[]> to support all kind of positions
-    private _items: OverlayItem[] = [];
-    private _componentRef: ManagedComponent | null = null;
+    private _items: Record<OverlayPositions, OverlayItem[]> = {
+        [OverlayPositions.VideoArea]: [],
+        [OverlayPositions.InteractiveArea]: [],
+        [OverlayPositions.PresetArea]: []
+    };
+    private _componentRef: Record<OverlayPositions, ManagedComponent | null> = {
+        [OverlayPositions.InteractiveArea]: null,
+        [OverlayPositions.VideoArea]: null,
+        [OverlayPositions.PresetArea]: null,
+    };
     private _options: OverlayManagerOptions;
     private _cache: {
         canvas: {
@@ -35,14 +39,26 @@ export class OverlayManager {
     } = { canvas: { playerSize: { width: 0, height: 0 }, videoSize: { width: 0, height: 0 } } };
 
     constructor(private options: OverlayManagerOptions) {
-        // TODO add representation
-        // TODO add two place holders, one for each OverlayPositions values.
         this._options = options;
-        this._overlayContainer = this.options.presetManager.add({
+        this.options.presetManager.add({
             label: "overlay-manager",
             presets: [PresetNames.Playback, PresetNames.Live],
-            container: { name: "VideoOverlay" },
-            renderChild: this._renderChild
+            container: { name: "PresetArea" },
+            renderChild: () => this._renderChild(OverlayPositions.PresetArea)
+        });
+
+        this.options.presetManager.add({
+            label: "overlay-manager",
+            presets: [PresetNames.Playback, PresetNames.Live],
+            container: { name: "VideoArea" },
+            renderChild: () => this._renderChild(OverlayPositions.VideoArea)
+        });
+        this.options.presetManager.add({
+            label: "overlay-manager",
+            presets: [PresetNames.Playback, PresetNames.Live],
+            container: { name: "InteractiveArea" },
+            renderChild: () => this._renderChild(OverlayPositions.InteractiveArea)
+
         });
         this._addPlayerBindings();
         this._updateCachedCanvas();
@@ -62,26 +78,33 @@ export class OverlayManager {
             data
         };
 
+
         const item = new OverlayItem(itemOptions);
-        this._items.push(item);
+        this._items[data.position].push(item);
         return item;
     }
 
     remove(item: OverlayItem) {
-        let itemIndex = this._items.indexOf(item);
+        const positionItems = this._items[item.data.position];
+        let itemIndex = positionItems.indexOf(item);
         if (itemIndex > -1) {
-            this._items[itemIndex].destroy();
-            this._items.splice(itemIndex, 1);
+            positionItems[itemIndex].destroy();
+            positionItems.splice(itemIndex, 1);
         } else {
             console.warn(`couldn't remove ${item} since it wasn't found`);
         }
     }
 
+    reset() : void {
+        // TODO sakal missing
+    }
     /**
-     * remove all ui manager items
+     * destroy all ui manager items
      */
-    reset(): void {
-        this._items.forEach(item => {
+    destroy(): void {
+        // TODO sakal sohuld call on destroy
+        const allItems = [...this._items.VideoArea, ...this._items.InteractiveArea, ...this._items.PresetArea];
+        allItems.forEach(item => {
             try {
                 item.destroy();
             } catch (e) {
@@ -90,7 +113,9 @@ export class OverlayManager {
             }
         });
 
-        this._items = [];
+        this._items.VideoArea = [];
+        this._items.PresetArea = [];
+        this._items.InteractiveArea = [];
     }
 
     private _getRendererProps(props: Partial<OverlayItemProps>): OverlayItemProps {
@@ -112,21 +137,34 @@ export class OverlayManager {
         };
     }
 
-    private _renderChildren = () => {
+    private _renderChildren = (position: OverlayPositions) => {
         const props = this._getRendererProps({});
-        return this._items.map(item => item.renderOverlayChild(props));
+        return this._items[position].map(item => item.renderOverlayChild(props));
     };
-    private _renderChild = (): ComponentChild => {
-        // TODO sakal get label from renderer executer
+    private _renderChild = (position: OverlayPositions): ComponentChild => {
         return (
             <ManagedComponent
                 label={"overlay-manager"}
-                renderChildren={this._renderChildren}
+                renderChildren={() => this._renderChildren(position)}
                 isShown={() => true}
-                ref={ref => (this._componentRef = ref)}
+                ref={ref => (this._componentRef[position] = ref)}
             />
         );
     };
+
+    private _updateComponents() {
+        if (this._componentRef.InteractiveArea) {
+            this._componentRef.InteractiveArea.update();
+        }
+
+    if (this._componentRef.PresetArea) {
+        this._componentRef.PresetArea.update();
+    }
+
+        if (this._componentRef.VideoArea) {
+            this._componentRef.VideoArea.update();
+        }
+    }
 
     private _addPlayerBindings() {
         const {
@@ -134,27 +172,17 @@ export class OverlayManager {
         } = this._options;
 
         eventManager.listen(kalturaPlayer, kalturaPlayer.Event.TIME_UPDATE, () => {
-            if (!this._componentRef) {
-                return;
-            }
-
-            this._componentRef.update();
+            this._updateComponents();
         });
 
         eventManager.listen(kalturaPlayer, kalturaPlayer.Event.MEDIA_LOADED, () => {
-            if (!this._componentRef) {
-                return;
-            }
             this._updateCachedCanvas();
-            this._componentRef.update();
+            this._updateComponents();
         });
 
         eventManager.listen(kalturaPlayer, kalturaPlayer.Event.RESIZE, () => {
-            if (!this._componentRef) {
-                return;
-            }
             this._updateCachedCanvas();
-            this._componentRef.update();
+            this._updateComponents();
         });
     }
 }

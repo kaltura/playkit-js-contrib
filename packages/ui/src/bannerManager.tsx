@@ -63,7 +63,7 @@ export class BannerManager {
         this._overlayItem = this._options.overlayManager.add({
             label: "Banner",
             mode: OverlayUIModes.Immediate,
-            position: OverlayPositions.VisibleArea,
+            position: OverlayPositions.InteractiveArea,
             renderContent: this._createRenderBanner(props, {
                 onClose: this._handleCloseEvent.bind(this)
             })

@@ -35,6 +35,10 @@ export class OverlayItem {
         this._addPlayerBindings();
     }
 
+    get data(): OverlayItemData {
+        return this._options.data;
+    }
+
     remove = (): void => {
         this._logger.info("remove item from player", {
             method: "remove"

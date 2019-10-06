@@ -3,15 +3,16 @@ import { ComponentChild } from "preact";
 export type VerticalPositions = "Top" | "Bottom";
 export type HorizontalPositions = "Left" | "Right";
 
+// TODO sakal consider changing to enum
 export type PredefinedContainers =
     | { name: "PresetOverlay" }
     | { name: "BottomBar"; position: HorizontalPositions }
     | { name: "TopBar"; position: HorizontalPositions }
     | { name: "SidePanel"; position: HorizontalPositions | VerticalPositions }
-    | { name: "VideoOverlay" }
-    | { name: "PresetMiddleArea" }
-    | { name: "PlayerOverlay" }
-    | { name: "visibleArea"; isModal: boolean }
+    | { name: "PresetArea" }
+    | { name: "VideoArea" }
+    | { name: "InteractiveArea" }
+    | { name: "PlayerArea" }
     | string;
 
 export enum PresetNames {

@@ -8,9 +8,11 @@ export enum OverlayUIModes {
     FirstPlay = "FirstPlay"
 }
 
+// TODO sakal VisibleArea to InteractiveArea
 export enum OverlayPositions {
-    Video = "video",
-    VisibleArea = "visibleArea"
+    VideoArea = "VideoArea",
+    PresetArea = "PresetArea",
+    InteractiveArea = "InteractiveArea"
 }
 
 export interface OverlayItemData {

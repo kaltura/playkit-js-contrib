@@ -35,7 +35,7 @@ export class KitchenSinkManager {
         [KitchenSinkPositions.Left]: []
     };
     private _options: KitchenSinkManagerOptions;
-    private _kitchenSinkServiceRef: { _component: KitchenSinkAdapter } | null = null;
+    private _kitchenSinkServiceRef: KitchenSinkAdapter | null = null;
 
     constructor(private options: KitchenSinkManagerOptions) {
         this._options = options;
@@ -56,10 +56,10 @@ export class KitchenSinkManager {
         });
 
         this.options.presetManager.add({
-            label: "kitchen-sink-manager",
+            label: "kitchen-sink-adapter",
             shareAdvancedPlayerAPI: true,
             presets: [PresetNames.Playback, PresetNames.Live],
-            container: { name: "PlayerOverlay" },
+            container: { name: "PlayerArea" },
             renderChild: () => <KitchenSinkAdapter ref={this._setRef} />
         });
     }
@@ -92,7 +92,7 @@ export class KitchenSinkManager {
         return <KitchenSink>{items}</KitchenSink>;
     };
 
-    private _setRef = (ref: { _component: KitchenSinkAdapter } | null) => {
+    private _setRef = (ref: KitchenSinkAdapter | null) => {
         this._kitchenSinkServiceRef = ref;
     };
 
@@ -106,7 +106,7 @@ export class KitchenSinkManager {
             return;
         }
 
-        this._kitchenSinkServiceRef._component.collapse(position);
+        this._kitchenSinkServiceRef.collapse(position);
     };
 
     private _handleIconClick = (item: KitchenSinkItem) => {
@@ -114,6 +114,6 @@ export class KitchenSinkManager {
             return;
         }
 
-        this._kitchenSinkServiceRef._component.expand(item.data.position, item.data.expandMode);
+        this._kitchenSinkServiceRef.expand(item.data.position, item.data.expandMode);
     };
 }
