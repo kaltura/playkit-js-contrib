@@ -10,7 +10,8 @@ module.exports = (env, options) => {
     },
     externals: [nodeExternals(
       {
-        importType: 'umd'
+        importType: 'umd',
+        whitelist:["uuid"]
       }
     )],
     resolve: {
