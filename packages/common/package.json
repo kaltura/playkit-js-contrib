@@ -27,7 +27,8 @@
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0",
     "webpack-merge": "^4.2.1",
-    "webpack-node-externals": "^1.7.2"
+    "webpack-node-externals": "^1.7.2",
+    "uuid": "^3.3.3"
   },
   "publishConfig": {
     "access": "public"

@@ -6,7 +6,9 @@ import {
     KitchenSinkManager,
     PresetManager,
     BannerManager,
-    BannerManagerOptions
+    BannerManagerOptions,
+    ToastsManager,
+    ToastsManagerOptions
 } from "@playkit-js-contrib/ui";
 import { enableLogIfNeeded } from "@playkit-js-contrib/common";
 
@@ -50,7 +52,8 @@ export class EnvironmentManager {
                     upperBarManager: this.upperBarManager,
                     kitchenSinkManager: this.kitchenSinkManager,
                     overlayManager: this.overlayManager,
-                    bannerManager: this.bannerManager
+                    bannerManager: this.bannerManager,
+                    toastManager: this.toastManager
                 };
 
                 return new UIManager(options);
@@ -110,6 +113,16 @@ export class EnvironmentManager {
             };
 
             return new BannerManager(options);
+        });
+    }
+
+    public get toastManager(): ToastsManager {
+        return ToastsManager.fromPlayer(this.playerContribServices, () => {
+            const options: ToastsManagerOptions = {
+                overlayManager: this.overlayManager
+            };
+
+            return new ToastsManager(options);
         });
     }
 }

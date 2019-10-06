@@ -1,12 +1,14 @@
 import { ComponentChild } from "preact";
+import { KitchenSinkAdapter } from "./components/kitchen-sink-adapter";
 
 export interface KitchenSinkContentRendererProps {
     onClose: () => void;
 }
 
 export enum KitchenSinkExpandModes {
-    AlongSideTheVideo,
-    OverTheVideo
+    AlongSideTheVideo = "AlongSideTheVideo",
+    Hidden = "Hidden",
+    OverTheVideo = "OverTheVideo"
 }
 
 export enum KitchenSinkPositions {

@@ -35,7 +35,7 @@ export class KitchenSinkManager {
         [KitchenSinkPositions.Left]: []
     };
     private _options: KitchenSinkManagerOptions;
-    private _kitchenSinkServiceRef: KitchenSinkAdapter | null = null;
+    private _kitchenSinkAdapterRef: KitchenSinkAdapter | null = null;
 
     constructor(private options: KitchenSinkManagerOptions) {
         this._options = options;
@@ -70,7 +70,9 @@ export class KitchenSinkManager {
      */
     add(data: KitchenSinkItemData): KitchenSinkItem {
         const itemOptions = {
-            data
+            data,
+            isExpanded: this._isExpanded,
+            expand: this._expand
         };
         const item = new KitchenSinkItem(itemOptions);
         this._items[data.position].push(item);
@@ -78,11 +80,31 @@ export class KitchenSinkManager {
         this.options.upperBarManager.add({
             label: data.label,
             renderItem: data.renderIcon,
-            onClick: () => this._handleIconClick(item)
+            onClick: () => this._expand(item.data.position, item.data.expandMode)
         });
 
         return item;
     }
+
+    private _isExpanded = (position: KitchenSinkPositions): boolean => {
+        if (!this._kitchenSinkAdapterRef) {
+            return false;
+        }
+        return (
+            this._kitchenSinkAdapterRef.getSidePanelMode(position) !== KitchenSinkExpandModes.Hidden
+        );
+    };
+
+    private _expand = (
+        position: KitchenSinkPositions,
+        expandMode: KitchenSinkExpandModes
+    ): void => {
+        if (!this._kitchenSinkAdapterRef) {
+            return;
+        }
+
+        this._kitchenSinkAdapterRef.expand(position, expandMode);
+    };
 
     private _renderChild = (position: KitchenSinkPositions): ComponentChild => {
         const itemProps: KitchenSinkItemRenderProps = {
@@ -93,7 +115,7 @@ export class KitchenSinkManager {
     };
 
     private _setRef = (ref: KitchenSinkAdapter | null) => {
-        this._kitchenSinkServiceRef = ref;
+        this._kitchenSinkAdapterRef = ref ? ref : null;
     };
 
     /**
@@ -102,18 +124,10 @@ export class KitchenSinkManager {
     reset(): void {}
 
     private _handleOnClose = (position: KitchenSinkPositions) => {
-        if (!this._kitchenSinkServiceRef) {
+        if (!this._kitchenSinkAdapterRef) {
             return;
         }
 
-        this._kitchenSinkServiceRef.collapse(position);
-    };
-
-    private _handleIconClick = (item: KitchenSinkItem) => {
-        if (!this._kitchenSinkServiceRef) {
-            return;
-        }
-
-        this._kitchenSinkServiceRef.expand(item.data.position, item.data.expandMode);
+        this._kitchenSinkAdapterRef.collapse(position);
     };
 }

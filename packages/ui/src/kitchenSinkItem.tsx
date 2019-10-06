@@ -1,11 +1,18 @@
 import { h, ComponentChild, Ref } from "preact";
 import { getContribLogger } from "@playkit-js-contrib/common";
-import { KitchenSinkItemData } from "./kitchenSinkItemData";
+import {
+    KitchenSinkExpandModes,
+    KitchenSinkItemData,
+    KitchenSinkPositions
+} from "./kitchenSinkItemData";
 import { ManagedComponent } from "./components/managed-component";
 import { ContribLogger } from "@playkit-js-contrib/common";
+import { KitchenSinkAdapter } from "./components/kitchen-sink-adapter";
 
 export interface KitchenSinkItemOptions {
     data: KitchenSinkItemData;
+    isExpanded: (position: KitchenSinkPositions) => boolean;
+    expand: (position: KitchenSinkPositions, expandMode: KitchenSinkExpandModes) => void;
 }
 
 export interface KitchenSinkItemRenderProps {
@@ -50,6 +57,14 @@ export class KitchenSinkItem {
         }
 
         this._componentRef.update();
+    }
+
+    public isActive(): boolean {
+        return this._options.isExpanded(this._options.data.position);
+    }
+
+    public activate(): void {
+        this._options.expand(this._options.data.position, this._options.data.expandMode);
     }
 
     public renderContentChild = (props: KitchenSinkItemRenderProps): ComponentChild => {
