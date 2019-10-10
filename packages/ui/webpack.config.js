@@ -1,12 +1,13 @@
 const path = require("path");
 var nodeExternals = require('webpack-node-externals');
+const CopyPlugin = require('copy-webpack-plugin');
 
 const libraryName = 'ui';
 
 module.exports = (env, options) => {
   return {
     entry: {
-      [`playkit-js-contrib-${libraryName}`]: './src/index.ts'
+      [`playkit-js-contrib-${libraryName}`]: './src/index.ts',
     },
     externals: [nodeExternals(
       {
@@ -64,5 +65,13 @@ module.exports = (env, options) => {
         }
       ]
     },
+    plugins: [
+      new CopyPlugin([
+        {
+          from: './src/assets/normalize.scss',
+          to: path.resolve(__dirname, 'lib')
+        },
+      ]),
+    ],
   };
 };
