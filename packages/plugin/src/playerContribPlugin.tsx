@@ -9,6 +9,9 @@ export interface ContribConfig {
         serviceUrl: string;
         userId?: string;
     };
+    kitchenSink: {
+        expandMode: string;
+    };
 }
 
 export interface OnRegisterUI {
@@ -155,6 +158,9 @@ export abstract class PlayerContribPlugin extends (KalturaPlayer as any).core.Ba
                 serviceUrl: this.player.config.provider.env.serviceUrl,
                 partnerId: this.player.config.session.partnerId,
                 userId: this.player.config.session.userId
+            },
+            kitchenSink: {
+                expandMode: this.player.config.expandMode
             }
         };
     }
