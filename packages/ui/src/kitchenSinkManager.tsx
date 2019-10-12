@@ -81,11 +81,22 @@ export class KitchenSinkManager {
         this.options.upperBarManager.add({
             label: data.label,
             renderItem: data.renderIcon,
-            onClick: () => this._expand(item.data.position, item.data.expandMode)
+            onClick: () => this._toggle(item.data.position, item.data.expandMode)
         });
 
         return item;
     }
+
+    private _toggle = (
+        position: KitchenSinkPositions,
+        expandMode: KitchenSinkExpandModes
+    ): void => {
+        if (this._isExpanded(position)) {
+            this._collapse(position);
+        } else {
+            this._expand(position, expandMode);
+        }
+    };
 
     private _isExpanded = (position: KitchenSinkPositions): boolean => {
         if (!this._kitchenSinkAdapterRef) {
@@ -106,6 +117,14 @@ export class KitchenSinkManager {
 
         this._kitchenSinkAdapterRef.expand(position, expandMode);
     };
+
+    private _collapse(position: KitchenSinkPositions): void {
+        if (!this._kitchenSinkAdapterRef) {
+            return;
+        }
+
+        this._kitchenSinkAdapterRef.collapse(position);
+    }
 
     private _renderChild = (position: KitchenSinkPositions): ComponentChild => {
         const itemProps: KitchenSinkItemRenderProps = {
