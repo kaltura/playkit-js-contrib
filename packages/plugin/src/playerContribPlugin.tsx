@@ -2,7 +2,7 @@ import { h } from "preact";
 import { UIManager } from "@playkit-js-contrib/ui";
 import { EnvironmentManager } from "./environmentManager";
 
-export enum EntryType {
+export enum EntryTypes {
     Vod = "Vod",
     Live = "Live"
 }
