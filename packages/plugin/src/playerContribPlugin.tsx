@@ -2,6 +2,11 @@ import { h } from "preact";
 import { UIManager } from "@playkit-js-contrib/ui";
 import { EnvironmentManager } from "./environmentManager";
 
+export enum EntryTypes {
+    Vod = "Vod",
+    Live = "Live"
+}
+
 export interface ContribConfig {
     server: {
         ks: string;
@@ -29,7 +34,7 @@ function hasOnPluginSetup(plugin: any): plugin is OnPluginSetup {
 
 export interface OnMediaLoadConfig {
     entryId: string;
-    entryType: string;
+    entryType: EntryTypes;
 }
 
 export interface OnMediaLoad {
