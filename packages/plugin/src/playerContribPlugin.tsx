@@ -34,7 +34,7 @@ function hasOnPluginSetup(plugin: any): plugin is OnPluginSetup {
 
 export interface OnMediaLoadConfig {
     entryId: string;
-    entryType: EntryType;
+    entryType: EntryTypes;
 }
 
 export interface OnMediaLoad {
