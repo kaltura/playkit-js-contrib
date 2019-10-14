@@ -7,13 +7,13 @@ import {
 import { KitchenSinkItem, KitchenSinkItemRenderProps } from "./kitchenSinkItem";
 import { UpperBarManager } from "./upperBarManager";
 import { PresetManager } from "./presetManager";
-import { PlayerAPI, PlayerContribServices } from "@playkit-js-contrib/common";
+import { PlayerContribServices } from "@playkit-js-contrib/common";
 import { PresetNames } from "./presetItemData";
 import { KitchenSink } from "./components/kitchen-sink/kitchenSink";
 import { KitchenSinkAdapter } from "./components/kitchen-sink-adapter";
 
 export interface KitchenSinkManagerOptions {
-    playerAPI: PlayerAPI;
+    kalturaPlayer: KalturaPlayerInstance;
     presetManager: PresetManager;
     upperBarManager: UpperBarManager;
 }

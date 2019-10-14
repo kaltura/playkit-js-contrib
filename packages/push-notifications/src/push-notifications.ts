@@ -6,7 +6,7 @@ import {
     RegisterRequestResponse
 } from "./client-api";
 import { SocketWrapper } from "./socket-wrapper";
-import { PlayerAPI, getContribLogger } from "@playkit-js-contrib/common";
+import { getContribLogger } from "@playkit-js-contrib/common";
 
 export interface EventParams extends Record<string, any> {
     entryId: string;
@@ -29,7 +29,7 @@ export interface PushNotificationsOptions {
     ks: string;
     serviceUrl: string;
     clientTag: string;
-    playerAPI: PlayerAPI;
+    kalturaPlayer: KalturaPlayerInstance;
 }
 
 export interface APINotificationResponse extends APIResponse {
@@ -73,13 +73,9 @@ export class PushNotifications {
     }
 
     private _onPlayerReset(options: PushNotificationsOptions) {
-        options.playerAPI.eventManager.listen(
-            options.playerAPI.kalturaPlayer,
-            options.playerAPI.kalturaPlayer.Event.PLAYER_RESET,
-            () => {
-                this.reset();
-            }
-        );
+        options.kalturaPlayer.addEventListener(options.kalturaPlayer.Event.PLAYER_RESET, () => {
+            this.reset();
+        });
     }
 
     public reset() {

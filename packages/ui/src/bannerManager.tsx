@@ -1,6 +1,6 @@
 import { OverlayItem } from "./overlayItem";
 import { OverlayManager } from "./overlayManager";
-import { PlayerAPI, PlayerContribServices } from "@playkit-js-contrib/common";
+import { PlayerContribServices } from "@playkit-js-contrib/common";
 import { OverlayItemProps, OverlayPositions, OverlayUIModes } from "./overlayItemData";
 import { ComponentChild, h } from "preact";
 import { Banner } from "./components/banner";
@@ -23,7 +23,7 @@ export interface BannerOptions {
 
 export interface BannerManagerOptions {
     overlayManager: OverlayManager;
-    playerApi: PlayerAPI;
+    kalturaPlayer: KalturaPlayerInstance;
 }
 
 export interface BannerState {
@@ -116,7 +116,7 @@ export class BannerManager {
     }
 
     private _getState(): BannerState {
-        let playerSize = getPlayerSize(this._options.playerApi.kalturaPlayer);
+        let playerSize = getPlayerSize(this._options.kalturaPlayer);
         return {
             visibilityMode:
                 !playerSize || playerSize.width < MinPlayerWidth

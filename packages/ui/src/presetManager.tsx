@@ -1,9 +1,9 @@
-import { PlayerAPI, PlayerContribServices } from "@playkit-js-contrib/common";
+import { PlayerContribServices } from "@playkit-js-contrib/common";
 import { PresetItemData } from "./presetItemData";
 import { KalturaPlayerPresetComponent, PresetItem } from "./presetItem";
 
 export interface PresetManagerOptions {
-    playerAPI: PlayerAPI;
+    kalturaPlayer: KalturaPlayerInstance;
 }
 
 const ResourceToken = "PresetManager-v1";
@@ -29,7 +29,7 @@ export class PresetManager {
             return null;
         }
         const component = new PresetItem({
-            playerAPI: this._options.playerAPI,
+            kalturaPlayer: this._options.kalturaPlayer,
             data
         });
 

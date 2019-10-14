@@ -1,10 +1,10 @@
 import { h } from "preact";
-import { ContribLogger, getContribLogger, PlayerAPI } from "@playkit-js-contrib/common";
+import { ContribLogger, getContribLogger } from "@playkit-js-contrib/common";
 import { OverlayItemData, OverlayItemProps, OverlayUIModes } from "./overlayItemData";
 import { ManagedComponent } from "./components/managed-component";
 
 export interface OverlayItemOptions {
-    playerAPI: PlayerAPI;
+    kalturaPlayer: KalturaPlayerInstance;
     data: OverlayItemData;
 }
 
@@ -98,18 +98,33 @@ export class OverlayItem {
         );
     }
 
+    private _handleMediaLoaded = () => {
+        const { kalturaPlayer } = this._options;
+        kalturaPlayer.removeEventListener(
+            kalturaPlayer.Event.MEDIA_LOADED,
+            this._handleMediaLoaded
+        );
+        this.add();
+    };
+
+    private _handleFirstPlay = () => {
+        const { kalturaPlayer } = this._options;
+        kalturaPlayer.removeEventListener(kalturaPlayer.Event.FIRST_PLAY, this._handleFirstPlay);
+        this.add();
+    };
+
     private _addPlayerBindings() {
-        const {
-            playerAPI: { eventManager, kalturaPlayer },
-            data
-        } = this._options;
+        const { kalturaPlayer, data } = this._options;
 
         if (data.mode === OverlayUIModes.MediaLoaded) {
-            eventManager.listenOnce(kalturaPlayer, kalturaPlayer.Event.MEDIA_LOADED, this.add);
+            kalturaPlayer.addEventListener(
+                kalturaPlayer.Event.MEDIA_LOADED,
+                this._handleMediaLoaded
+            );
         }
 
         if (data.mode === OverlayUIModes.FirstPlay) {
-            eventManager.listenOnce(kalturaPlayer, kalturaPlayer.Event.FIRST_PLAY, this.add);
+            kalturaPlayer.addEventListener(kalturaPlayer.Event.FIRST_PLAY, this._handleFirstPlay);
         }
 
         if (data.mode === OverlayUIModes.Immediate) {

@@ -1,7 +1,7 @@
 import { OverlayItem } from "./overlayItem";
 import { OverlayItemData, OverlayItemProps, OverlayPositions } from "./overlayItemData";
 import { PresetManager } from "./presetManager";
-import { PlayerAPI, PlayerContribServices } from "@playkit-js-contrib/common";
+import { PlayerContribServices } from "@playkit-js-contrib/common";
 import { PresetNames } from "./presetItemData";
 import { ComponentChild, h } from "preact";
 import { PlayerSize, VideoSize } from "./common.types";
@@ -9,7 +9,7 @@ import { getPlayerSize, getVideoSize } from "./playerUtils";
 import { ManagedComponent } from "./components/managed-component";
 
 export interface OverlayManagerOptions {
-    playerAPI: PlayerAPI;
+    kalturaPlayer: KalturaPlayerInstance;
     presetManager: PresetManager;
 }
 
@@ -28,7 +28,7 @@ export class OverlayManager {
     private _componentRef: Record<OverlayPositions, ManagedComponent | null> = {
         [OverlayPositions.InteractiveArea]: null,
         [OverlayPositions.VideoArea]: null,
-        [OverlayPositions.PresetArea]: null,
+        [OverlayPositions.PresetArea]: null
     };
     private _options: OverlayManagerOptions;
     private _cache: {
@@ -58,7 +58,6 @@ export class OverlayManager {
             presets: [PresetNames.Playback, PresetNames.Live],
             container: { name: "InteractiveArea" },
             renderChild: () => this._renderChild(OverlayPositions.InteractiveArea)
-
         });
         this._addPlayerBindings();
         this._updateCachedCanvas();
@@ -78,7 +77,6 @@ export class OverlayManager {
             data
         };
 
-
         const item = new OverlayItem(itemOptions);
         this._items[data.position].push(item);
         return item;
@@ -95,7 +93,7 @@ export class OverlayManager {
         }
     }
 
-    reset() : void {
+    reset(): void {
         // TODO sakal missing
     }
     /**
@@ -103,7 +101,11 @@ export class OverlayManager {
      */
     destroy(): void {
         // TODO sakal sohuld call on destroy
-        const allItems = [...this._items.VideoArea, ...this._items.InteractiveArea, ...this._items.PresetArea];
+        const allItems = [
+            ...this._items.VideoArea,
+            ...this._items.InteractiveArea,
+            ...this._items.PresetArea
+        ];
         allItems.forEach(item => {
             try {
                 item.destroy();
@@ -119,7 +121,7 @@ export class OverlayManager {
     }
 
     private _getRendererProps(props: Partial<OverlayItemProps>): OverlayItemProps {
-        const { kalturaPlayer } = this._options.playerAPI;
+        const { kalturaPlayer } = this._options;
 
         return {
             currentTime:
@@ -132,8 +134,8 @@ export class OverlayManager {
 
     private _updateCachedCanvas() {
         this._cache.canvas = {
-            playerSize: getPlayerSize(this._options.playerAPI.kalturaPlayer),
-            videoSize: getVideoSize(this._options.playerAPI.kalturaPlayer)
+            playerSize: getPlayerSize(this._options.kalturaPlayer),
+            videoSize: getVideoSize(this._options.kalturaPlayer)
         };
     }
 
@@ -157,9 +159,9 @@ export class OverlayManager {
             this._componentRef.InteractiveArea.update();
         }
 
-    if (this._componentRef.PresetArea) {
-        this._componentRef.PresetArea.update();
-    }
+        if (this._componentRef.PresetArea) {
+            this._componentRef.PresetArea.update();
+        }
 
         if (this._componentRef.VideoArea) {
             this._componentRef.VideoArea.update();
@@ -167,20 +169,18 @@ export class OverlayManager {
     }
 
     private _addPlayerBindings() {
-        const {
-            playerAPI: { eventManager, kalturaPlayer }
-        } = this._options;
+        const { kalturaPlayer } = this._options;
 
-        eventManager.listen(kalturaPlayer, kalturaPlayer.Event.TIME_UPDATE, () => {
+        kalturaPlayer.addEventListener(kalturaPlayer.Event.TIME_UPDATE, () => {
             this._updateComponents();
         });
 
-        eventManager.listen(kalturaPlayer, kalturaPlayer.Event.MEDIA_LOADED, () => {
+        kalturaPlayer.addEventListener(kalturaPlayer.Event.MEDIA_LOADED, () => {
             this._updateCachedCanvas();
             this._updateComponents();
         });
 
-        eventManager.listen(kalturaPlayer, kalturaPlayer.Event.RESIZE, () => {
+        kalturaPlayer.addEventListener(kalturaPlayer.Event.RESIZE, () => {
             this._updateCachedCanvas();
             this._updateComponents();
         });

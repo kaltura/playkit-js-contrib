@@ -15,7 +15,18 @@ declare interface Logger {
     error(message: string, context: MessageOptions): void;
 }
 
+interface FakeEvent {}
+
+type EventListener = (event: FakeEvent) => boolean | void;
+
 declare global {
+    interface KalturaPlayerInstance {
+        addEventListener: (type: string, listener: EventListener) => void;
+        removeEventListener: (type: string, listener: EventListener) => void;
+        Event: Record<string, string>;
+        currentTime: number;
+    }
+
     const KalturaPlayer: {
         ui: {
             redux: {

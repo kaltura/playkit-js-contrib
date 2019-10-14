@@ -72,10 +72,7 @@ export abstract class PlayerContribPlugin extends (KalturaPlayer as any).core.Ba
     private _wasSetupExecuted = false;
     private _wasSetupFailed = false;
     private _environment: EnvironmentManager = EnvironmentManager.get({
-        playerAPI: {
-            kalturaPlayer: this.player,
-            eventManager: this.eventManager
-        }
+        kalturaPlayer: this.player
     });
 
     getUIComponents(): any[] {

@@ -5,11 +5,10 @@ import { UpperBar } from "./components/upper-bar";
 import { PresetManager } from "./presetManager";
 import { PresetNames } from "./presetItemData";
 import { PlayerContribServices } from "@playkit-js-contrib/common";
-import { PlayerAPI } from "@playkit-js-contrib/common";
 import { PresetItem } from "./presetItem";
 
 export interface UpperBarManagerOptions {
-    playerAPI: PlayerAPI;
+    kalturaPlayer: KalturaPlayerInstance;
     presetManager: PresetManager;
 }
 
@@ -47,7 +46,7 @@ export class UpperBarManager {
      */
     add(data: UpperBarItemData): UpperBarItem {
         const itemOptions = {
-            playerAPI: this._options.playerAPI,
+            kalturaPlayer: this._options.kalturaPlayer,
             data
         };
         const item = new UpperBarItem(itemOptions);

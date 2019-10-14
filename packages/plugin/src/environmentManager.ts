@@ -1,4 +1,4 @@
-import { PlayerAPI, PlayerContribServices } from "@playkit-js-contrib/common";
+import { PlayerContribServices } from "@playkit-js-contrib/common";
 import {
     OverlayManager,
     UIManager,
@@ -13,7 +13,7 @@ import {
 import { enableLogIfNeeded } from "@playkit-js-contrib/common";
 
 export interface EnvironmentManagerOptions {
-    playerAPI: PlayerAPI;
+    kalturaPlayer: KalturaPlayerInstance;
 }
 
 function getPlayerContribServices(kalturaPlayer: any): PlayerContribServices {
@@ -25,7 +25,7 @@ enableLogIfNeeded();
 
 export class EnvironmentManager {
     static get(options: EnvironmentManagerOptions): EnvironmentManager {
-        const playerContribServices = getPlayerContribServices(options.playerAPI.kalturaPlayer);
+        const playerContribServices = getPlayerContribServices(options.kalturaPlayer);
         return playerContribServices.register("EnvironmentManager-v1", 1, () => {
             return new EnvironmentManager(playerContribServices, options);
         });
@@ -39,7 +39,7 @@ export class EnvironmentManager {
     private registerResources() {}
 
     public get playerContribServices(): PlayerContribServices {
-        return PlayerContribServices.get(this._options.playerAPI.kalturaPlayer);
+        return PlayerContribServices.get(this._options.kalturaPlayer);
     }
 
     public get uiManager(): UIManager {
@@ -47,7 +47,7 @@ export class EnvironmentManager {
             this.playerContribServices,
             (): UIManager => {
                 const options = {
-                    playerAPI: this._options.playerAPI,
+                    kalturaPlayer: this._options.kalturaPlayer,
                     presetManager: this.presetManager,
                     upperBarManager: this.upperBarManager,
                     kitchenSinkManager: this.kitchenSinkManager,
@@ -64,7 +64,7 @@ export class EnvironmentManager {
     public get presetManager(): PresetManager {
         return PresetManager.fromPlayer(this.playerContribServices, () => {
             const options = {
-                playerAPI: this._options.playerAPI
+                kalturaPlayer: this._options.kalturaPlayer
             };
 
             return new PresetManager(options);
@@ -74,7 +74,7 @@ export class EnvironmentManager {
     public get upperBarManager(): UpperBarManager {
         return UpperBarManager.fromPlayer(this.playerContribServices, () => {
             const options = {
-                playerAPI: this._options.playerAPI,
+                kalturaPlayer: this._options.kalturaPlayer,
                 presetManager: this.presetManager
             };
 
@@ -85,7 +85,7 @@ export class EnvironmentManager {
     public get kitchenSinkManager(): KitchenSinkManager {
         return KitchenSinkManager.fromPlayer(this.playerContribServices, () => {
             const options = {
-                playerAPI: this._options.playerAPI,
+                kalturaPlayer: this._options.kalturaPlayer,
                 presetManager: this.presetManager,
                 upperBarManager: this.upperBarManager
             };
@@ -97,7 +97,7 @@ export class EnvironmentManager {
     public get overlayManager(): OverlayManager {
         return OverlayManager.fromPlayer(this.playerContribServices, () => {
             const options = {
-                playerAPI: this._options.playerAPI,
+                kalturaPlayer: this._options.kalturaPlayer,
                 presetManager: this.presetManager
             };
 
@@ -108,7 +108,7 @@ export class EnvironmentManager {
     public get bannerManager(): BannerManager {
         return BannerManager.fromPlayer(this.playerContribServices, () => {
             const options: BannerManagerOptions = {
-                playerApi: this._options.playerAPI,
+                kalturaPlayer: this._options.kalturaPlayer,
                 overlayManager: this.overlayManager
             };
 

@@ -1,12 +1,12 @@
 import { h, render } from "preact";
-import { getContribLogger, PlayerAPI } from "@playkit-js-contrib/common";
+import { getContribLogger } from "@playkit-js-contrib/common";
 import { PresetItemData, PredefinedContainers, RelativeToTypes } from "./presetItemData";
 import { ManagedComponent } from "./components/managed-component";
 import { ContribLogger } from "@playkit-js-contrib/common";
 import { InjectedComponent } from "./components/injected-component/injected-component";
 
 export interface PresetItemOptions {
-    playerAPI: PlayerAPI;
+    kalturaPlayer: KalturaPlayerInstance;
     data: PresetItemData;
 }
 
