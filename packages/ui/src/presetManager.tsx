@@ -23,7 +23,7 @@ export class PresetManager {
         this._options = options;
     }
 
-    add<TProps>(data: PresetItemData & { shown?: boolean}): PresetItem | null {
+    add<TProps>(data: PresetItemData & { shown?: boolean }): void {
         if (this._isLocked) {
             console.warn(`cannot add new preset items once player completed its' setup phase`);
             return null;
@@ -34,7 +34,6 @@ export class PresetManager {
         });
 
         this._pendingComponents.push(component);
-        return component;
     }
 
     lockManager(): void {
@@ -42,8 +41,10 @@ export class PresetManager {
     }
 
     registerComponents(): KalturaPlayerPresetComponent[] {
-        const configs: (KalturaPlayerPresetComponent | null)[] = this._pendingComponents.map(component => component.playerConfig);
-        this._components = [ ...this._components, ...this._pendingComponents];
+        const configs: (KalturaPlayerPresetComponent | null)[] = this._pendingComponents.map(
+            component => component.playerConfig
+        );
+        this._components = [...this._components, ...this._pendingComponents];
         this._pendingComponents = [];
         return configs.filter(Boolean) as KalturaPlayerPresetComponent[];
     }

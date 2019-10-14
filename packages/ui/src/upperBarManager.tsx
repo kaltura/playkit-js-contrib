@@ -25,11 +25,10 @@ export class UpperBarManager {
 
     private _items: UpperBarItem[] = [];
     private _options: UpperBarManagerOptions;
-    private _upperBar: PresetItem | null;
 
     constructor(options: UpperBarManagerOptions) {
         this._options = options;
-        this._upperBar = this._options.presetManager.add({
+        this._options.presetManager.add({
             label: "upper-bar-manager",
             presets: [PresetNames.Playback, PresetNames.Live],
             container: { name: "TopBar", position: "Right" },
