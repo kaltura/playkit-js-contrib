@@ -32,6 +32,14 @@ function hasOnPluginSetup(plugin: any): plugin is OnPluginSetup {
     return "onPluginSetup" in plugin;
 }
 
+export interface OnPluginDestroy {
+    OnPluginDestroy(): void;
+}
+
+function hasOnPluginDestory(plugin: any): plugin is OnPluginDestroy {
+    return "OnPluginDestroy" in plugin;
+}
+
 export interface OnMediaLoadConfig {
     entryId: string;
     entryType: EntryTypes;
@@ -131,6 +139,14 @@ export abstract class PlayerContribPlugin extends (KalturaPlayer as any).core.Ba
     public destroy() {
         this.reset();
         this.eventManager.destroy();
+
+        if (hasOnPluginDestory(this)) {
+            try {
+                this.hasOnPluginDestory();
+            } catch (e) {
+                console.error(`failure during plugin destroy`, { error: e.message });
+            }
+        }
     }
 
     public reset() {
