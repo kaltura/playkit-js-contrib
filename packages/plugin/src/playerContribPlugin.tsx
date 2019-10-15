@@ -7,7 +7,13 @@ export enum EntryTypes {
     Live = "Live"
 }
 
+export interface ContribConfigSources {
+    entryId: string;
+    entryType: EntryTypes;
+}
+
 export interface ContribConfig {
+    sources?: ContribConfigSources;
     server: {
         ks: string;
         partnerId: number;
@@ -40,10 +46,7 @@ function hasOnPluginDestory(plugin: any): plugin is OnPluginDestroy {
     return "OnPluginDestroy" in plugin;
 }
 
-export interface OnMediaLoadConfig {
-    entryId: string;
-    entryType: EntryTypes;
-}
+export type OnMediaLoadConfig = { sources: ContribConfigSources };
 
 export interface OnMediaLoad {
     onMediaLoad(config: OnMediaLoadConfig): void;
@@ -120,12 +123,9 @@ export abstract class PlayerContribPlugin extends (KalturaPlayer as any).core.Ba
 
             if (hasOnMediaLoad(this)) {
                 try {
-                    const config = {
-                        entryId: this.player.config.sources.id,
-                        entryType: this.player.config.sources.type
-                    };
+                    const sources = this.getContribConfig().sources;
 
-                    this.onMediaLoad(config);
+                    this.onMediaLoad({ sources });
                 } catch (e) {
                     console.error(`failure during media load `, { error: e.message });
                 }
@@ -162,12 +162,16 @@ export abstract class PlayerContribPlugin extends (KalturaPlayer as any).core.Ba
         throw new Error("tbd");
     }
 
-    get entryId(): string {
-        return this.player.config.sources.id;
-    }
-
     getContribConfig(): ContribConfig {
+        const sources = this.player.config.sources
+            ? {
+                  entryId: this.player.config.sources.id,
+                  entryType: this.player.config.sources.type
+              }
+            : undefined;
+
         return {
+            sources,
             server: {
                 ks: this.player.config.session.ks,
                 serviceUrl: this.player.config.provider.env.serviceUrl,
