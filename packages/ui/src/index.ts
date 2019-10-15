@@ -18,3 +18,4 @@ export * from "./cuepointOverlayEngine";
 export * from "./common.types";
 export * from "./components/logger";
 export * from "./presetItemData";
+export * from "./components/managed-component";
