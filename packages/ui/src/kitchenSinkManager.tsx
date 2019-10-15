@@ -114,8 +114,8 @@ export class KitchenSinkManager {
         return <KitchenSink>{items}</KitchenSink>;
     };
 
-    private _setRef = (ref: { _component: KitchenSinkAdapter } | null) => {
-        this._kitchenSinkAdapterRef = ref ? ref._component : null;
+    private _setRef = (ref: KitchenSinkAdapter | null) => {
+        this._kitchenSinkAdapterRef = ref ? ref : null;
     };
 
     /**
