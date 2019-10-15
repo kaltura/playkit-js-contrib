@@ -17,5 +17,4 @@ export * from "./presetItemData";
 export * from "./scaleVideo";
 export * from "./cuepointFloatingEngine";
 export * from "./common.types";
-export * from "./components/logger";
 export * from "./components/managed-component";
