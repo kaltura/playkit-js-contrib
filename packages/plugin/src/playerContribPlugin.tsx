@@ -46,6 +46,14 @@ function hasOnPluginDestroy(plugin: any): plugin is OnPluginDestroy {
     return "OnPluginDestroy" in plugin;
 }
 
+export interface onActivePresetChanged {
+    onActivePresetChanged(presetName: string): void;
+}
+
+function hasOnActivePresetChanged(plugin: any): plugin is onActivePresetChanged {
+    return "onActivePresetChanged" in plugin;
+}
+
 export type OnMediaLoadConfig = { sources: ContribConfigSources };
 
 export interface OnMediaLoad {

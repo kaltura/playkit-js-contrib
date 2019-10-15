@@ -39,7 +39,7 @@ declare global {
                 bindActions(actions: Record<string, unknown>[]): (...args: any) => void;
             };
             components: {};
-            EventTypes: any;
+            EventType: any;
         };
         core: {
             registerPlugin(name: string, component: any): void;
