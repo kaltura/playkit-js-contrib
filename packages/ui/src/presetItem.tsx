@@ -57,7 +57,7 @@ export class PresetItem {
     private _element: Element | null = null;
     private _logger: ContribLogger;
 
-    constructor(options: PresetItemOptions & { shown?: boolean }) {
+    constructor(options: PresetItemOptions) {
         this._options = options;
         this._logger = getContribLogger({
             module: "contrib-ui",

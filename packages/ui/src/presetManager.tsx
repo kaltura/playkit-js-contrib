@@ -23,7 +23,7 @@ export class PresetManager {
         this._options = options;
     }
 
-    add<TProps>(data: PresetItemData & { shown?: boolean }): void {
+    add<TProps>(data: PresetItemData): void {
         if (this._isLocked) {
             console.warn(`cannot add new preset items once player completed its' setup phase`);
             return null;
