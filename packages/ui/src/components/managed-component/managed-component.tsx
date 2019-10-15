@@ -42,16 +42,6 @@ export class ManagedComponent extends Component<ManagedComponentProps, ManagedCo
         });
     }
 
-    componentWillUnmount(): void {
-        if (!this._logger) {
-            return;
-        }
-
-        this._logger.info(`unmount component`, {
-            method: "componentWillUnmount"
-        });
-    }
-
     render() {
         const { fillContainer, isShown } = this.props;
         if (!isShown()) {

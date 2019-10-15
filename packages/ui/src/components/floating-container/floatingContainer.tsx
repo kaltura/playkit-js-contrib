@@ -3,9 +3,7 @@ import * as styles from "./_floatingContainer.scss";
 import { getContribLogger } from "@playkit-js-contrib/common";
 import { ContribLogger } from "@playkit-js-contrib/common";
 
-export interface KitchenSinkRendererProps {}
-
-export class FloatingContainer extends Component<KitchenSinkRendererProps> {
+export class FloatingContainer extends Component {
     private _logger: ContribLogger | null = null;
 
     componentDidMount(): void {
