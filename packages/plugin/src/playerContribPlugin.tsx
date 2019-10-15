@@ -42,7 +42,7 @@ export interface OnPluginDestroy {
     OnPluginDestroy(): void;
 }
 
-function hasOnPluginDestory(plugin: any): plugin is OnPluginDestroy {
+function hasOnPluginDestroy(plugin: any): plugin is OnPluginDestroy {
     return "OnPluginDestroy" in plugin;
 }
 
@@ -137,9 +137,9 @@ export abstract class PlayerContribPlugin extends (KalturaPlayer as any).core.Ba
         this.reset();
         this.eventManager.destroy();
 
-        if (hasOnPluginDestory(this)) {
+        if (hasOnPluginDestroy(this)) {
             try {
-                this.hasOnPluginDestory();
+                this.hasOnPluginDestroy();
             } catch (e) {
                 console.error(`failure during plugin destroy`, { error: e.message });
             }
