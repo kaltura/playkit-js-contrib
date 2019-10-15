@@ -1,5 +1,5 @@
-import { OverlayItem } from "./overlayItem";
-import { OverlayItemData, OverlayItemProps, OverlayPositions } from "./overlayItemData";
+import { FloatingItem } from "./floatingItem";
+import { FloatingItemData, FloatingItemProps, FloatingPositions } from "./floatingItemData";
 import { PresetManager } from "./presetManager";
 import { PlayerContribServices } from "@playkit-js-contrib/common";
 import { PresetNames } from "./presetItemData";
@@ -8,29 +8,32 @@ import { PlayerSize, VideoSize } from "./common.types";
 import { getPlayerSize, getVideoSize } from "./playerUtils";
 import { ManagedComponent } from "./components/managed-component";
 
-export interface OverlayManagerOptions {
+export interface FloatingManagerOptions {
     kalturaPlayer: KalturaPlayerInstance;
     presetManager: PresetManager;
 }
 
-const ResourceToken = "OverlayManager-v1";
+const ResourceToken = "FloatingManager-v1";
 
-export class OverlayManager {
-    static fromPlayer(playerContribServices: PlayerContribServices, creator: () => OverlayManager) {
+export class FloatingManager {
+    static fromPlayer(
+        playerContribServices: PlayerContribServices,
+        creator: () => FloatingManager
+    ) {
         return playerContribServices.register(ResourceToken, 1, creator);
     }
 
-    private _items: Record<OverlayPositions, OverlayItem[]> = {
-        [OverlayPositions.VideoArea]: [],
-        [OverlayPositions.InteractiveArea]: [],
-        [OverlayPositions.PresetArea]: []
+    private _items: Record<FloatingPositions, FloatingItem[]> = {
+        [FloatingPositions.VideoArea]: [],
+        [FloatingPositions.InteractiveArea]: [],
+        [FloatingPositions.PresetArea]: []
     };
-    private _componentRef: Record<OverlayPositions, ManagedComponent | null> = {
-        [OverlayPositions.InteractiveArea]: null,
-        [OverlayPositions.VideoArea]: null,
-        [OverlayPositions.PresetArea]: null
+    private _componentRef: Record<FloatingPositions, ManagedComponent | null> = {
+        [FloatingPositions.InteractiveArea]: null,
+        [FloatingPositions.VideoArea]: null,
+        [FloatingPositions.PresetArea]: null
     };
-    private _options: OverlayManagerOptions;
+    private _options: FloatingManagerOptions;
     private _cache: {
         canvas: {
             playerSize: PlayerSize;
@@ -38,37 +41,37 @@ export class OverlayManager {
         };
     } = { canvas: { playerSize: { width: 0, height: 0 }, videoSize: { width: 0, height: 0 } } };
 
-    constructor(private options: OverlayManagerOptions) {
+    constructor(private options: FloatingManagerOptions) {
         this._options = options;
         this.options.presetManager.add({
-            label: "overlay-manager",
+            label: "floating-manager",
             presets: [PresetNames.Playback, PresetNames.Live],
             container: { name: "PresetArea" },
-            renderChild: () => this._renderChild(OverlayPositions.PresetArea)
+            renderChild: () => this._renderChild(FloatingPositions.PresetArea)
         });
 
         this.options.presetManager.add({
-            label: "overlay-manager",
+            label: "floating-manager",
             presets: [PresetNames.Playback, PresetNames.Live],
             container: { name: "VideoArea" },
-            renderChild: () => this._renderChild(OverlayPositions.VideoArea)
+            renderChild: () => this._renderChild(FloatingPositions.VideoArea)
         });
         this.options.presetManager.add({
-            label: "overlay-manager",
+            label: "floating-manager",
             presets: [PresetNames.Playback, PresetNames.Live],
             container: { name: "InteractiveArea" },
-            renderChild: () => this._renderChild(OverlayPositions.InteractiveArea)
+            renderChild: () => this._renderChild(FloatingPositions.InteractiveArea)
         });
         this._addPlayerBindings();
         this._updateCachedCanvas();
     }
 
     /**
-     * initialize new overlay ui item
+     * initialize new floating ui item
      * @param item
      */
-    //TODO push new item to relevant position array according to its' OverlayPositions value
-    add(data: OverlayItemData): OverlayItem | null {
+    //TODO push new item to relevant position array according to its' FloatingPositions value
+    add(data: FloatingItemData): FloatingItem | null {
         const { presetManager } = this._options;
 
         const itemOptions = {
@@ -77,12 +80,12 @@ export class OverlayManager {
             data
         };
 
-        const item = new OverlayItem(itemOptions);
+        const item = new FloatingItem(itemOptions);
         this._items[data.position].push(item);
         return item;
     }
 
-    remove(item: OverlayItem) {
+    remove(item: FloatingItem) {
         const positionItems = this._items[item.data.position];
         let itemIndex = positionItems.indexOf(item);
         if (itemIndex > -1) {
@@ -120,7 +123,7 @@ export class OverlayManager {
         this._items.InteractiveArea = [];
     }
 
-    private _getRendererProps(props: Partial<OverlayItemProps>): OverlayItemProps {
+    private _getRendererProps(props: Partial<FloatingItemProps>): FloatingItemProps {
         const { kalturaPlayer } = this._options;
 
         return {
@@ -139,14 +142,14 @@ export class OverlayManager {
         };
     }
 
-    private _renderChildren = (position: OverlayPositions) => {
+    private _renderChildren = (position: FloatingPositions) => {
         const props = this._getRendererProps({});
-        return this._items[position].map(item => item.renderOverlayChild(props));
+        return this._items[position].map(item => item.renderFloatingChild(props));
     };
-    private _renderChild = (position: OverlayPositions): ComponentChild => {
+    private _renderChild = (position: FloatingPositions): ComponentChild => {
         return (
             <ManagedComponent
-                label={"overlay-manager"}
+                label={"floating-manager"}
                 renderChildren={() => this._renderChildren(position)}
                 isShown={() => true}
                 ref={ref => (this._componentRef[position] = ref)}

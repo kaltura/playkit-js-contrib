@@ -5,7 +5,7 @@ export type HorizontalPositions = "Left" | "Right";
 
 // TODO sakal consider changing to enum
 export type PredefinedContainers =
-    | { name: "PresetOverlay" }
+    | { name: "PresetFloating" }
     | { name: "BottomBar"; position: HorizontalPositions }
     | { name: "TopBar"; position: HorizontalPositions }
     | { name: "SidePanel"; position: HorizontalPositions | VerticalPositions }

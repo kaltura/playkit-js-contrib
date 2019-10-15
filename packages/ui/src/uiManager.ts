@@ -1,5 +1,5 @@
 import { UpperBarManager } from "./upperBarManager";
-import { OverlayManager } from "./overlayManager";
+import { FloatingManager } from "./floatingManager";
 import { KitchenSinkManager } from "./kitchenSinkManager";
 import { PlayerContribServices } from "@playkit-js-contrib/common";
 import { PresetManager } from "./presetManager";
@@ -8,7 +8,7 @@ import { ToastsManager } from "./toastsManager";
 
 export interface UIManagerOptions {
     upperBarManager: UpperBarManager;
-    overlayManager: OverlayManager;
+    floatingManager: FloatingManager;
     kitchenSinkManager: KitchenSinkManager;
     presetManager: PresetManager;
     bannerManager: BannerManager;
@@ -28,8 +28,8 @@ export class UIManager {
         return this._options.upperBarManager;
     }
 
-    get overlay(): OverlayManager {
-        return this._options.overlayManager;
+    get floating(): FloatingManager {
+        return this._options.floatingManager;
     }
 
     get kitchenSink(): KitchenSinkManager {
@@ -52,7 +52,7 @@ export class UIManager {
 
     reset(): void {
         this._options.upperBarManager && this._options.upperBarManager.reset();
-        this._options.overlayManager && this._options.overlayManager.reset();
+        this._options.floatingManager && this._options.floatingManager.reset();
         this._options.kitchenSinkManager && this._options.kitchenSinkManager.reset();
         this._options.bannerManager && this._options.bannerManager.reset();
         this._options.toastManager && this._options.toastManager.reset();

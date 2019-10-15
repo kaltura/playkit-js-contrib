@@ -1,25 +1,25 @@
 import { h } from "preact";
 import { ContribLogger, getContribLogger } from "@playkit-js-contrib/common";
-import { OverlayItemData, OverlayItemProps, OverlayUIModes } from "./overlayItemData";
+import { FloatingItemData, FloatingItemProps, FloatingUIModes } from "./floatingItemData";
 import { ManagedComponent } from "./components/managed-component";
 
-export interface OverlayItemOptions {
+export interface FloatingItemOptions {
     kalturaPlayer: KalturaPlayerInstance;
-    data: OverlayItemData;
+    data: FloatingItemData;
 }
 
-export class OverlayItem {
+export class FloatingItem {
     private _destroyed = false;
-    private _options: OverlayItemOptions;
+    private _options: FloatingItemOptions;
     private _isShown = false;
     private _componentRef: ManagedComponent | null = null;
     private _logger: ContribLogger;
 
-    constructor(options: OverlayItemOptions) {
+    constructor(options: FloatingItemOptions) {
         this._options = options;
         this._logger = getContribLogger({
             module: "contrib-ui",
-            class: "OverlayItem",
+            class: "FloatingItem",
             context: options.data.label
         });
         this._logger.debug("executed", {
@@ -35,7 +35,7 @@ export class OverlayItem {
         this._addPlayerBindings();
     }
 
-    get data(): OverlayItemData {
+    get data(): FloatingItemData {
         return this._options.data;
     }
 
@@ -84,7 +84,7 @@ export class OverlayItem {
         this.remove();
     }
 
-    renderOverlayChild(props: OverlayItemProps) {
+    renderFloatingChild(props: FloatingItemProps) {
         // TODO sakal check if should rename 'name' to 'label'
         const { label } = this._options.data;
 
@@ -116,18 +116,18 @@ export class OverlayItem {
     private _addPlayerBindings() {
         const { kalturaPlayer, data } = this._options;
 
-        if (data.mode === OverlayUIModes.MediaLoaded) {
+        if (data.mode === FloatingUIModes.MediaLoaded) {
             kalturaPlayer.addEventListener(
                 kalturaPlayer.Event.MEDIA_LOADED,
                 this._handleMediaLoaded
             );
         }
 
-        if (data.mode === OverlayUIModes.FirstPlay) {
+        if (data.mode === FloatingUIModes.FirstPlay) {
             kalturaPlayer.addEventListener(kalturaPlayer.Event.FIRST_PLAY, this._handleFirstPlay);
         }
 
-        if (data.mode === OverlayUIModes.Immediate) {
+        if (data.mode === FloatingUIModes.Immediate) {
             this.add();
         }
     }

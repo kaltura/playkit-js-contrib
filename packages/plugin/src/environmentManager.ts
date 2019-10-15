@@ -1,6 +1,6 @@
 import { PlayerContribServices } from "@playkit-js-contrib/common";
 import {
-    OverlayManager,
+    FloatingManager,
     UIManager,
     UpperBarManager,
     KitchenSinkManager,
@@ -51,7 +51,7 @@ export class EnvironmentManager {
                     presetManager: this.presetManager,
                     upperBarManager: this.upperBarManager,
                     kitchenSinkManager: this.kitchenSinkManager,
-                    overlayManager: this.overlayManager,
+                    floatingManager: this.floatingManager,
                     bannerManager: this.bannerManager,
                     toastManager: this.toastManager
                 };
@@ -94,14 +94,14 @@ export class EnvironmentManager {
         });
     }
 
-    public get overlayManager(): OverlayManager {
-        return OverlayManager.fromPlayer(this.playerContribServices, () => {
+    public get floatingManager(): FloatingManager {
+        return FloatingManager.fromPlayer(this.playerContribServices, () => {
             const options = {
                 kalturaPlayer: this._options.kalturaPlayer,
                 presetManager: this.presetManager
             };
 
-            return new OverlayManager(options);
+            return new FloatingManager(options);
         });
     }
 
@@ -109,7 +109,7 @@ export class EnvironmentManager {
         return BannerManager.fromPlayer(this.playerContribServices, () => {
             const options: BannerManagerOptions = {
                 kalturaPlayer: this._options.kalturaPlayer,
-                overlayManager: this.overlayManager
+                floatingManager: this.floatingManager
             };
 
             return new BannerManager(options);
@@ -119,7 +119,7 @@ export class EnvironmentManager {
     public get toastManager(): ToastsManager {
         return ToastsManager.fromPlayer(this.playerContribServices, () => {
             const options: ToastsManagerOptions = {
-                overlayManager: this.overlayManager
+                floatingManager: this.floatingManager
             };
 
             return new ToastsManager(options);
