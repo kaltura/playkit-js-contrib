@@ -7,8 +7,8 @@ import {
     PresetManager,
     BannerManager,
     BannerManagerOptions,
-    ToastsManager,
-    ToastsManagerOptions
+    ToastManager,
+    ToastManagerOptions
 } from "@playkit-js-contrib/ui";
 import { enableLogIfNeeded } from "@playkit-js-contrib/common";
 
@@ -116,13 +116,13 @@ export class EnvironmentManager {
         });
     }
 
-    public get toastManager(): ToastsManager {
-        return ToastsManager.fromPlayer(this.playerContribServices, () => {
-            const options: ToastsManagerOptions = {
+    public get toastManager(): ToastManager {
+        return ToastManager.fromPlayer(this.playerContribServices, () => {
+            const options: ToastManagerOptions = {
                 floatingManager: this.floatingManager
             };
 
-            return new ToastsManager(options);
+            return new ToastManager(options);
         });
     }
 }

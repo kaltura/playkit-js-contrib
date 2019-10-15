@@ -6,7 +6,7 @@ import { ToastProps } from "./components/toast/toast";
 import { ToastsContainer } from "./components/toasts-container/toastsContainer";
 import { h } from "preact";
 
-export interface ToastsManagerOptions {
+export interface ToastManagerOptions {
     floatingManager: FloatingManager;
 }
 
@@ -32,18 +32,18 @@ interface ManagedToasts {
     toastProps: ToastProps;
 }
 
-const ResourceToken: string = "ToastsManager-v1";
+const ResourceToken: string = "ToastManager-v1";
 
-export class ToastsManager {
-    static fromPlayer(playerContribServices: PlayerContribServices, creator: () => ToastsManager) {
+export class ToastManager {
+    static fromPlayer(playerContribServices: PlayerContribServices, creator: () => ToastManager) {
         return playerContribServices.register(ResourceToken, 1, creator);
     }
 
-    private _options: ToastsManagerOptions;
+    private _options: ToastManagerOptions;
     private _toasts: ManagedToasts[] = [];
     private _floatingItem: FloatingItem | null = null;
 
-    constructor(private options: ToastsManagerOptions) {
+    constructor(private options: ToastManagerOptions) {
         this._options = options;
     }
 

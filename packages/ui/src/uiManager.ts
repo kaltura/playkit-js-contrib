@@ -4,7 +4,7 @@ import { KitchenSinkManager } from "./kitchenSinkManager";
 import { PlayerContribServices } from "@playkit-js-contrib/common";
 import { PresetManager } from "./presetManager";
 import { BannerManager } from "./bannerManager";
-import { ToastsManager } from "./toastsManager";
+import { ToastManager } from "./toastManager";
 
 export interface UIManagerOptions {
     upperBarManager: UpperBarManager;
@@ -12,7 +12,7 @@ export interface UIManagerOptions {
     kitchenSinkManager: KitchenSinkManager;
     presetManager: PresetManager;
     bannerManager: BannerManager;
-    toastManager: ToastsManager;
+    toastManager: ToastManager;
 }
 
 const ResourceToken = "UIManager-v1";
@@ -40,11 +40,11 @@ export class UIManager {
         return this._options.bannerManager;
     }
 
-    get toast(): ToastsManager {
+    get toast(): ToastManager {
         return this._options.toastManager;
     }
 
-    get playerUIComponents(): { add: PresetManager["add"] } {
+    get presetComponents(): { add: PresetManager["add"] } {
         return {
             add: this._options.presetManager.add.bind(this._options.presetManager)
         };

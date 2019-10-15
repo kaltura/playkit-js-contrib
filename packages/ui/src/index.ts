@@ -2,7 +2,7 @@
 
 export * from "./uiManager";
 export * from "./bannerManager";
-export * from "./toastsManager";
+export * from "./toastManager";
 export * from "./floatingItem";
 export * from "./floatingItemData";
 export * from "./floatingManager";
