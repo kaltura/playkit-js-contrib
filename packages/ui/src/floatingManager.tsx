@@ -9,7 +9,7 @@ import { getPlayerSize, getVideoSize } from "./playerUtils";
 import { ManagedComponent } from "./components/managed-component";
 
 export interface FloatingManagerOptions {
-    kalturaPlayer: KalturaPlayerInstance;
+    corePlayer: CorePlayer;
     presetManager: PresetManager;
 }
 
@@ -124,21 +124,21 @@ export class FloatingManager {
     }
 
     private _getRendererProps(props: Partial<FloatingItemProps>): FloatingItemProps {
-        const { kalturaPlayer } = this._options;
+        const { corePlayer } = this._options;
 
         return {
             currentTime:
                 typeof props.currentTime !== "undefined"
                     ? props.currentTime
-                    : kalturaPlayer.currentTime * 1000,
+                    : corePlayer.currentTime * 1000,
             canvas: this._cache.canvas
         };
     }
 
     private _updateCachedCanvas() {
         this._cache.canvas = {
-            playerSize: getPlayerSize(this._options.kalturaPlayer),
-            videoSize: getVideoSize(this._options.kalturaPlayer)
+            playerSize: getPlayerSize(this._options.corePlayer),
+            videoSize: getVideoSize(this._options.corePlayer)
         };
     }
 
@@ -172,18 +172,18 @@ export class FloatingManager {
     }
 
     private _addPlayerBindings() {
-        const { kalturaPlayer } = this._options;
+        const { corePlayer } = this._options;
 
-        kalturaPlayer.addEventListener(kalturaPlayer.Event.TIME_UPDATE, () => {
+        corePlayer.addEventListener(corePlayer.Event.TIME_UPDATE, () => {
             this._updateComponents();
         });
 
-        kalturaPlayer.addEventListener(kalturaPlayer.Event.MEDIA_LOADED, () => {
+        corePlayer.addEventListener(corePlayer.Event.MEDIA_LOADED, () => {
             this._updateCachedCanvas();
             this._updateComponents();
         });
 
-        kalturaPlayer.addEventListener(kalturaPlayer.Event.RESIZE, () => {
+        corePlayer.addEventListener(corePlayer.Event.RESIZE, () => {
             this._updateCachedCanvas();
             this._updateComponents();
         });

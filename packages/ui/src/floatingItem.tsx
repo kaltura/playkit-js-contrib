@@ -4,7 +4,7 @@ import { FloatingItemData, FloatingItemProps, FloatingUIModes } from "./floating
 import { ManagedComponent } from "./components/managed-component";
 
 export interface FloatingItemOptions {
-    kalturaPlayer: KalturaPlayerInstance;
+    corePlayer: CorePlayer;
     data: FloatingItemData;
 }
 
@@ -99,32 +99,26 @@ export class FloatingItem {
     }
 
     private _handleMediaLoaded = () => {
-        const { kalturaPlayer } = this._options;
-        kalturaPlayer.removeEventListener(
-            kalturaPlayer.Event.MEDIA_LOADED,
-            this._handleMediaLoaded
-        );
+        const { corePlayer } = this._options;
+        corePlayer.removeEventListener(corePlayer.Event.MEDIA_LOADED, this._handleMediaLoaded);
         this.add();
     };
 
     private _handleFirstPlay = () => {
-        const { kalturaPlayer } = this._options;
-        kalturaPlayer.removeEventListener(kalturaPlayer.Event.FIRST_PLAY, this._handleFirstPlay);
+        const { corePlayer } = this._options;
+        corePlayer.removeEventListener(corePlayer.Event.FIRST_PLAY, this._handleFirstPlay);
         this.add();
     };
 
     private _addPlayerBindings() {
-        const { kalturaPlayer, data } = this._options;
+        const { corePlayer, data } = this._options;
 
         if (data.mode === FloatingUIModes.MediaLoaded) {
-            kalturaPlayer.addEventListener(
-                kalturaPlayer.Event.MEDIA_LOADED,
-                this._handleMediaLoaded
-            );
+            corePlayer.addEventListener(corePlayer.Event.MEDIA_LOADED, this._handleMediaLoaded);
         }
 
         if (data.mode === FloatingUIModes.FirstPlay) {
-            kalturaPlayer.addEventListener(kalturaPlayer.Event.FIRST_PLAY, this._handleFirstPlay);
+            corePlayer.addEventListener(corePlayer.Event.FIRST_PLAY, this._handleFirstPlay);
         }
 
         if (data.mode === FloatingUIModes.Immediate) {

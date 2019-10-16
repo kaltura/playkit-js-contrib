@@ -8,7 +8,7 @@ import { PlayerContribServices } from "@playkit-js-contrib/common";
 import { PresetItem } from "./presetItem";
 
 export interface UpperBarManagerOptions {
-    kalturaPlayer: KalturaPlayerInstance;
+    corePlayer: CorePlayer;
     presetManager: PresetManager;
 }
 
@@ -46,7 +46,7 @@ export class UpperBarManager {
      */
     add(data: UpperBarItemData): UpperBarItem {
         const itemOptions = {
-            kalturaPlayer: this._options.kalturaPlayer,
+            corePlayer: this._options.corePlayer,
             data
         };
         const item = new UpperBarItem(itemOptions);

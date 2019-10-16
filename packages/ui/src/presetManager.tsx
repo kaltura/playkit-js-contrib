@@ -3,7 +3,7 @@ import { PresetItemData } from "./presetItemData";
 import { KalturaPlayerPresetComponent, PresetItem } from "./presetItem";
 
 export interface PresetManagerOptions {
-    kalturaPlayer: KalturaPlayerInstance;
+    corePlayer: CorePlayer;
 }
 
 const ResourceToken = "PresetManager-v1";
@@ -29,7 +29,7 @@ export class PresetManager {
             return null;
         }
         const component = new PresetItem({
-            kalturaPlayer: this._options.kalturaPlayer,
+            corePlayer: this._options.corePlayer,
             data
         });
 

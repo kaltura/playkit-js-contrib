@@ -29,7 +29,7 @@ export interface PushNotificationsOptions {
     ks: string;
     serviceUrl: string;
     clientTag: string;
-    kalturaPlayer: KalturaPlayerInstance;
+    corePlayer: CorePlayer;
 }
 
 export interface APINotificationResponse extends APIResponse {
@@ -73,7 +73,7 @@ export class PushNotifications {
     }
 
     private _onPlayerReset(options: PushNotificationsOptions) {
-        options.kalturaPlayer.addEventListener(options.kalturaPlayer.Event.PLAYER_RESET, () => {
+        options.corePlayer.addEventListener(options.corePlayer.Event.PLAYER_RESET, () => {
             this.reset();
         });
     }

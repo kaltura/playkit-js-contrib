@@ -28,7 +28,7 @@ export class CorePluginProxy extends KalturaPlayer.core.BasePlugin {
         }
 
         try {
-            const contribServices = EnvironmentManager.get({ kalturaPlayer: player });
+            const contribServices = EnvironmentManager.get({ corePlayer: player });
             const corePlugin = pluginFactories.corePluginFactory
                 ? pluginFactories.corePluginFactory(name, player, config)
                 : new CorePlugin(name, player, config);

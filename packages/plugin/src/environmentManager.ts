@@ -14,11 +14,11 @@ import { enableLogIfNeeded } from "@playkit-js-contrib/common";
 import { ContribConfig, EntryTypes } from "./core-plugin";
 
 export interface EnvironmentManagerOptions {
-    kalturaPlayer: KalturaPlayerInstance;
+    corePlayer: CorePlayer;
 }
 
-function getPlayerContribServices(kalturaPlayer: any): PlayerContribServices {
-    return PlayerContribServices.get(kalturaPlayer);
+function getPlayerContribServices(corePlayer: any): PlayerContribServices {
+    return PlayerContribServices.get(corePlayer);
 }
 
 // TODO SAKAL find more suitable location
@@ -26,7 +26,7 @@ enableLogIfNeeded();
 
 export class EnvironmentManager {
     static get(options: EnvironmentManagerOptions): EnvironmentManager {
-        const playerContribServices = getPlayerContribServices(options.kalturaPlayer);
+        const playerContribServices = getPlayerContribServices(options.corePlayer);
         return playerContribServices.register("EnvironmentManager-v1", 1, () => {
             return new EnvironmentManager(playerContribServices, options);
         });
@@ -40,26 +40,26 @@ export class EnvironmentManager {
     private registerResources() {}
 
     public get playerContribServices(): PlayerContribServices {
-        return PlayerContribServices.get(this._options.kalturaPlayer);
+        return PlayerContribServices.get(this._options.corePlayer);
     }
 
     public getContribConfig(): ContribConfig {
-        const { kalturaPlayer } = this._options;
+        const { corePlayer } = this._options;
 
-        const sources = kalturaPlayer.config.sources
+        const sources = corePlayer.config.sources
             ? {
-                  entryId: kalturaPlayer.config.sources.id,
-                  entryType: EntryTypes[kalturaPlayer.config.sources.type] || EntryTypes.Vod
+                  entryId: corePlayer.config.sources.id,
+                  entryType: EntryTypes[corePlayer.config.sources.type] || EntryTypes.Vod
               }
             : undefined;
 
         return {
             sources,
             server: {
-                ks: kalturaPlayer.config.session.ks,
-                serviceUrl: kalturaPlayer.config.provider.env.serviceUrl,
-                partnerId: kalturaPlayer.config.session.partnerId,
-                userId: kalturaPlayer.config.session.userId
+                ks: corePlayer.config.session.ks,
+                serviceUrl: corePlayer.config.provider.env.serviceUrl,
+                partnerId: corePlayer.config.session.partnerId,
+                userId: corePlayer.config.session.userId
             }
         };
     }
@@ -69,7 +69,7 @@ export class EnvironmentManager {
             this.playerContribServices,
             (): UIManager => {
                 const options = {
-                    kalturaPlayer: this._options.kalturaPlayer,
+                    corePlayer: this._options.corePlayer,
                     presetManager: this.presetManager,
                     upperBarManager: this.upperBarManager,
                     kitchenSinkManager: this.kitchenSinkManager,
@@ -86,7 +86,7 @@ export class EnvironmentManager {
     public get presetManager(): PresetManager {
         return PresetManager.fromPlayer(this.playerContribServices, () => {
             const options = {
-                kalturaPlayer: this._options.kalturaPlayer
+                corePlayer: this._options.corePlayer
             };
 
             return new PresetManager(options);
@@ -96,7 +96,7 @@ export class EnvironmentManager {
     public get upperBarManager(): UpperBarManager {
         return UpperBarManager.fromPlayer(this.playerContribServices, () => {
             const options = {
-                kalturaPlayer: this._options.kalturaPlayer,
+                corePlayer: this._options.corePlayer,
                 presetManager: this.presetManager
             };
 
@@ -107,7 +107,7 @@ export class EnvironmentManager {
     public get kitchenSinkManager(): KitchenSinkManager {
         return KitchenSinkManager.fromPlayer(this.playerContribServices, () => {
             const options = {
-                kalturaPlayer: this._options.kalturaPlayer,
+                corePlayer: this._options.corePlayer,
                 presetManager: this.presetManager,
                 upperBarManager: this.upperBarManager
             };
@@ -119,7 +119,7 @@ export class EnvironmentManager {
     public get floatingManager(): FloatingManager {
         return FloatingManager.fromPlayer(this.playerContribServices, () => {
             const options = {
-                kalturaPlayer: this._options.kalturaPlayer,
+                corePlayer: this._options.corePlayer,
                 presetManager: this.presetManager
             };
 
@@ -130,7 +130,7 @@ export class EnvironmentManager {
     public get bannerManager(): BannerManager {
         return BannerManager.fromPlayer(this.playerContribServices, () => {
             const options: BannerManagerOptions = {
-                kalturaPlayer: this._options.kalturaPlayer,
+                corePlayer: this._options.corePlayer,
                 floatingManager: this.floatingManager
             };
 

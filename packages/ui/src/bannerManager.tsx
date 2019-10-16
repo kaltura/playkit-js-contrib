@@ -26,7 +26,7 @@ export interface BannerOptions {
 
 export interface BannerManagerOptions {
     floatingManager: FloatingManager;
-    kalturaPlayer: KalturaPlayerInstance;
+    corePlayer: CorePlayer;
 }
 
 export interface BannerState {
@@ -119,7 +119,7 @@ export class BannerManager {
     }
 
     private _getState(): BannerState {
-        let playerSize = getPlayerSize(this._options.kalturaPlayer);
+        let playerSize = getPlayerSize(this._options.corePlayer);
         return {
             visibilityMode:
                 !playerSize || playerSize.width < MinPlayerWidth
