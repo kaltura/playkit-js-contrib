@@ -120,6 +120,15 @@ export class KitchenSinkManager {
         return item;
     }
 
+    //todo [sa] implement
+    remove(item: KitchenSinkItem): void {
+        //deactivate item if needed
+        //remove upper bar icon
+        //remove from _items
+        //call item.destroy
+        //refresh UI ???
+    }
+
     private _toggle = (item: KitchenSinkItem): void => {
         if (this._isActive(item)) {
             this._deactivateItem(item);
@@ -130,7 +139,7 @@ export class KitchenSinkManager {
 
     private _activateItem = (item: KitchenSinkItem): void => {
         const { position, expandMode } = item.data;
-        // activate already active item
+        // trying to activate an already active item
         if (this._activeItems[position] === item) return;
         // switch between items if currently there is an active one (without collapsing / expanding KS)
         if (this._activeItems[position]) {
@@ -211,5 +220,6 @@ export class KitchenSinkManager {
      */
     reset(): void {
         //todo [sa] unregister items from eventManager events
+        //iterate over all items and call this.remove(item)
     }
 }
