@@ -1,6 +1,13 @@
-import { h } from "preact";
 import { UIManager } from "@playkit-js-contrib/ui";
 import { EnvironmentManager } from "./environmentManager";
+import {
+    ContribPlugin,
+    hasOnMediaLoad,
+    hasOnMediaUnload,
+    hasOnPluginDestroy,
+    hasOnPluginSetup,
+    hasOnRegisterUI
+} from "./contrib-plugin";
 
 export enum EntryTypes {
     Vod = "Vod",
@@ -22,62 +29,20 @@ export interface ContribConfig {
     };
 }
 
-export interface OnRegisterUI {
-    onRegisterUI(uiManager: UIManager): void;
-}
-
-function hasOnRegisterUI(plugin: any): plugin is OnRegisterUI {
-    return "onRegisterUI" in plugin;
-}
-
-export interface OnPluginSetup {
-    onPluginSetup(config: ContribConfig): void;
-}
-
-function hasOnPluginSetup(plugin: any): plugin is OnPluginSetup {
-    return "onPluginSetup" in plugin;
-}
-
-export interface OnPluginDestroy {
-    OnPluginDestroy(): void;
-}
-
-function hasOnPluginDestroy(plugin: any): plugin is OnPluginDestroy {
-    return "OnPluginDestroy" in plugin;
-}
-
-export interface onActivePresetChanged {
-    onActivePresetChanged(presetName: string): void;
-}
-
-function hasOnActivePresetChanged(plugin: any): plugin is onActivePresetChanged {
-    return "onActivePresetChanged" in plugin;
-}
-
-export type OnMediaLoadConfig = { sources: ContribConfigSources };
-
-export interface OnMediaLoad {
-    onMediaLoad(config: OnMediaLoadConfig): void;
-}
-
-function hasOnMediaLoad(plugin: any): plugin is OnMediaLoad {
-    return "onMediaLoad" in plugin;
-}
-
-export interface OnMediaUnload {
-    onMediaUnload(): void;
-}
-
-function hasOnMediaUnload(plugin: any): plugin is OnMediaUnload {
-    return "onMediaUnload" in plugin;
-}
-
-// TODO try to remove the 'as any'
-// @ts-ignore
-export abstract class PlayerContribPlugin extends (KalturaPlayer as any).core.BasePlugin {
+export class CorePlugin extends KalturaPlayer.core.BasePlugin {
     static defaultConfig = {};
     static isValid(player: any) {
         return true;
+    }
+
+    private _contribPlugin!: ContribPlugin;
+
+    constructor(...args: any[]) {
+        super(...args);
+    }
+
+    setContribPlugin(contribPlugin: ContribPlugin) {
+        this._contribPlugin = contribPlugin;
     }
 
     private _wasSetupExecuted = false;
@@ -87,9 +52,9 @@ export abstract class PlayerContribPlugin extends (KalturaPlayer as any).core.Ba
     });
 
     getUIComponents(): any[] {
-        if (hasOnRegisterUI(this)) {
+        if (hasOnRegisterUI(this._contribPlugin)) {
             try {
-                this.onRegisterUI(this._environment.uiManager);
+                this._contribPlugin.onRegisterUI(this._environment.uiManager);
             } catch (e) {
                 console.error(`failed to register contrib ui items for plugin`, {
                     error: e.message
@@ -111,10 +76,10 @@ export abstract class PlayerContribPlugin extends (KalturaPlayer as any).core.Ba
     loadMedia(): void {
         this.eventManager.listenOnce(this.player, this.player.Event.MEDIA_LOADED, () => {
             if (!this._wasSetupExecuted) {
-                if (hasOnPluginSetup(this)) {
+                if (hasOnPluginSetup(this._contribPlugin)) {
                     try {
                         const config = this.getContribConfig();
-                        this.onPluginSetup(config);
+                        this._contribPlugin.onPluginSetup(config);
                     } catch (e) {
                         this._wasSetupFailed = true;
                         console.error(`failed to execute plugin setup, suspend plugin`, {
@@ -129,11 +94,11 @@ export abstract class PlayerContribPlugin extends (KalturaPlayer as any).core.Ba
                 return;
             }
 
-            if (hasOnMediaLoad(this)) {
+            if (hasOnMediaLoad(this._contribPlugin)) {
                 try {
                     const sources = this.getContribConfig().sources;
 
-                    this.onMediaLoad({ sources });
+                    this._contribPlugin.onMediaLoad({ sources });
                 } catch (e) {
                     console.error(`failure during media load `, { error: e.message });
                 }
@@ -145,9 +110,9 @@ export abstract class PlayerContribPlugin extends (KalturaPlayer as any).core.Ba
         this.reset();
         this.eventManager.destroy();
 
-        if (hasOnPluginDestroy(this)) {
+        if (hasOnPluginDestroy(this._contribPlugin)) {
             try {
-                this.hasOnPluginDestroy();
+                this._contribPlugin.onPluginDestroy();
             } catch (e) {
                 console.error(`failure during plugin destroy`, { error: e.message });
             }
@@ -156,25 +121,20 @@ export abstract class PlayerContribPlugin extends (KalturaPlayer as any).core.Ba
 
     public reset() {
         this._environment.uiManager.reset();
-        if (hasOnMediaUnload(this)) {
+        if (hasOnMediaUnload(this._contribPlugin)) {
             try {
-                this.onMediaUnload();
+                this._contribPlugin.onMediaUnload();
             } catch (e) {
                 console.error(`failure during media unload`, { error: e.message });
             }
         }
     }
 
-    protected _sendAnalytics() {
-        // TBD
-        throw new Error("tbd");
-    }
-
     getContribConfig(): ContribConfig {
         const sources = this.player.config.sources
             ? {
                   entryId: this.player.config.sources.id,
-                  entryType: this.player.config.sources.type
+                  entryType: EntryTypes[this.player.config.sources.type] || EntryTypes.Vod
               }
             : undefined;
 

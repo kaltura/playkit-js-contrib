@@ -19,12 +19,34 @@ interface FakeEvent {}
 
 type EventListener = (event: FakeEvent) => boolean | void;
 
+interface BasePlugin {
+    player: KalturaPlayerInstance;
+    eventManager: any;
+}
 declare global {
     interface KalturaPlayerInstance {
-        addEventListener: (type: string, listener: EventListener) => void;
+        pause(): void;
+        play(): void;
+        addEventListener(type: string, listener: EventListener): void;
         removeEventListener: (type: string, listener: EventListener) => void;
         Event: Record<string, string>;
         currentTime: number;
+        config: {
+            session: {
+                ks: string;
+                partnerId: number;
+                userId: string;
+            };
+            provider: {
+                env: {
+                    serviceUrl: string;
+                };
+            };
+            sources?: {
+                id: string;
+                type: string;
+            };
+        };
     }
 
     const KalturaPlayer: {
@@ -44,8 +66,7 @@ declare global {
         core: {
             registerPlugin(name: string, component: any): void;
             BasePlugin: {
-                player: any;
-                eventManager: any;
+                new (...args: any[]): BasePlugin;
             };
         };
     };
