@@ -1,18 +1,23 @@
-import { h, ComponentChild, Ref } from "preact";
-import { getContribLogger } from "@playkit-js-contrib/common";
-import {
-    KitchenSinkExpandModes,
-    KitchenSinkItemData,
-    KitchenSinkPositions
-} from "./kitchenSinkItemData";
+import { ComponentChild, h } from "preact";
+import { ContribLogger, getContribLogger, Handler } from "@playkit-js-contrib/common";
+import { KitchenSinkItemData } from "./kitchenSinkItemData";
 import { ManagedComponent } from "./components/managed-component";
-import { ContribLogger } from "@playkit-js-contrib/common";
-import { KitchenSinkAdapter } from "./components/kitchen-sink-adapter";
+import { EventTypes, ItemActiveStateChangeEvent, ItemActiveStates } from "./kitchenSinkManager";
+import { KitchenSink } from "./components/kitchen-sink";
 
 export interface KitchenSinkItemOptions {
     data: KitchenSinkItemData;
-    isExpanded: (position: KitchenSinkPositions) => boolean;
-    expand: (position: KitchenSinkPositions, expandMode: KitchenSinkExpandModes) => void;
+    isActive: (item: KitchenSinkItem) => boolean;
+    activate: (item: KitchenSinkItem) => void;
+    deactivate: (item: KitchenSinkItem) => void;
+    onActivationStateChange: (
+        type: EventTypes,
+        handler: Handler<ItemActiveStateChangeEvent>
+    ) => void;
+    unregisterActivationStateChange: (
+        type: EventTypes,
+        handler: Handler<ItemActiveStateChangeEvent>
+    ) => void;
 }
 
 export interface KitchenSinkItemRenderProps {
@@ -23,6 +28,7 @@ export class KitchenSinkItem {
     private _options: KitchenSinkItemOptions;
     private _componentRef: ManagedComponent | null = null;
     private _logger: ContribLogger;
+    private _isActive: boolean = false;
 
     constructor(options: KitchenSinkItemOptions) {
         this._options = options;
@@ -41,6 +47,11 @@ export class KitchenSinkItem {
         this._logger.info(`created item ${options.data.label}`, {
             method: "constructor"
         });
+
+        this._options.onActivationStateChange(
+            EventTypes.ItemActiveStateChangeEvent,
+            this._activationStateChange
+        );
     }
 
     get data() {
@@ -60,11 +71,23 @@ export class KitchenSinkItem {
     }
 
     public isActive(): boolean {
-        return this._options.isExpanded(this._options.data.position);
+        return this._options.isActive(this);
     }
 
     public activate(): void {
-        this._options.expand(this._options.data.position, this._options.data.expandMode);
+        this._options.activate(this);
+    }
+
+    private _activationStateChange = ({ state, item }: ItemActiveStateChangeEvent) => {
+        // handle only if relevant to this item
+        if (this === item) {
+            this._isActive = state === ItemActiveStates.Active;
+            this.update();
+        }
+    };
+
+    public deactivate(): void {
+        this._options.deactivate(this);
     }
 
     public renderContentChild = (props: KitchenSinkItemRenderProps): ComponentChild => {
@@ -73,8 +96,10 @@ export class KitchenSinkItem {
         return (
             <ManagedComponent
                 label={label}
-                fitToContainer={typeof fitToContainer === "boolean" ? fitToContainer : true}
-                renderChildren={() => renderContent(props)}
+                fitToContainer={false}
+                renderChildren={() => (
+                    <KitchenSink children={renderContent(props)} isActive={this._isActive} />
+                )}
                 isShown={() => true}
                 ref={ref => (this._componentRef = ref)}
             />

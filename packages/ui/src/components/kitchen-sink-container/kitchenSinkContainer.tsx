@@ -1,14 +1,12 @@
 import { Component, h } from "preact";
+import * as styles from "./_kitchenSinkContainer.scss";
 import { ContribLogger, getContribLogger } from "@playkit-js-contrib/common";
-import * as styles from "./_kitchenSink.scss";
 
-export interface KitchenSinkProps {
-    isActive: boolean;
-}
+export interface KitchenSinkContainerRendererProps {}
 
-export class KitchenSink extends Component<KitchenSinkProps> {
+export class KitchenSinkContainer extends Component<KitchenSinkContainerRendererProps> {
     static defaultProps = {
-        isActive: false
+        updateSidePanelMode: () => {}
     };
 
     private _logger: ContribLogger | null = null;
@@ -16,7 +14,7 @@ export class KitchenSink extends Component<KitchenSinkProps> {
     componentDidMount(): void {
         this._logger = getContribLogger({
             module: "contrib-ui",
-            class: "KitchenSink"
+            class: "KitchenSinkContainer"
         });
         this._logger.info(`mount component`, {
             method: "componentDidMount"
@@ -40,10 +38,6 @@ export class KitchenSink extends Component<KitchenSinkProps> {
             });
         }
 
-        return <div className={this._getClass()}>{this.props.children}</div>;
-    }
-
-    private _getClass(): string {
-        return styles.root + " " + (this.props.isActive ? styles.active : styles.inactive);
+        return <div className={styles.root}>{this.props.children}</div>;
     }
 }
