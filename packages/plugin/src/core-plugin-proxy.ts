@@ -1,10 +1,13 @@
 import { CorePlugin } from "./core-plugin";
-import { ContribPlugin, hasSetCorePlugin } from "./contrib-plugin";
-import {
-    AdvancedContribPlugin,
-    ContribPluginFactories,
-    isAdvancedContribPlugin
-} from "./contrib-plugin-factories";
+import { ContribPlugin } from "./contrib-plugin";
+import { ContribPluginFactories } from "./contrib-plugin-factories";
+import { EnvironmentManager } from "./environmentManager";
+import { getContribLogger } from "@playkit-js-contrib/common";
+
+const _logger = getContribLogger({
+    module: "contrib-plugin",
+    class: "core-plugin-proxy"
+});
 
 // @ts-ignore
 export class CorePluginProxy extends KalturaPlayer.core.BasePlugin {
@@ -13,30 +16,45 @@ export class CorePluginProxy extends KalturaPlayer.core.BasePlugin {
     }
 
     static createPlugin(name: string, player: any, config: any): any {
-        const factory = ContribPluginFactories.factories[name];
+        const pluginFactories = ContribPluginFactories.factories[name];
 
-        if (!factory) {
-            throw new Error(`cannot find contrib plugin factory for '${name}`);
+        if (!pluginFactories) {
+            _logger.error("cannot find requested contrib plugin", {
+                data: {
+                    pluginName: name
+                }
+            });
+            throw new Error(`cannot find contrib plugin factory named '${name}`);
         }
 
-        const plugin = factory({ corePlayer: player });
+        try {
+            const contribServices = EnvironmentManager.get({ kalturaPlayer: player });
+            const corePlugin = pluginFactories.corePluginFactory
+                ? pluginFactories.corePluginFactory(name, player, config)
+                : new CorePlugin(name, player, config);
+            const contribPlugin = pluginFactories.contribPluginFactory({
+                corePlugin,
+                contribServices
+            });
 
-        let contribPlugin: ContribPlugin;
-        let corePlugin: CorePlugin;
-        if (isAdvancedContribPlugin(plugin)) {
-            corePlugin = new plugin.corePluginConstructor(name, player, config);
-            contribPlugin = plugin.contribPlugin;
-        } else {
-            corePlugin = new CorePlugin(name, player, config);
-            contribPlugin = plugin;
+            corePlugin.setContribContext({ contribPlugin, contribServices });
+
+            _logger.info("created contrib plugin", {
+                data: {
+                    pluginName: name
+                }
+            });
+
+            return corePlugin;
+        } catch (e) {
+            _logger.error("failed to create contrib plugin", {
+                data: {
+                    pluginName: name,
+                    error: e
+                }
+            });
+            throw e;
         }
-
-        corePlugin.setContribPlugin(contribPlugin);
-        if (hasSetCorePlugin(contribPlugin)) {
-            contribPlugin.setCorePlugin(corePlugin);
-        }
-
-        return corePlugin;
     }
 
     protected _contribPlugin!: ContribPlugin;

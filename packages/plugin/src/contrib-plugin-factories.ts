@@ -1,24 +1,11 @@
-import { CorePlugin } from "./core-plugin";
-import { ContribPlugin } from "./contrib-plugin";
+import { ContribPluginFactory, CorePluginFactory } from "./contrib-plugin-manager";
 
-export type AdvancedContribPlugin = {
-    contribPlugin: ContribPlugin;
-    corePluginConstructor: CorePluginConstructor;
+export type PluginFactories = {
+    contribPluginFactory: ContribPluginFactory;
+    corePluginFactory?: CorePluginFactory;
 };
-
-export function isAdvancedContribPlugin(item: any): item is AdvancedContribPlugin {
-    return item && item.contribPlugin && item.corePlugin;
-}
-
-export interface CorePluginConstructor {
-    new (...args: any[]): CorePlugin;
-}
-
-export type ContribPluginFactory = (context: {
-    corePlayer: KalturaPlayerInstance;
-}) => ContribPlugin | AdvancedContribPlugin;
 
 export class ContribPluginFactories {
     // TODO sakal expose add/get instead of actual property
-    static factories: Record<string, ContribPluginFactory> = {};
+    static factories: Record<string, PluginFactories> = {};
 }

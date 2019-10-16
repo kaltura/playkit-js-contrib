@@ -11,6 +11,7 @@ import {
     ToastManagerOptions
 } from "@playkit-js-contrib/ui";
 import { enableLogIfNeeded } from "@playkit-js-contrib/common";
+import { ContribConfig, EntryTypes } from "./core-plugin";
 
 export interface EnvironmentManagerOptions {
     kalturaPlayer: KalturaPlayerInstance;
@@ -40,6 +41,27 @@ export class EnvironmentManager {
 
     public get playerContribServices(): PlayerContribServices {
         return PlayerContribServices.get(this._options.kalturaPlayer);
+    }
+
+    public getContribConfig(): ContribConfig {
+        const { kalturaPlayer } = this._options;
+
+        const sources = kalturaPlayer.config.sources
+            ? {
+                  entryId: kalturaPlayer.config.sources.id,
+                  entryType: EntryTypes[kalturaPlayer.config.sources.type] || EntryTypes.Vod
+              }
+            : undefined;
+
+        return {
+            sources,
+            server: {
+                ks: kalturaPlayer.config.session.ks,
+                serviceUrl: kalturaPlayer.config.provider.env.serviceUrl,
+                partnerId: kalturaPlayer.config.session.partnerId,
+                userId: kalturaPlayer.config.session.userId
+            }
+        };
     }
 
     public get uiManager(): UIManager {

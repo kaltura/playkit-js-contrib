@@ -35,26 +35,28 @@ export class CorePlugin extends KalturaPlayer.core.BasePlugin {
         return true;
     }
 
-    private _contribPlugin!: ContribPlugin;
+    protected _contribPlugin!: ContribPlugin;
+    protected _contribServices!: EnvironmentManager;
 
     constructor(...args: any[]) {
         super(...args);
     }
 
-    setContribPlugin(contribPlugin: ContribPlugin) {
-        this._contribPlugin = contribPlugin;
+    setContribContext(context: {
+        contribPlugin: ContribPlugin;
+        contribServices: EnvironmentManager;
+    }) {
+        this._contribPlugin = context.contribPlugin;
+        this._contribServices = context.contribServices;
     }
 
     private _wasSetupExecuted = false;
     private _wasSetupFailed = false;
-    private _environment: EnvironmentManager = EnvironmentManager.get({
-        kalturaPlayer: this.player
-    });
 
     getUIComponents(): any[] {
         if (hasOnRegisterUI(this._contribPlugin)) {
             try {
-                this._contribPlugin.onRegisterUI(this._environment.uiManager);
+                this._contribPlugin.onRegisterUI(this._contribServices.uiManager);
             } catch (e) {
                 console.error(`failed to register contrib ui items for plugin`, {
                     error: e.message
@@ -62,15 +64,7 @@ export class CorePlugin extends KalturaPlayer.core.BasePlugin {
             }
         }
 
-        return this._environment.presetManager.registerComponents();
-    }
-
-    get environment(): EnvironmentManager {
-        return this._environment;
-    }
-
-    get uiManager(): UIManager {
-        return this._environment.uiManager;
+        return this._contribServices.presetManager.registerComponents();
     }
 
     loadMedia(): void {
@@ -78,7 +72,7 @@ export class CorePlugin extends KalturaPlayer.core.BasePlugin {
             if (!this._wasSetupExecuted) {
                 if (hasOnPluginSetup(this._contribPlugin)) {
                     try {
-                        const config = this.getContribConfig();
+                        const config = this._contribServices.getContribConfig();
                         this._contribPlugin.onPluginSetup(config);
                     } catch (e) {
                         this._wasSetupFailed = true;
@@ -96,7 +90,7 @@ export class CorePlugin extends KalturaPlayer.core.BasePlugin {
 
             if (hasOnMediaLoad(this._contribPlugin)) {
                 try {
-                    const sources = this.getContribConfig().sources;
+                    const sources = this._contribServices.getContribConfig().sources;
 
                     this._contribPlugin.onMediaLoad({ sources });
                 } catch (e) {
@@ -120,7 +114,7 @@ export class CorePlugin extends KalturaPlayer.core.BasePlugin {
     }
 
     public reset() {
-        this._environment.uiManager.reset();
+        this._contribServices.uiManager.reset();
         if (hasOnMediaUnload(this._contribPlugin)) {
             try {
                 this._contribPlugin.onMediaUnload();
@@ -128,24 +122,5 @@ export class CorePlugin extends KalturaPlayer.core.BasePlugin {
                 console.error(`failure during media unload`, { error: e.message });
             }
         }
-    }
-
-    getContribConfig(): ContribConfig {
-        const sources = this.player.config.sources
-            ? {
-                  entryId: this.player.config.sources.id,
-                  entryType: EntryTypes[this.player.config.sources.type] || EntryTypes.Vod
-              }
-            : undefined;
-
-        return {
-            sources,
-            server: {
-                ks: this.player.config.session.ks,
-                serviceUrl: this.player.config.provider.env.serviceUrl,
-                partnerId: this.player.config.session.partnerId,
-                userId: this.player.config.session.userId
-            }
-        };
     }
 }
