@@ -28,7 +28,7 @@ export class KitchenSinkItem {
     private _options: KitchenSinkItemOptions;
     private _componentRef: ManagedComponent | null = null;
     private _logger: ContribLogger;
-    private _isActive: boolean = false;
+    private _destroyed: boolean = false;
 
     constructor(options: KitchenSinkItemOptions) {
         this._options = options;
@@ -78,10 +78,9 @@ export class KitchenSinkItem {
         this._options.activate(this);
     }
 
-    private _activationStateChange = ({ state, item }: ItemActiveStateChangeEvent) => {
+    private _activationStateChange = ({ item }: ItemActiveStateChangeEvent) => {
         // handle only if relevant to this item
         if (this === item) {
-            this._isActive = state === ItemActiveStates.Active;
             this.update();
         }
     };
@@ -90,17 +89,28 @@ export class KitchenSinkItem {
         this._options.deactivate(this);
     }
 
+    public destroy(): void {
+        this._options.unregisterActivationStateChange(
+            EventTypes.ItemActiveStateChangeEvent,
+            this._activationStateChange
+        );
+        this._destroyed = true;
+        this.update();
+        this._componentRef = null;
+        this._options = null;
+    }
+
     public renderContentChild = (props: KitchenSinkItemRenderProps): ComponentChild => {
-        const { renderContent, label, fitToContainer } = this._options.data;
+        const { renderContent, label } = this._options.data;
 
         return (
             <ManagedComponent
                 label={label}
-                fitToContainer={false}
+                fitToContainer={false} //todo [sa] is it OK ?????
                 renderChildren={() => (
-                    <KitchenSink children={renderContent(props)} isActive={this._isActive} />
+                    <KitchenSink children={renderContent(props)} isActive={this.isActive()} />
                 )}
-                isShown={() => true}
+                isShown={() => !this._destroyed}
                 ref={ref => (this._componentRef = ref)}
             />
         );
