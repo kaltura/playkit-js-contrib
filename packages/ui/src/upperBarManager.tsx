@@ -4,7 +4,7 @@ import { UpperBarItemData } from "./upperBarItemData";
 import { UpperBar } from "./components/upper-bar";
 import { PresetManager } from "./presetManager";
 import { PresetNames } from "./presetItemData";
-import { PlayerContribServices } from "@playkit-js-contrib/common";
+import { PlayerContribRegistry } from "@playkit-js-contrib/common";
 import { PresetItem } from "./presetItem";
 
 export interface UpperBarManagerOptions {
@@ -16,10 +16,10 @@ const ResourceToken = "UpperBarManager-v1";
 
 export class UpperBarManager {
     static fromPlayer(
-        playerContribServices: PlayerContribServices,
+        playerContribRegistry: PlayerContribRegistry,
         creator: () => UpperBarManager
     ) {
-        return playerContribServices.register(ResourceToken, 1, creator);
+        return playerContribRegistry.register(ResourceToken, 1, creator);
     }
 
     private _items: UpperBarItem[] = [];

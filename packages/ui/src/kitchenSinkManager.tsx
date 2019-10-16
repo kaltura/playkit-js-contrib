@@ -7,7 +7,7 @@ import {
 import { KitchenSinkItem, KitchenSinkItemRenderProps } from "./kitchenSinkItem";
 import { UpperBarManager } from "./upperBarManager";
 import { PresetManager } from "./presetManager";
-import { PlayerContribServices } from "@playkit-js-contrib/common";
+import { PlayerContribRegistry } from "@playkit-js-contrib/common";
 import { PresetNames } from "./presetItemData";
 import { KitchenSink } from "./components/kitchen-sink/kitchenSink";
 import { KitchenSinkAdapter } from "./components/kitchen-sink-adapter";
@@ -22,10 +22,10 @@ const ResourceToken = "KitchenSinkManager-v1";
 
 export class KitchenSinkManager {
     static fromPlayer(
-        playerContribServices: PlayerContribServices,
+        playerContribRegistry: PlayerContribRegistry,
         creator: () => KitchenSinkManager
     ) {
-        return playerContribServices.register(ResourceToken, 1, creator);
+        return playerContribRegistry.register(ResourceToken, 1, creator);
     }
 
     private _items: Record<KitchenSinkPositions, KitchenSinkItem[]> = {

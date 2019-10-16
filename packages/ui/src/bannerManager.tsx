@@ -1,6 +1,6 @@
 import { FloatingItem } from "./floatingItem";
 import { FloatingManager } from "./floatingManager";
-import { PlayerContribServices } from "@playkit-js-contrib/common";
+import { PlayerContribRegistry } from "@playkit-js-contrib/common";
 import { FloatingItemProps, FloatingPositions, FloatingUIModes } from "./floatingItemData";
 import { ComponentChild, h } from "preact";
 import { Banner } from "./components/banner";
@@ -47,8 +47,8 @@ const MinDuration: number = 5 * 1000;
  * banner manager manages the display (add / remove) of a single banner in the player.
  */
 export class BannerManager {
-    static fromPlayer(playerContribServices: PlayerContribServices, creator: () => BannerManager) {
-        return playerContribServices.register(ResourceToken, 1, creator);
+    static fromPlayer(playerContribRegistry: PlayerContribRegistry, creator: () => BannerManager) {
+        return playerContribRegistry.register(ResourceToken, 1, creator);
     }
 
     private _options: BannerManagerOptions;

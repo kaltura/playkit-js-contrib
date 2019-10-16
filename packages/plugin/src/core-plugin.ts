@@ -1,5 +1,4 @@
-import { UIManager } from "@playkit-js-contrib/ui";
-import { EnvironmentManager } from "./environmentManager";
+import { ContribServices } from "./contrib-services";
 import {
     ContribPlugin,
     hasOnMediaLoad,
@@ -14,13 +13,11 @@ export enum EntryTypes {
     Live = "Live"
 }
 
-export interface ContribConfigSources {
-    entryId: string;
-    entryType: EntryTypes;
-}
-
 export interface ContribConfig {
-    sources?: ContribConfigSources;
+    sources?: {
+        entryId: string;
+        entryType: EntryTypes;
+    };
     server: {
         ks: string;
         partnerId: number;
@@ -36,16 +33,13 @@ export class CorePlugin extends KalturaPlayer.core.BasePlugin {
     }
 
     protected _contribPlugin!: ContribPlugin;
-    protected _contribServices!: EnvironmentManager;
+    protected _contribServices!: ContribServices;
 
     constructor(...args: any[]) {
         super(...args);
     }
 
-    setContribContext(context: {
-        contribPlugin: ContribPlugin;
-        contribServices: EnvironmentManager;
-    }) {
+    setContribContext(context: { contribPlugin: ContribPlugin; contribServices: ContribServices }) {
         this._contribPlugin = context.contribPlugin;
         this._contribServices = context.contribServices;
     }

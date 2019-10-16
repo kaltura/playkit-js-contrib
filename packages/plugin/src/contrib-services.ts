@@ -1,4 +1,4 @@
-import { PlayerContribServices } from "@playkit-js-contrib/common";
+import { PlayerContribRegistry } from "@playkit-js-contrib/common";
 import {
     FloatingManager,
     UIManager,
@@ -13,34 +13,34 @@ import {
 import { enableLogIfNeeded } from "@playkit-js-contrib/common";
 import { ContribConfig, EntryTypes } from "./core-plugin";
 
-export interface EnvironmentManagerOptions {
+export interface ContribServicesOptions {
     corePlayer: CorePlayer;
 }
 
-function getPlayerContribServices(corePlayer: any): PlayerContribServices {
-    return PlayerContribServices.get(corePlayer);
+function getPlayerContribRegistry(corePlayer: any): PlayerContribRegistry {
+    return PlayerContribRegistry.get(corePlayer);
 }
 
 // TODO SAKAL find more suitable location
 enableLogIfNeeded();
 
-export class EnvironmentManager {
-    static get(options: EnvironmentManagerOptions): EnvironmentManager {
-        const playerContribServices = getPlayerContribServices(options.corePlayer);
-        return playerContribServices.register("EnvironmentManager-v1", 1, () => {
-            return new EnvironmentManager(playerContribServices, options);
+export class ContribServices {
+    static get(options: ContribServicesOptions): ContribServices {
+        const playerContribRegistry = getPlayerContribRegistry(options.corePlayer);
+        return playerContribRegistry.register("ContribServices-v1", 1, () => {
+            return new ContribServices(playerContribRegistry, options);
         });
     }
 
     constructor(
-        private _playerContribServices: PlayerContribServices,
-        private _options: EnvironmentManagerOptions
+        private _playerContribRegistry: PlayerContribRegistry,
+        private _options: ContribServicesOptions
     ) {}
 
     private registerResources() {}
 
-    public get playerContribServices(): PlayerContribServices {
-        return PlayerContribServices.get(this._options.corePlayer);
+    public get playerContribRegistry(): PlayerContribRegistry {
+        return PlayerContribRegistry.get(this._options.corePlayer);
     }
 
     public getContribConfig(): ContribConfig {
@@ -66,7 +66,7 @@ export class EnvironmentManager {
 
     public get uiManager(): UIManager {
         return UIManager.fromPlayer(
-            this.playerContribServices,
+            this.playerContribRegistry,
             (): UIManager => {
                 const options = {
                     corePlayer: this._options.corePlayer,
@@ -84,7 +84,7 @@ export class EnvironmentManager {
     }
 
     public get presetManager(): PresetManager {
-        return PresetManager.fromPlayer(this.playerContribServices, () => {
+        return PresetManager.fromPlayer(this.playerContribRegistry, () => {
             const options = {
                 corePlayer: this._options.corePlayer
             };
@@ -94,7 +94,7 @@ export class EnvironmentManager {
     }
 
     public get upperBarManager(): UpperBarManager {
-        return UpperBarManager.fromPlayer(this.playerContribServices, () => {
+        return UpperBarManager.fromPlayer(this.playerContribRegistry, () => {
             const options = {
                 corePlayer: this._options.corePlayer,
                 presetManager: this.presetManager
@@ -105,7 +105,7 @@ export class EnvironmentManager {
     }
 
     public get kitchenSinkManager(): KitchenSinkManager {
-        return KitchenSinkManager.fromPlayer(this.playerContribServices, () => {
+        return KitchenSinkManager.fromPlayer(this.playerContribRegistry, () => {
             const options = {
                 corePlayer: this._options.corePlayer,
                 presetManager: this.presetManager,
@@ -117,7 +117,7 @@ export class EnvironmentManager {
     }
 
     public get floatingManager(): FloatingManager {
-        return FloatingManager.fromPlayer(this.playerContribServices, () => {
+        return FloatingManager.fromPlayer(this.playerContribRegistry, () => {
             const options = {
                 corePlayer: this._options.corePlayer,
                 presetManager: this.presetManager
@@ -128,7 +128,7 @@ export class EnvironmentManager {
     }
 
     public get bannerManager(): BannerManager {
-        return BannerManager.fromPlayer(this.playerContribServices, () => {
+        return BannerManager.fromPlayer(this.playerContribRegistry, () => {
             const options: BannerManagerOptions = {
                 corePlayer: this._options.corePlayer,
                 floatingManager: this.floatingManager
@@ -139,7 +139,7 @@ export class EnvironmentManager {
     }
 
     public get toastManager(): ToastManager {
-        return ToastManager.fromPlayer(this.playerContribServices, () => {
+        return ToastManager.fromPlayer(this.playerContribRegistry, () => {
             const options: ToastManagerOptions = {
                 floatingManager: this.floatingManager
             };

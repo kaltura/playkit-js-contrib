@@ -1,7 +1,7 @@
 import { FloatingItem } from "./floatingItem";
 import { FloatingItemData, FloatingItemProps, FloatingPositions } from "./floatingItemData";
 import { PresetManager } from "./presetManager";
-import { PlayerContribServices } from "@playkit-js-contrib/common";
+import { PlayerContribRegistry } from "@playkit-js-contrib/common";
 import { PresetNames } from "./presetItemData";
 import { ComponentChild, h } from "preact";
 import { PlayerSize, VideoSize } from "./common.types";
@@ -17,10 +17,10 @@ const ResourceToken = "FloatingManager-v1";
 
 export class FloatingManager {
     static fromPlayer(
-        playerContribServices: PlayerContribServices,
+        playerContribRegistry: PlayerContribRegistry,
         creator: () => FloatingManager
     ) {
-        return playerContribServices.register(ResourceToken, 1, creator);
+        return playerContribRegistry.register(ResourceToken, 1, creator);
     }
 
     private _items: Record<FloatingPositions, FloatingItem[]> = {

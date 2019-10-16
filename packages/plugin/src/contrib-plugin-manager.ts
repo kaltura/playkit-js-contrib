@@ -1,12 +1,12 @@
 import { ContribPluginFactories } from "./contrib-plugin-factories";
 import { CorePluginProxy } from "./core-plugin-proxy";
 import { CorePlugin } from "./core-plugin";
-import { EnvironmentManager } from "./environmentManager";
+import { ContribServices } from "./contrib-services";
 import { ContribPlugin } from "./contrib-plugin";
 
 export type ContribPluginData = {
     corePlugin: CorePlugin;
-    contribServices: EnvironmentManager;
+    contribServices: ContribServices;
 };
 
 export type ContribPluginFactory = (data: ContribPluginData) => ContribPlugin;

@@ -1,7 +1,7 @@
 import { UpperBarManager } from "./upperBarManager";
 import { FloatingManager } from "./floatingManager";
 import { KitchenSinkManager } from "./kitchenSinkManager";
-import { PlayerContribServices } from "@playkit-js-contrib/common";
+import { PlayerContribRegistry } from "@playkit-js-contrib/common";
 import { PresetManager } from "./presetManager";
 import { BannerManager } from "./bannerManager";
 import { ToastManager } from "./toastManager";
@@ -18,8 +18,8 @@ export interface UIManagerOptions {
 const ResourceToken = "UIManager-v1";
 
 export class UIManager {
-    static fromPlayer(playerContribServices: PlayerContribServices, creator: () => UIManager) {
-        return playerContribServices.register(ResourceToken, 1, creator);
+    static fromPlayer(playerContribRegistry: PlayerContribRegistry, creator: () => UIManager) {
+        return playerContribRegistry.register(ResourceToken, 1, creator);
     }
 
     constructor(private _options: UIManagerOptions) {}

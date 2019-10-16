@@ -1,4 +1,4 @@
-import { PlayerContribServices, UUID } from "@playkit-js-contrib/common";
+import { PlayerContribRegistry, UUID } from "@playkit-js-contrib/common";
 import { FloatingManager } from "./floatingManager";
 import { FloatingItemProps, FloatingPositions, FloatingUIModes } from "./floatingItemData";
 import { FloatingItem } from "./floatingItem";
@@ -35,8 +35,8 @@ interface ManagedToasts {
 const ResourceToken: string = "ToastManager-v1";
 
 export class ToastManager {
-    static fromPlayer(playerContribServices: PlayerContribServices, creator: () => ToastManager) {
-        return playerContribServices.register(ResourceToken, 1, creator);
+    static fromPlayer(playerContribRegistry: PlayerContribRegistry, creator: () => ToastManager) {
+        return playerContribRegistry.register(ResourceToken, 1, creator);
     }
 
     private _options: ToastManagerOptions;

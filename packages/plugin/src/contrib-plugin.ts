@@ -1,4 +1,4 @@
-import { ContribConfig, ContribConfigSources } from "./core-plugin";
+import { ContribConfig } from "./core-plugin";
 import { UIManager } from "@playkit-js-contrib/ui";
 
 export interface ContribPlugin {}
@@ -35,7 +35,7 @@ export function hasOnActivePresetChanged(plugin: any): plugin is onActivePresetC
     return "onActivePresetChanged" in plugin;
 }
 
-export type OnMediaLoadConfig = { sources: ContribConfigSources };
+export type OnMediaLoadConfig = { sources: Required<ContribConfig>["sources"] };
 
 export interface OnMediaLoad {
     onMediaLoad(config: OnMediaLoadConfig): void;

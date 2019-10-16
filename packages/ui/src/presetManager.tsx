@@ -1,4 +1,4 @@
-import { PlayerContribServices } from "@playkit-js-contrib/common";
+import { PlayerContribRegistry } from "@playkit-js-contrib/common";
 import { PresetItemData } from "./presetItemData";
 import { KalturaPlayerPresetComponent, PresetItem } from "./presetItem";
 
@@ -10,8 +10,8 @@ const ResourceToken = "PresetManager-v1";
 
 // TODO sakal rename to PlayerUIManager
 export class PresetManager {
-    static fromPlayer(playerContribServices: PlayerContribServices, creator: () => PresetManager) {
-        return playerContribServices.register(ResourceToken, 1, creator);
+    static fromPlayer(playerContribRegistry: PlayerContribRegistry, creator: () => PresetManager) {
+        return playerContribRegistry.register(ResourceToken, 1, creator);
     }
 
     private _isLocked = false;

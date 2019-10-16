@@ -1,7 +1,7 @@
 import { CorePlugin } from "./core-plugin";
 import { ContribPlugin } from "./contrib-plugin";
 import { ContribPluginFactories } from "./contrib-plugin-factories";
-import { EnvironmentManager } from "./environmentManager";
+import { ContribServices } from "./contrib-services";
 import { getContribLogger } from "@playkit-js-contrib/common";
 
 const _logger = getContribLogger({
@@ -28,7 +28,7 @@ export class CorePluginProxy extends KalturaPlayer.core.BasePlugin {
         }
 
         try {
-            const contribServices = EnvironmentManager.get({ corePlayer: player });
+            const contribServices = ContribServices.get({ corePlayer: player });
             const corePlugin = pluginFactories.corePluginFactory
                 ? pluginFactories.corePluginFactory(name, player, config)
                 : new CorePlugin(name, player, config);
