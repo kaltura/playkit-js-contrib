@@ -6,7 +6,7 @@ import {
     RegisterRequestResponse
 } from "./client-api";
 import { SocketWrapper } from "./socket-wrapper";
-import { getContribLogger } from "@playkit-js-contrib/common";
+import { getContribLogger, PlayerContribRegistry } from "@playkit-js-contrib/common";
 
 export interface EventParams extends Record<string, any> {
     entryId: string;
@@ -49,23 +49,36 @@ const logger = getContribLogger({
     class: "PushNotifications"
 });
 
-export class PushNotifications {
-    private static instancePool: any = {}; // Todo by @Eran_Sakal register singleton per player (and remove this line)
+const ResourceToken = "PushNotifications-v1";
 
-    private _socketPool: any = {};
-    private _clientApi: any;
+function getDomainFromUrl(url: string) {
+    return url.replace(/^(.*\/\/[^\/?#]*).*$/, "$1");
+}
 
-    // Todo: should use plugin instance
-    static getInstance(options: PushNotificationsOptions): PushNotifications {
-        const domainUrl = PushNotifications._getDomainFromUrl(options.serviceUrl);
+export class PushNotificationsFactory {
+    static fromPlayer(
+        playerContribRegistry: PlayerContribRegistry,
+        creator: () => PushNotificationsFactory
+    ) {
+        return playerContribRegistry.register(ResourceToken, 1, creator);
+    }
 
-        if (!PushNotifications.instancePool[domainUrl]) {
+    private instancePool: any = {};
+
+    getInstance(options: PushNotificationsOptions): PushNotifications {
+        const domainUrl = getDomainFromUrl(options.serviceUrl);
+
+        if (!this.instancePool[domainUrl]) {
             const newInstance = new PushNotifications(options);
-            PushNotifications.instancePool[domainUrl] = newInstance;
+            this.instancePool[domainUrl] = newInstance;
         }
 
-        return PushNotifications.instancePool[domainUrl];
+        return this.instancePool[domainUrl];
     }
+}
+export class PushNotifications {
+    private _socketPool: any = {};
+    private _clientApi: any;
 
     constructor(options: PushNotificationsOptions) {
         this._clientApi = new ClientApi(options);
@@ -168,7 +181,7 @@ export class PushNotifications {
         }
 
         //cache sockets by host name
-        let socketKey = PushNotifications._getDomainFromUrl(result.url);
+        let socketKey = getDomainFromUrl(result.url);
         let socketWrapper = this._socketPool[socketKey];
         if (!socketWrapper) {
             socketWrapper = new SocketWrapper({
@@ -188,9 +201,5 @@ export class PushNotifications {
         );
 
         return Promise.resolve();
-    }
-
-    private static _getDomainFromUrl(url: string) {
-        return url.replace(/^(.*\/\/[^\/?#]*).*$/, "$1");
     }
 }

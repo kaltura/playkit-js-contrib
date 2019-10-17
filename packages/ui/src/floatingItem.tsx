@@ -44,7 +44,6 @@ export class FloatingItem {
             method: "remove"
         });
         this._isShown = false;
-        // TODO sakal check if need to manually call renderer update or if shown prop is enough
         if (!this._componentRef) {
             return;
         }
@@ -57,7 +56,6 @@ export class FloatingItem {
             method: "add"
         });
         this._isShown = true;
-        // TODO sakal check if need to manually call renderer update or if shown prop is enough
         if (!this._componentRef) {
             return;
         }
@@ -85,7 +83,6 @@ export class FloatingItem {
     }
 
     renderFloatingChild(props: FloatingItemProps) {
-        // TODO sakal check if should rename 'name' to 'label'
         const { label } = this._options.data;
 
         return (

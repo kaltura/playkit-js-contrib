@@ -31,7 +31,7 @@ const mapStateToProps = state => {
     KalturaPlayer.ui.utils.bindActions(KalturaPlayer.ui.reducers.shell.actions),
     null,
     {
-        forwardRef: true // TODO sakal fix reference by connect
+        forwardRef: true
     }
 )
 export class KitchenSinkAdapter extends KalturaPlayer.ui.preact.Component<KitchenSinkAdapterProps> {

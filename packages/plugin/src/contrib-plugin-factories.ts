@@ -7,6 +7,5 @@ export type PluginFactories = {
 };
 
 export class ContribPluginFactories {
-    // TODO sakal expose add/get instead of actual property
     static factories: Record<string, PluginFactories> = {};
 }

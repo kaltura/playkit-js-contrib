@@ -8,7 +8,6 @@ export interface PresetManagerOptions {
 
 const ResourceToken = "PresetManager-v1";
 
-// TODO sakal rename to PlayerUIManager
 export class PresetManager {
     static fromPlayer(playerContribRegistry: PlayerContribRegistry, creator: () => PresetManager) {
         return playerContribRegistry.register(ResourceToken, 1, creator);

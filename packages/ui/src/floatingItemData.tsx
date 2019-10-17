@@ -8,7 +8,6 @@ export enum FloatingUIModes {
     FirstPlay = "FirstPlay"
 }
 
-// TODO sakal VisibleArea to InteractiveArea
 export enum FloatingPositions {
     VideoArea = "VideoArea",
     PresetArea = "PresetArea",

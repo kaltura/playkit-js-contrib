@@ -5,7 +5,7 @@ declare global {
         ui: {
             redux: {
                 connect: (...args: any) => any;
-            }; // TODO sakal consider if should add explicit type
+            };
             reducers: Record<string, { actions: Record<string, unknown>[] }>;
             preact: typeof ContribPreact;
             utils: {

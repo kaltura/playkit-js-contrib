@@ -12,6 +12,11 @@ import {
 } from "@playkit-js-contrib/ui";
 import { enableLogIfNeeded } from "@playkit-js-contrib/common";
 import { ContribConfig, EntryTypes } from "./core-plugin";
+import {
+    PushNotifications,
+    PushNotificationsFactory,
+    PushNotificationsOptions
+} from "@playkit-js-contrib/push-notifications";
 
 export interface ContribServicesOptions {
     corePlayer: CorePlayer;
@@ -104,6 +109,13 @@ export class ContribServices {
         });
     }
 
+    public pushNotifications(options: PushNotificationsOptions): PushNotifications {
+        const factory = PushNotificationsFactory.fromPlayer(this.playerContribRegistry, () => {
+            return new PushNotificationsFactory();
+        });
+
+        return factory.getInstance(options);
+    }
     public get kitchenSinkManager(): KitchenSinkManager {
         return KitchenSinkManager.fromPlayer(this.playerContribRegistry, () => {
             const options = {
