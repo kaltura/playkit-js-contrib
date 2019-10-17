@@ -20,6 +20,11 @@ declare global {
             BasePlugin: {
                 new (...args: any[]): CoreBasePlugin;
             };
+            utils: {
+                Object: {
+                    mergeDeep(target: Record<string, any>, ...sources: Record<string, any>[]);
+                };
+            };
         };
     };
 }

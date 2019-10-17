@@ -16,11 +16,15 @@ export class ContribPluginManager {
     static registerPlugin(
         pluginName: string,
         contribPluginFactory: ContribPluginFactory,
-        corePluginFactory?: CorePluginFactory
+        overrides?: {
+            corePluginFactory?: CorePluginFactory;
+            defaultConfig?: Record<string, any>;
+        }
     ) {
         ContribPluginFactories.factories[pluginName] = {
             contribPluginFactory,
-            corePluginFactory
+            corePluginFactory: overrides.corePluginFactory,
+            defaultConfig: overrides.defaultConfig
         };
         KalturaPlayer.core.registerPlugin(pluginName, CorePluginProxy);
     }
