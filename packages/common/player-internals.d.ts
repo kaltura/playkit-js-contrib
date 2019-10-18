@@ -24,6 +24,7 @@ interface InjectedComponentProps {
 declare global {
     const KalturaPlayer: {
         ui: {
+            EventType: Record<string, string>;
             redux: {
                 connect: (...args: any) => any;
             }; // TODO sakal consider if should add explicit type

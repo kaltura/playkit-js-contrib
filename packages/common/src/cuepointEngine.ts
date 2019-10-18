@@ -14,7 +14,7 @@ type ChangeData<T extends Cuepoint> = {
 const DefaultReasonableSeekThreshold = 2000;
 
 export interface Cuepoint {
-    id: string;
+    id?: string | number;
     startTime: number;
     endTime?: number;
 }
@@ -239,9 +239,7 @@ export class CuepointEngine<T extends Cuepoint> {
             } else {
                 if (cuepointIndex !== -1) {
                     logger.info(
-                        `cuepoint was marked with type ${item.type} at ${
-                            item.time
-                        }. remove from new cuepoint list as it wasn't visible yet`,
+                        `cuepoint was marked with type ${item.type} at ${item.time}. remove from new cuepoint list as it wasn't visible yet`,
                         {
                             method: "createCuepointDelta",
                             data: { cuepoint: item.cuePoint }
@@ -251,9 +249,7 @@ export class CuepointEngine<T extends Cuepoint> {
                     newCuepoint.splice(cuepointIndex, 1);
                 } else if (removedCuepoint.indexOf(item.cuePoint) === -1) {
                     logger.info(
-                        `cuepoint was marked with type ${item.type} at ${
-                            item.time
-                        }. add to removed cuepoint list`,
+                        `cuepoint was marked with type ${item.type} at ${item.time}. add to removed cuepoint list`,
                         {
                             method: "createCuepointDelta",
                             data: { cuepoint: item.cuePoint }
