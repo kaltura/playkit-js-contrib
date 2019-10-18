@@ -7,6 +7,7 @@ import {
 } from "./client-api";
 import { SocketWrapper } from "./socket-wrapper";
 import { getContribLogger, PlayerContribRegistry } from "@playkit-js-contrib/common";
+import { getDomainFromUrl } from "./utils";
 
 export interface EventParams extends Record<string, any> {
     entryId: string;
@@ -49,33 +50,6 @@ const logger = getContribLogger({
     class: "PushNotifications"
 });
 
-const ResourceToken = "PushNotifications-v1";
-
-function getDomainFromUrl(url: string) {
-    return url.replace(/^(.*\/\/[^\/?#]*).*$/, "$1");
-}
-
-export class PushNotificationsFactory {
-    static fromPlayer(
-        playerContribRegistry: PlayerContribRegistry,
-        creator: () => PushNotificationsFactory
-    ) {
-        return playerContribRegistry.register(ResourceToken, 1, creator);
-    }
-
-    private instancePool: any = {};
-
-    getInstance(options: PushNotificationsOptions): PushNotifications {
-        const domainUrl = getDomainFromUrl(options.serviceUrl);
-
-        if (!this.instancePool[domainUrl]) {
-            const newInstance = new PushNotifications(options);
-            this.instancePool[domainUrl] = newInstance;
-        }
-
-        return this.instancePool[domainUrl];
-    }
-}
 export class PushNotifications {
     private _socketPool: any = {};
     private _clientApi: any;

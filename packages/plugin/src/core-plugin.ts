@@ -26,20 +26,24 @@ export interface ContribConfig {
     };
 }
 
-export class CorePlugin extends KalturaPlayer.core.BasePlugin {
+export class CorePlugin<TContribPlugin extends ContribPlugin = ContribPlugin> extends KalturaPlayer
+    .core.BasePlugin {
     static defaultConfig = {};
     static isValid(player: any) {
         return true;
     }
 
-    protected _contribPlugin!: ContribPlugin;
+    protected _contribPlugin!: TContribPlugin;
     protected _contribServices!: ContribServices;
 
     constructor(...args: any[]) {
         super(...args);
     }
 
-    setContribContext(context: { contribPlugin: ContribPlugin; contribServices: ContribServices }) {
+    setContribContext(context: {
+        contribPlugin: TContribPlugin;
+        contribServices: ContribServices;
+    }) {
         this._contribPlugin = context.contribPlugin;
         this._contribServices = context.contribServices;
     }

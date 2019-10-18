@@ -39,7 +39,6 @@
     ],
     "dependencies": {
         "@playkit-js-contrib/common": "^2.0.1-next.0",
-        "@playkit-js-contrib/ui": "^2.0.1-next.0",
-        "@playkit-js-contrib/push-notifications": "^2.0.1-next.0"
+        "@playkit-js-contrib/ui": "^2.0.1-next.0"
     }
 }
