@@ -9,7 +9,7 @@ import { getPlayerSize, getVideoSize } from "./playerUtils";
 import { ManagedComponent } from "./components/managed-component";
 
 export interface FloatingManagerOptions {
-    corePlayer: CorePlayer;
+    corePlayer: KalturaPlayerTypes.Player;
     presetManager: PresetManager;
 }
 

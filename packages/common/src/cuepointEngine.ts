@@ -14,7 +14,6 @@ type ChangeData<T extends Cuepoint> = {
 const DefaultReasonableSeekThreshold = 2000;
 
 export interface Cuepoint {
-    id: string;
     startTime: number;
     endTime?: number;
 }

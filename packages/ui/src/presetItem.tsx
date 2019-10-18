@@ -6,7 +6,7 @@ import { ContribLogger } from "@playkit-js-contrib/common";
 import { InjectedComponent } from "./components/injected-component/injected-component";
 
 export interface PresetItemOptions {
-    corePlayer: CorePlayer;
+    corePlayer: KalturaPlayerTypes.Player;
     data: PresetItemData;
 }
 

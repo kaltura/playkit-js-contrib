@@ -13,7 +13,7 @@ import { KitchenSink } from "./components/kitchen-sink/kitchenSink";
 import { KitchenSinkAdapter } from "./components/kitchen-sink-adapter";
 
 export interface KitchenSinkManagerOptions {
-    corePlayer: CorePlayer;
+    corePlayer: KalturaPlayerTypes.Player;
     presetManager: PresetManager;
     upperBarManager: UpperBarManager;
 }

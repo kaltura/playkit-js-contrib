@@ -4,7 +4,7 @@ import { FloatingItemData, FloatingItemProps, FloatingUIModes } from "./floating
 import { ManagedComponent } from "./components/managed-component";
 
 export interface FloatingItemOptions {
-    corePlayer: CorePlayer;
+    corePlayer: KalturaPlayerTypes.Player;
     data: FloatingItemData;
 }
 

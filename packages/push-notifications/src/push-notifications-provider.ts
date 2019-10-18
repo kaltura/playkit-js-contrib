@@ -7,7 +7,10 @@ const ResourceToken = "PushNotifications-v1";
 export class PushNotificationsProvider {
     private instancePool: any = {};
 
-    public static get(player: CorePlayer, options: PushNotificationsOptions): PushNotifications {
+    public static get(
+        player: KalturaPlayerTypes.Player,
+        options: PushNotificationsOptions
+    ): PushNotifications {
         const pushNotificationProviderInstance = PlayerContribRegistry.get(player).register(
             ResourceToken,
             1,

@@ -8,24 +8,6 @@ import {
     hasOnRegisterUI
 } from "./contrib-plugin";
 
-export enum EntryTypes {
-    Vod = "Vod",
-    Live = "Live"
-}
-
-export interface ContribConfig {
-    sources?: {
-        entryId: string;
-        entryType: EntryTypes;
-    };
-    server: {
-        ks: string;
-        partnerId: number;
-        serviceUrl: string;
-        userId?: string;
-    };
-}
-
 export class CorePlugin<TContribPlugin extends ContribPlugin = ContribPlugin> extends KalturaPlayer
     .core.BasePlugin {
     static defaultConfig = {};
@@ -70,8 +52,7 @@ export class CorePlugin<TContribPlugin extends ContribPlugin = ContribPlugin> ex
             if (!this._wasSetupExecuted) {
                 if (hasOnPluginSetup(this._contribPlugin)) {
                     try {
-                        const config = this._contribServices.getContribConfig();
-                        this._contribPlugin.onPluginSetup(config);
+                        this._contribPlugin.onPluginSetup();
                     } catch (e) {
                         this._wasSetupFailed = true;
                         console.error(`failed to execute plugin setup, suspend plugin`, {
@@ -88,9 +69,7 @@ export class CorePlugin<TContribPlugin extends ContribPlugin = ContribPlugin> ex
 
             if (hasOnMediaLoad(this._contribPlugin)) {
                 try {
-                    const sources = this._contribServices.getContribConfig().sources;
-
-                    this._contribPlugin.onMediaLoad({ sources });
+                    this._contribPlugin.onMediaLoad();
                 } catch (e) {
                     console.error(`failure during media load `, { error: e.message });
                 }

@@ -3,6 +3,7 @@ import { ContribPlugin } from "./contrib-plugin";
 import { ContribPluginFactories } from "./contrib-plugin-factories";
 import { ContribServices } from "./contrib-services";
 import { getContribLogger } from "@playkit-js-contrib/common";
+import { ContribPluginConfigs } from "./contrib-plugin-configs";
 
 const _logger = getContribLogger({
     module: "contrib-plugin",
@@ -34,12 +35,16 @@ export class CorePluginProxy extends KalturaPlayer.core.BasePlugin {
                 config
             );
             const contribServices = ContribServices.get({ corePlayer: player });
+
             const corePlugin = pluginFactories.corePluginFactory
                 ? pluginFactories.corePluginFactory(name, player, corePluginConfig)
                 : new CorePlugin(name, player, corePluginConfig);
+
             const contribPlugin = pluginFactories.contribPluginFactory({
                 corePlugin,
-                contribServices
+                contribServices,
+                configs: new ContribPluginConfigs<any>(player, corePlugin),
+                player
             });
 
             corePlugin.setContribContext({ contribPlugin, contribServices });

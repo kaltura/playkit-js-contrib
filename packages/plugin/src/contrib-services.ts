@@ -11,10 +11,9 @@ import {
     ToastManagerOptions
 } from "@playkit-js-contrib/ui";
 import { enableLogIfNeeded } from "@playkit-js-contrib/common";
-import { ContribConfig, EntryTypes } from "./core-plugin";
 
 export interface ContribServicesOptions {
-    corePlayer: CorePlayer;
+    corePlayer: KalturaPlayerTypes.Player;
 }
 
 function getPlayerContribRegistry(corePlayer: any): PlayerContribRegistry {
@@ -41,27 +40,6 @@ export class ContribServices {
 
     public get playerContribRegistry(): PlayerContribRegistry {
         return PlayerContribRegistry.get(this._options.corePlayer);
-    }
-
-    public getContribConfig(): ContribConfig {
-        const { corePlayer } = this._options;
-
-        const sources = corePlayer.config.sources
-            ? {
-                  entryId: corePlayer.config.sources.id,
-                  entryType: EntryTypes[corePlayer.config.sources.type] || EntryTypes.Vod
-              }
-            : undefined;
-
-        return {
-            sources,
-            server: {
-                ks: corePlayer.config.session.ks,
-                serviceUrl: corePlayer.config.provider.env.serviceUrl,
-                partnerId: corePlayer.config.session.partnerId,
-                userId: corePlayer.config.session.userId
-            }
-        };
     }
 
     public get uiManager(): UIManager {

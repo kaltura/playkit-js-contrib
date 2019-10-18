@@ -26,7 +26,7 @@ export interface BannerOptions {
 
 export interface BannerManagerOptions {
     floatingManager: FloatingManager;
-    corePlayer: CorePlayer;
+    corePlayer: KalturaPlayerTypes.Player;
 }
 
 export interface BannerState {

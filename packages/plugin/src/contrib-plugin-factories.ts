@@ -1,7 +1,7 @@
 import { ContribPluginFactory, CorePluginFactory } from "./contrib-plugin-manager";
 
 export type PluginFactories = {
-    contribPluginFactory: ContribPluginFactory;
+    contribPluginFactory: ContribPluginFactory<any>;
     corePluginFactory?: CorePluginFactory;
     defaultConfig?: Record<string, any>;
 };

@@ -1,4 +1,3 @@
-import { ContribConfig } from "./core-plugin";
 import { UIManager } from "@playkit-js-contrib/ui";
 
 export interface ContribPlugin {}
@@ -12,7 +11,7 @@ export function hasOnRegisterUI(plugin: any): plugin is OnRegisterUI {
 }
 
 export interface OnPluginSetup {
-    onPluginSetup(config: ContribConfig): void;
+    onPluginSetup(): void;
 }
 
 export function hasOnPluginSetup(plugin: any): plugin is OnPluginSetup {
@@ -35,10 +34,8 @@ export function hasOnActivePresetChanged(plugin: any): plugin is onActivePresetC
     return "onActivePresetChanged" in plugin;
 }
 
-export type OnMediaLoadConfig = { sources: Required<ContribConfig>["sources"] };
-
 export interface OnMediaLoad {
-    onMediaLoad(config: OnMediaLoadConfig): void;
+    onMediaLoad(): void;
 }
 
 export function hasOnMediaLoad(plugin: any): plugin is OnMediaLoad {

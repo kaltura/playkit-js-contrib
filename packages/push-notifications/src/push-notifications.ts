@@ -30,7 +30,7 @@ export interface PushNotificationsOptions {
     ks: string;
     serviceUrl: string;
     clientTag: string;
-    corePlayer: CorePlayer;
+    corePlayer: KalturaPlayerTypes.Player;
 }
 
 export interface APINotificationResponse extends APIResponse {

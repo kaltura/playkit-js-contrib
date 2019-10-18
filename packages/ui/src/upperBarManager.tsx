@@ -8,7 +8,7 @@ import { PlayerContribRegistry } from "@playkit-js-contrib/common";
 import { PresetItem } from "./presetItem";
 
 export interface UpperBarManagerOptions {
-    corePlayer: CorePlayer;
+    corePlayer: KalturaPlayerTypes.Player;
     presetManager: PresetManager;
 }
 

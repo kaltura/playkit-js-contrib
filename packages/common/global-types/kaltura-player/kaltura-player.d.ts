@@ -9,7 +9,7 @@ declare global {
             reducers: Record<string, { actions: Record<string, unknown>[] }>;
             preact: typeof ContribPreact;
             utils: {
-                getLogger: (name: string) => CoreLogger;
+                getLogger: (name: string) => KalturaPlayerTypes.Logger;
                 bindActions(actions: Record<string, unknown>[]): (...args: any) => void;
             };
             components: {};
@@ -18,7 +18,7 @@ declare global {
         core: {
             registerPlugin(name: string, component: any): void;
             BasePlugin: {
-                new (...args: any[]): CoreBasePlugin;
+                new (...args: any[]): KalturaPlayerTypes.BasePlugin;
             };
             utils: {
                 Object: {
