@@ -20,3 +20,4 @@ export * from "./components/logger";
 export * from "./presetItemData";
 export * from "./components/managed-component";
 export * from "./downloader";
+export * from "./printer";
