@@ -13,7 +13,7 @@ declare namespace KalturaPlayerTypes {
     export interface PlayerConfig {
         log?: PlayerConfig.Log;
         sources: PlayerConfig.Sources;
-        plugins?: PlayerConfig.Plugins;
+        plugins: Record<string, Object>;
         playback: PlayerConfig.Playback;
         abr?: PlayerConfig.ABR;
         drm?: PlayerConfig.DRM;
@@ -104,29 +104,6 @@ declare namespace KalturaPlayerTypes {
         export interface StreamPriority {
             engine?: string;
             format?: string;
-        }
-
-        export interface Plugins {
-            "kaltura-live"?: Network;
-            kava?: Kava;
-        }
-
-        export interface Kava {
-            serviceUrl?: string;
-            viewEventCountdown?: number;
-            resetSessionCountdown?: number;
-            dvrThreshold?: number;
-            playbackContext?: string;
-            applicationVersion?: string;
-            playerVersion?: string;
-            playerName?: string;
-            referrer?: string;
-            partnerId?: number;
-            entryId?: string;
-            entryType?: string;
-            sessionId?: string;
-            ks: string;
-            uiConfId?: number;
         }
 
         export interface Provider {

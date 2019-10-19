@@ -1,9 +1,3 @@
-interface MessageOptions {
-    class?: string;
-    method?: string;
-    data?: Record<string, any>;
-}
-
 declare namespace KalturaPlayerTypes {
     export interface Logger {
         debug(message: string, context: MessageOptions): void;
@@ -15,5 +9,11 @@ declare namespace KalturaPlayerTypes {
         warn(message: string, context: MessageOptions): void;
 
         error(message: string, context: MessageOptions): void;
+    }
+
+    export interface MessageOptions {
+        class?: string;
+        method?: string;
+        data?: Record<string, any>;
     }
 }
