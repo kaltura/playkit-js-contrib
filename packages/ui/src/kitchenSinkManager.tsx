@@ -7,13 +7,13 @@ import {
 import { KitchenSinkItem, KitchenSinkItemRenderProps } from "./kitchenSinkItem";
 import { UpperBarManager } from "./upperBarManager";
 import { PresetManager } from "./presetManager";
-import { PlayerAPI, PlayerContribServices } from "@playkit-js-contrib/common";
+import { PlayerContribRegistry } from "@playkit-js-contrib/common";
 import { PresetNames } from "./presetItemData";
 import { KitchenSink } from "./components/kitchen-sink/kitchenSink";
 import { KitchenSinkAdapter } from "./components/kitchen-sink-adapter";
 
 export interface KitchenSinkManagerOptions {
-    playerAPI: PlayerAPI;
+    corePlayer: KalturaPlayerTypes.Player;
     presetManager: PresetManager;
     upperBarManager: UpperBarManager;
 }
@@ -22,10 +22,10 @@ const ResourceToken = "KitchenSinkManager-v1";
 
 export class KitchenSinkManager {
     static fromPlayer(
-        playerContribServices: PlayerContribServices,
+        playerContribRegistry: PlayerContribRegistry,
         creator: () => KitchenSinkManager
     ) {
-        return playerContribServices.register(ResourceToken, 1, creator);
+        return playerContribRegistry.register(ResourceToken, 1, creator);
     }
 
     private _items: Record<KitchenSinkPositions, KitchenSinkItem[]> = {
@@ -41,26 +41,25 @@ export class KitchenSinkManager {
         this._options = options;
         this.options.presetManager.add({
             label: "kitchen-sink-right",
-            fitToContainer: true,
+            fillContainer: true,
             presets: [PresetNames.Playback, PresetNames.Live],
-            container: { name: "sidePanel", position: "right" },
+            container: { name: "SidePanel", position: "Right" },
             renderChild: this._renderChild.bind(this, KitchenSinkPositions.Right)
         });
 
         this.options.presetManager.add({
             label: "kitchen-sink-bottom",
-            fitToContainer: true,
+            fillContainer: true,
             presets: [PresetNames.Playback, PresetNames.Live],
-            container: { name: "sidePanel", position: "bottom" },
+            container: { name: "SidePanel", position: "Bottom" },
             renderChild: this._renderChild.bind(this, KitchenSinkPositions.Bottom)
         });
 
         this.options.presetManager.add({
-            label: "kitchen-sink-manager",
-            fitToContainer: true,
+            label: "kitchen-sink-adapter",
             shareAdvancedPlayerAPI: true,
             presets: [PresetNames.Playback, PresetNames.Live],
-            container: { name: "overlay" },
+            container: { name: "PlayerArea" },
             renderChild: () => <KitchenSinkAdapter ref={this._setRef} />
         });
     }
@@ -115,8 +114,8 @@ export class KitchenSinkManager {
         return <KitchenSink>{items}</KitchenSink>;
     };
 
-    private _setRef = (ref: { _component: KitchenSinkAdapter } | null) => {
-        this._kitchenSinkAdapterRef = ref ? ref._component : null;
+    private _setRef = (ref: KitchenSinkAdapter | null) => {
+        this._kitchenSinkAdapterRef = ref ? ref : null;
     };
 
     /**

@@ -1,25 +1,25 @@
 import { h } from "preact";
-import { ContribLogger, getContribLogger, PlayerAPI } from "@playkit-js-contrib/common";
-import { OverlayItemData, OverlayItemProps, OverlayUIModes } from "./overlayItemData";
+import { ContribLogger, getContribLogger } from "@playkit-js-contrib/common";
+import { FloatingItemData, FloatingItemProps, FloatingUIModes } from "./floatingItemData";
 import { ManagedComponent } from "./components/managed-component";
 
-export interface OverlayItemOptions {
-    playerAPI: PlayerAPI;
-    data: OverlayItemData;
+export interface FloatingItemOptions {
+    corePlayer: KalturaPlayerTypes.Player;
+    data: FloatingItemData;
 }
 
-export class OverlayItem {
+export class FloatingItem {
     private _destroyed = false;
-    private _options: OverlayItemOptions;
+    private _options: FloatingItemOptions;
     private _isShown = false;
     private _componentRef: ManagedComponent | null = null;
     private _logger: ContribLogger;
 
-    constructor(options: OverlayItemOptions) {
+    constructor(options: FloatingItemOptions) {
         this._options = options;
         this._logger = getContribLogger({
             module: "contrib-ui",
-            class: "OverlayItem",
+            class: "FloatingItem",
             context: options.data.label
         });
         this._logger.debug("executed", {
@@ -35,12 +35,15 @@ export class OverlayItem {
         this._addPlayerBindings();
     }
 
+    get data(): FloatingItemData {
+        return this._options.data;
+    }
+
     remove = (): void => {
         this._logger.info("remove item from player", {
             method: "remove"
         });
         this._isShown = false;
-        // TODO sakal check if need to manually call renderer update or if shown prop is enough
         if (!this._componentRef) {
             return;
         }
@@ -53,7 +56,6 @@ export class OverlayItem {
             method: "add"
         });
         this._isShown = true;
-        // TODO sakal check if need to manually call renderer update or if shown prop is enough
         if (!this._componentRef) {
             return;
         }
@@ -80,8 +82,7 @@ export class OverlayItem {
         this.remove();
     }
 
-    renderOverlayChild(props: OverlayItemProps) {
-        // TODO sakal check if should rename 'name' to 'label'
+    renderFloatingChild(props: FloatingItemProps) {
         const { label } = this._options.data;
 
         return (
@@ -94,21 +95,30 @@ export class OverlayItem {
         );
     }
 
+    private _handleMediaLoaded = () => {
+        const { corePlayer } = this._options;
+        corePlayer.removeEventListener(corePlayer.Event.MEDIA_LOADED, this._handleMediaLoaded);
+        this.add();
+    };
+
+    private _handleFirstPlay = () => {
+        const { corePlayer } = this._options;
+        corePlayer.removeEventListener(corePlayer.Event.FIRST_PLAY, this._handleFirstPlay);
+        this.add();
+    };
+
     private _addPlayerBindings() {
-        const {
-            playerAPI: { eventManager, kalturaPlayer },
-            data
-        } = this._options;
+        const { corePlayer, data } = this._options;
 
-        if (data.mode === OverlayUIModes.MediaLoaded) {
-            eventManager.listenOnce(kalturaPlayer, kalturaPlayer.Event.MEDIA_LOADED, this.add);
+        if (data.mode === FloatingUIModes.MediaLoaded) {
+            corePlayer.addEventListener(corePlayer.Event.MEDIA_LOADED, this._handleMediaLoaded);
         }
 
-        if (data.mode === OverlayUIModes.FirstPlay) {
-            eventManager.listenOnce(kalturaPlayer, kalturaPlayer.Event.FIRST_PLAY, this.add);
+        if (data.mode === FloatingUIModes.FirstPlay) {
+            corePlayer.addEventListener(corePlayer.Event.FIRST_PLAY, this._handleFirstPlay);
         }
 
-        if (data.mode === OverlayUIModes.Immediate) {
+        if (data.mode === FloatingUIModes.Immediate) {
             this.add();
         }
     }

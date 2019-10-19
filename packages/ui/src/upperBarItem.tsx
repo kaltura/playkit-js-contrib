@@ -1,14 +1,13 @@
 import { h, ComponentChild } from "preact";
 import { UpperBarItemData } from "./upperBarItemData";
-import { ContribLogger } from '@playkit-js-contrib/common';
-import { getContribLogger } from '@playkit-js-contrib/common';
+import { ContribLogger } from "@playkit-js-contrib/common";
+import { getContribLogger } from "@playkit-js-contrib/common";
 
 export interface UpperBarItemOptions {
     data: UpperBarItemData;
 }
 
 export interface UpperBarItemProps {}
-
 
 export class UpperBarItem {
     private _options: UpperBarItemOptions;
@@ -17,18 +16,18 @@ export class UpperBarItem {
     constructor(options: UpperBarItemOptions) {
         this._options = options;
         this._logger = getContribLogger({
-            module: 'contrib-ui',
-            class: 'PresetItem',
+            module: "contrib-ui",
+            class: "PresetItem",
             context: options.data.label
         });
-        this._logger.debug('executed', {
-            method: 'constructor',
+        this._logger.debug("executed", {
+            method: "constructor",
             data: {
                 options
             }
         });
         this._logger.info(`created item ${options.data.label}`, {
-            method: 'constructor'
+            method: "constructor"
         });
     }
 
@@ -37,7 +36,7 @@ export class UpperBarItem {
         const children = renderItem(props);
 
         return (
-            <div data-contrib-item={label} onClick={onClick} className={"icon--clickable"}>
+            <div onClick={onClick} className={"icon--clickable"}>
                 {children}
             </div>
         );

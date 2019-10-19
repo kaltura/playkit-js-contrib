@@ -1,27 +1,28 @@
 import { ComponentChild, Ref } from "preact";
 import { PlayerSize, VideoSize } from "./common.types";
 
-export enum OverlayUIModes {
+export enum FloatingUIModes {
     MediaLoaded = "MediaLoaded",
     OnDemand = "OnDemand",
     Immediate = "Immediate",
     FirstPlay = "FirstPlay"
 }
 
-export enum OverlayPositions {
-    Video = "video",
-    VisibleArea = "visibleArea"
+export enum FloatingPositions {
+    VideoArea = "VideoArea",
+    PresetArea = "PresetArea",
+    InteractiveArea = "InteractiveArea"
 }
 
-export interface OverlayItemData {
+export interface FloatingItemData {
     label: string;
-    mode: OverlayUIModes;
-    renderContent: (overlayItemProps: OverlayItemProps) => ComponentChild;
+    mode: FloatingUIModes;
+    renderContent: (floatingItemProps: FloatingItemProps) => ComponentChild;
     className?: string;
-    position: OverlayPositions;
+    position: FloatingPositions;
 }
 
-export interface OverlayItemProps {
+export interface FloatingItemProps {
     currentTime: number;
     canvas: {
         playerSize: PlayerSize;

@@ -2,7 +2,7 @@
 import { ScaleCalculation, scaleVideo } from "./scaleVideo";
 import { CuepointEngine } from "@playkit-js-contrib/common";
 import { PlayerSize, VideoSize } from "./common.types";
-import { getContribLogger } from '@playkit-js-contrib/common';
+import { getContribLogger } from "@playkit-js-contrib/common";
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
@@ -10,7 +10,7 @@ enum ChangeTypes {
     Show = "show",
     Hide = "hide"
 }
-type ChangeData<T extends OverlayCuepoint> = {
+type ChangeData<T extends FloatingCuepoint> = {
     time: number;
     type: ChangeTypes;
     cuePoint: T;
@@ -25,7 +25,7 @@ export interface Layout {
     height: number;
 }
 
-export interface OverlayCuepoint {
+export interface FloatingCuepoint {
     id: string;
     startTime: number;
     endTime?: number;
@@ -40,18 +40,18 @@ export interface OverlayCuepoint {
     layout: Layout;
 }
 
-export type RawOverlayCuepoint = Omit<OverlayCuepoint, "layout">;
+export type RawFloatingCuepoint = Omit<FloatingCuepoint, "layout">;
 
-export interface OverlayCuepoint extends RawOverlayCuepoint {}
+export interface FloatingCuepoint extends RawFloatingCuepoint {}
 
 const logger = getContribLogger({
-    module: 'contrib-ui',
-    class: 'CuepointOverlayEngine'
+    module: "contrib-ui",
+    class: "CuepointFloatingEngine"
 });
 
-export class CuepointOverlayEngine<
-    TRaw extends RawOverlayCuepoint,
-    T extends OverlayCuepoint
+export class CuepointFloatingEngine<
+    TRaw extends RawFloatingCuepoint,
+    T extends FloatingCuepoint
 > extends CuepointEngine<T> {
     private playerSize: PlayerSize | null = null;
     private videoSize: VideoSize | null = null;
@@ -79,13 +79,13 @@ export class CuepointOverlayEngine<
     }
 
     private recalculateCuepointLayout(): void {
-        logger.debug('calculating cuepoint layout based on video/player sizes', {
-            method: 'recalculateCuepointLayout'
+        logger.debug("calculating cuepoint layout based on video/player sizes", {
+            method: "recalculateCuepointLayout"
         });
 
         if (!this.playerSize || !this.videoSize) {
-            logger.warn('missing video/player sizes, hide all cuepoint', {
-                method: 'recalculateCuepointLayout'
+            logger.warn("missing video/player sizes, hide all cuepoint", {
+                method: "recalculateCuepointLayout"
             });
             this.enabled = false;
             return;
@@ -96,8 +96,8 @@ export class CuepointOverlayEngine<
         const canCalcaulateLayout = playerWidth && playerHeight && videoWidth && videoHeight;
 
         if (!canCalcaulateLayout) {
-            logger.warn('missing video/player sizes, hide all cuepoint', {
-                method: 'recalculateCuepointLayout'
+            logger.warn("missing video/player sizes, hide all cuepoint", {
+                method: "recalculateCuepointLayout"
             });
             this.enabled = false;
             return;
@@ -111,8 +111,8 @@ export class CuepointOverlayEngine<
             true
         );
 
-        logger.debug('recalculate cuepoint layout based on new sizes', {
-            method: 'recalculateCuepointLayout',
+        logger.debug("recalculate cuepoint layout based on new sizes", {
+            method: "recalculateCuepointLayout",
             data: {
                 scaleCalculation
             }
