@@ -21,7 +21,7 @@
     "types": "./lib/index.d.ts",
     "devDependencies": {
         "@types/socket.io-client": "^1.4.32",
-        "fs-extra": "^7.0.1",
+        "fs-extra": "^8.1.0",
         "ts-loader": "^6.0.4",
         "typescript": "^3.2.2",
         "webpack": "^4.29.6",
