@@ -1,1 +1,1 @@
-export { KitchenSink } from "./kitchenSink";
+export * from "./kitchenSink";

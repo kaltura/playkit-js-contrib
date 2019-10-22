@@ -4,12 +4,11 @@ import { UpperBarItemData } from "./upperBarItemData";
 import { UpperBar } from "./components/upper-bar";
 import { PresetManager } from "./presetManager";
 import { PresetNames } from "./presetItemData";
-import { PlayerContribServices } from "@playkit-js-contrib/common";
-import { PlayerAPI } from "@playkit-js-contrib/common";
+import { PlayerContribRegistry } from "@playkit-js-contrib/common";
 import { PresetItem } from "./presetItem";
 
 export interface UpperBarManagerOptions {
-    playerAPI: PlayerAPI;
+    corePlayer: KalturaPlayerTypes.Player;
     presetManager: PresetManager;
 }
 
@@ -17,23 +16,22 @@ const ResourceToken = "UpperBarManager-v1";
 
 export class UpperBarManager {
     static fromPlayer(
-        playerContribServices: PlayerContribServices,
+        playerContribRegistry: PlayerContribRegistry,
         creator: () => UpperBarManager
     ) {
-        return playerContribServices.register(ResourceToken, 1, creator);
+        return playerContribRegistry.register(ResourceToken, 1, creator);
     }
 
     private _items: UpperBarItem[] = [];
     private _options: UpperBarManagerOptions;
-    private _upperBar: PresetItem | null;
 
     constructor(options: UpperBarManagerOptions) {
         this._options = options;
-        this._upperBar = this._options.presetManager.add({
+        this._options.presetManager.add({
             label: "upper-bar-manager",
             presets: [PresetNames.Playback, PresetNames.Live],
-            container: { name: 'topBar', position: 'right'},
-            renderChild: this._renderChild,
+            container: { name: "TopBar", position: "Right" },
+            renderChild: this._renderChild
         });
     }
 
@@ -48,7 +46,7 @@ export class UpperBarManager {
      */
     add(data: UpperBarItemData): UpperBarItem {
         const itemOptions = {
-            playerAPI: this._options.playerAPI,
+            corePlayer: this._options.corePlayer,
             data
         };
         const item = new UpperBarItem(itemOptions);

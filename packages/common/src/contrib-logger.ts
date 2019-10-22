@@ -11,10 +11,10 @@ export interface ContribLogger {
     error(message: string, context: MessageOptions): void;
 }
 
-function getPlayerLogger(options: { kalturaPlayer?: any; loggerName?: string }): JSLogger | null {
-    const { kalturaPlayer, loggerName } = options;
+function getPlayerLogger(options: { corePlayer?: any; loggerName?: string }): JSLogger | null {
+    const { corePlayer, loggerName } = options;
 
-    const getLoggerFn = kalturaPlayer ? kalturaPlayer.getLogger : KalturaPlayer.ui.utils.getLogger;
+    const getLoggerFn = corePlayer ? corePlayer.getLogger : KalturaPlayer.ui.utils.getLogger;
 
     if (!getLoggerFn) {
         return null;
@@ -114,12 +114,12 @@ export interface MessageOptions {
 }
 
 export function getContribLogger(
-    options: { kalturaPlayer?: any } & LoggerOptions = {}
+    options: { corePlayer?: any } & LoggerOptions = {}
 ): ContribLogger {
-    const { kalturaPlayer } = options;
+    const { corePlayer } = options;
 
-    const loggerName = `${kalturaPlayer ? kalturaPlayer._playerId : "global"}_contrib`;
-    const logger = getPlayerLogger({ kalturaPlayer, loggerName });
+    const loggerName = `${corePlayer ? corePlayer._playerId : "global"}_contrib`;
+    const logger = getPlayerLogger({ corePlayer, loggerName });
 
     if (!logger) {
         return defaultNoopLogger;

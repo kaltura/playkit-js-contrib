@@ -1,21 +1,18 @@
 import { h, Component } from "preact";
-import * as styles from "./_overlayContainer.scss";
+import * as styles from "./_floatingContainer.scss";
 import { getContribLogger } from "@playkit-js-contrib/common";
-import { ContribLogger } from '@playkit-js-contrib/common';
+import { ContribLogger } from "@playkit-js-contrib/common";
 
-export interface KitchenSinkRendererProps {
-}
-
-export class OverlayContainer extends Component<KitchenSinkRendererProps> {
+export class FloatingContainer extends Component {
     private _logger: ContribLogger | null = null;
 
     componentDidMount(): void {
         this._logger = getContribLogger({
-            module: 'contrib-ui',
-            class: 'OverlayContainer',
+            module: "contrib-ui",
+            class: "FloatingContainer"
         });
         this._logger.info(`mount component`, {
-            method: 'componentDidMount'
+            method: "componentDidMount"
         });
     }
 
@@ -25,14 +22,14 @@ export class OverlayContainer extends Component<KitchenSinkRendererProps> {
         }
 
         this._logger.info(`unmount component`, {
-            method: 'componentWillUnmount'
+            method: "componentWillUnmount"
         });
     }
 
     render(props: any) {
         if (this._logger) {
             this._logger.trace(`render component`, {
-                method: 'render'
+                method: "render"
             });
         }
         return <div className={styles.root}>{this.props.children}</div>;

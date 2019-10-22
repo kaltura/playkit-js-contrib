@@ -1,13 +1,13 @@
-import { PlayerContribServices, UUID } from "@playkit-js-contrib/common";
-import { OverlayManager } from "./overlayManager";
-import { OverlayItemProps, OverlayPositions, OverlayUIModes } from "./overlayItemData";
-import { OverlayItem } from "./overlayItem";
+import { PlayerContribRegistry, UUID } from "@playkit-js-contrib/common";
+import { FloatingManager } from "./floatingManager";
+import { FloatingItemProps, FloatingPositions, FloatingUIModes } from "./floatingItemData";
+import { FloatingItem } from "./floatingItem";
 import { ToastProps } from "./components/toast/toast";
 import { ToastsContainer } from "./components/toasts-container/toastsContainer";
 import { h } from "preact";
 
-export interface ToastsManagerOptions {
-    overlayManager: OverlayManager;
+export interface ToastManagerOptions {
+    floatingManager: FloatingManager;
 }
 
 export enum ToastSeverity {
@@ -32,24 +32,24 @@ interface ManagedToasts {
     toastProps: ToastProps;
 }
 
-const ResourceToken: string = "ToastsManager-v1";
+const ResourceToken: string = "ToastManager-v1";
 
-export class ToastsManager {
-    static fromPlayer(playerContribServices: PlayerContribServices, creator: () => ToastsManager) {
-        return playerContribServices.register(ResourceToken, 1, creator);
+export class ToastManager {
+    static fromPlayer(playerContribRegistry: PlayerContribRegistry, creator: () => ToastManager) {
+        return playerContribRegistry.register(ResourceToken, 1, creator);
     }
 
-    private _options: ToastsManagerOptions;
+    private _options: ToastManagerOptions;
     private _toasts: ManagedToasts[] = [];
-    private _overlayItem: OverlayItem | null = null;
+    private _floatingItem: FloatingItem | null = null;
 
-    constructor(private options: ToastsManagerOptions) {
+    constructor(private options: ToastManagerOptions) {
         this._options = options;
     }
 
     add(data: ToastItemData): void {
         const { duration, ...props } = data;
-        if (!this._overlayItem) this._addToastsContainer();
+        if (!this._floatingItem) this._addToastsContainer();
         let managedToast = {
             toastProps: {
                 ...props,
@@ -87,10 +87,10 @@ export class ToastsManager {
     };
 
     private _addToastsContainer(): void {
-        this._overlayItem = this._options.overlayManager.add({
+        this._floatingItem = this._options.floatingManager.add({
             label: "Toasts",
-            mode: OverlayUIModes.Immediate,
-            position: OverlayPositions.VisibleArea,
+            mode: FloatingUIModes.Immediate,
+            position: FloatingPositions.InteractiveArea,
             renderContent: () => {
                 return (
                     <ToastsContainer
@@ -104,14 +104,14 @@ export class ToastsManager {
     }
 
     private _removeToastsContainer(): void {
-        if (!this._overlayItem) return;
+        if (!this._floatingItem) return;
 
-        this._options.overlayManager.remove(this._overlayItem);
-        this._overlayItem = null;
+        this._options.floatingManager.remove(this._floatingItem);
+        this._floatingItem = null;
     }
 
     private _updateToastsUI(): void {
-        if (this._overlayItem) this._overlayItem.update();
+        if (this._floatingItem) this._floatingItem.update();
     }
 
     private _findToastIndexById(id: string): number {

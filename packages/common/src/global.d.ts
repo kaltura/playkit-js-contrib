@@ -1,1 +1,1 @@
-/// <reference path="../player-internals.d.ts" />
+/// <reference path="../global-types/index.d.ts" />

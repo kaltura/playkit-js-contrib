@@ -14,7 +14,6 @@ type ChangeData<T extends Cuepoint> = {
 const DefaultReasonableSeekThreshold = 2000;
 
 export interface Cuepoint {
-    id?: string | number;
     startTime: number;
     endTime?: number;
 }
@@ -293,14 +292,6 @@ export class CuepointEngine<T extends Cuepoint> {
             ? cuepointChanges[cuepointChanges.length - 1].time
             : cuepointChanges[timeIndex + 1].time;
         this.isFirstTime = false;
-        logger.debug(`update inner state with new time and index`, {
-            method: "updateInternals",
-            data: {
-                lastHandledTime: this.lastHandledTime,
-                lastHandledTimeIndex: this.lastHandledTimeIndex,
-                nextTimeToHandle: this.nextTimeToHandle
-            }
-        });
     }
 
     private createEmptyDelta(): {
