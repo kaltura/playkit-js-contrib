@@ -44,6 +44,6 @@ export class KitchenSink extends Component<KitchenSinkProps> {
     }
 
     private _getClass(): string {
-        return styles.root + " " + (this.props.isActive ? styles.active : styles.inactive);
+        return styles.root + " " + (this.props.isActive ? styles.active : "");
     }
 }
