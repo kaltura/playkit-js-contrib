@@ -48,26 +48,24 @@ export class KitchenSinkItem {
     }
 
     get data() {
-        if (this._destroyed) {
-            this._logger.warn(`cannot perform requested call, item was marked as destroyed`, {});
+        if (this._isDestroyed()) {
             return;
         }
         return this._options.data;
     }
 
     get displayName() {
-        if (this._destroyed) {
-            this._logger.warn(`cannot perform requested call, item was marked as destroyed`, {});
+        if (this._isDestroyed()) {
             return;
         }
         return this._options.data.label;
     }
 
     public update() {
-        if (this._destroyed) {
-            this._logger.warn(`cannot perform requested call, item was marked as destroyed`, {});
+        if (this._isDestroyed()) {
             return;
         }
+
         if (!this._componentRef) {
             return;
         }
@@ -76,18 +74,18 @@ export class KitchenSinkItem {
     }
 
     public isActive(): boolean {
-        if (this._destroyed) {
-            this._logger.warn(`cannot perform requested call, item was marked as destroyed`, {});
+        if (this._isDestroyed()) {
             return;
         }
+
         return this._options.isActive(this);
     }
 
     public activate(): void {
-        if (this._destroyed) {
-            this._logger.warn(`cannot perform requested call, item was marked as destroyed`, {});
+        if (this._isDestroyed()) {
             return;
         }
+
         this._options.activate(this);
     }
 
@@ -99,18 +97,18 @@ export class KitchenSinkItem {
     };
 
     public deactivate(): void {
-        if (this._destroyed) {
-            this._logger.warn(`cannot perform requested call, item was marked as destroyed`, {});
+        if (this._isDestroyed()) {
             return;
         }
+
         this._options.deactivate(this);
     }
 
     public destroy(): void {
-        if (this._destroyed) {
-            this._logger.warn(`cannot perform requested call, item was marked as destroyed`, {});
+        if (this._isDestroyed()) {
             return;
         }
+
         this._options.eventManager.off(
             EventTypes.ItemActiveStateChangeEvent,
             this._activationStateChange
@@ -122,8 +120,7 @@ export class KitchenSinkItem {
     }
 
     public renderContentChild = (props: KitchenSinkItemRenderProps): ComponentChild => {
-        if (this._destroyed) {
-            this._logger.warn(`cannot perform requested call, item was marked as destroyed`, {});
+        if (this._isDestroyed()) {
             return;
         }
 
@@ -141,4 +138,12 @@ export class KitchenSinkItem {
             />
         );
     };
+
+    private _isDestroyed(): boolean {
+        if (this._destroyed) {
+            this._logger.warn(`can't perform requested call, item was marked as destroyed`, {});
+            return true;
+        }
+        return false;
+    }
 }
