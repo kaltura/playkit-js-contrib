@@ -22,7 +22,9 @@ export class UIManager {
         return playerContribServices.register(ResourceToken, 1, creator);
     }
 
-    constructor(private _options: UIManagerOptions) {}
+    constructor(private _options: UIManagerOptions) {
+        this._loadFont();
+    }
 
     get upperBar(): UpperBarManager {
         return this._options.upperBarManager;
@@ -56,5 +58,27 @@ export class UIManager {
         this._options.kitchenSinkManager && this._options.kitchenSinkManager.reset();
         this._options.bannerManager && this._options.bannerManager.reset();
         this._options.toastManager && this._options.toastManager.reset();
+    }
+
+    private _loadFont() {
+        //todo [sa] load font from config
+        //todo [sa] use Lato font family - currently just testing
+        const fontCss = `.playkit-player .playkit-player-gui  {
+                font-family: inherit;
+            }
+        
+            .playkit-player-gui-content {
+                font-family: cursive, sans-serif;
+            }
+        
+            button {
+                font-family: inherit;
+            }`;
+        const lastHeadChild = (document.head || document.getElementsByTagName("head")[0])
+            .lastElementChild;
+        const style = document.createElement("style");
+        //adding as last child
+        lastHeadChild.parentNode.insertBefore(style, lastHeadChild.nextSibling);
+        style.appendChild(document.createTextNode(fontCss));
     }
 }
