@@ -14,7 +14,6 @@ type ChangeData<T extends Cuepoint> = {
 const DefaultReasonableSeekThreshold = 2000;
 
 export interface Cuepoint {
-    id: string;
     startTime: number;
     endTime?: number;
 }
@@ -239,9 +238,7 @@ export class CuepointEngine<T extends Cuepoint> {
             } else {
                 if (cuepointIndex !== -1) {
                     logger.info(
-                        `cuepoint was marked with type ${item.type} at ${
-                            item.time
-                        }. remove from new cuepoint list as it wasn't visible yet`,
+                        `cuepoint was marked with type ${item.type} at ${item.time}. remove from new cuepoint list as it wasn't visible yet`,
                         {
                             method: "createCuepointDelta",
                             data: { cuepoint: item.cuePoint }
@@ -251,9 +248,7 @@ export class CuepointEngine<T extends Cuepoint> {
                     newCuepoint.splice(cuepointIndex, 1);
                 } else if (removedCuepoint.indexOf(item.cuePoint) === -1) {
                     logger.info(
-                        `cuepoint was marked with type ${item.type} at ${
-                            item.time
-                        }. add to removed cuepoint list`,
+                        `cuepoint was marked with type ${item.type} at ${item.time}. add to removed cuepoint list`,
                         {
                             method: "createCuepointDelta",
                             data: { cuepoint: item.cuePoint }
@@ -297,14 +292,6 @@ export class CuepointEngine<T extends Cuepoint> {
             ? cuepointChanges[cuepointChanges.length - 1].time
             : cuepointChanges[timeIndex + 1].time;
         this.isFirstTime = false;
-        logger.debug(`update inner state with new time and index`, {
-            method: "updateInternals",
-            data: {
-                lastHandledTime: this.lastHandledTime,
-                lastHandledTimeIndex: this.lastHandledTimeIndex,
-                nextTimeToHandle: this.nextTimeToHandle
-            }
-        });
     }
 
     private createEmptyDelta(): {
