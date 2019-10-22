@@ -33,7 +33,7 @@ export interface ItemActiveStateChangeEvent {
     item: KitchenSinkItem;
 }
 
-type Events = ItemActiveStateChangeEvent;
+export type KitchenSinkEvents = ItemActiveStateChangeEvent;
 
 const ResourceToken = "KitchenSinkManager-v1";
 
@@ -45,7 +45,7 @@ export class KitchenSinkManager {
         return playerContribRegistry.register(ResourceToken, 1, creator);
     }
 
-    private _events: EventsManager<Events> = new EventsManager<Events>();
+    private _events: EventsManager<KitchenSinkEvents> = new EventsManager<KitchenSinkEvents>();
 
     private _items: Record<KitchenSinkPositions, KitchenSinkItem[]> = {
         [KitchenSinkPositions.Bottom]: [],
@@ -64,8 +64,8 @@ export class KitchenSinkManager {
     private _options: KitchenSinkManagerOptions;
     private _kitchenSinkAdapterRef: KitchenSinkAdapter | null = null;
 
-    on: EventsManager<Events>["on"] = this._events.on.bind(this._events);
-    off: EventsManager<Events>["off"] = this._events.off.bind(this._events);
+    on: EventsManager<KitchenSinkEvents>["on"] = this._events.on.bind(this._events);
+    off: EventsManager<KitchenSinkEvents>["off"] = this._events.off.bind(this._events);
 
     constructor(private options: KitchenSinkManagerOptions) {
         this._options = options;
@@ -104,8 +104,7 @@ export class KitchenSinkManager {
             isActive: this._isActive,
             activate: this._activateItem,
             deactivate: this._deactivateItem,
-            onActivationStateChange: this.on,
-            unregisterActivationStateChange: this.off
+            eventManager: this._events
         };
         const item = new KitchenSinkItem(itemOptions);
         this._items[data.position].push(item);

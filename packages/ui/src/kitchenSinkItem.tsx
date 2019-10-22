@@ -1,8 +1,8 @@
 import { ComponentChild, h } from "preact";
-import { ContribLogger, getContribLogger, Handler } from "@playkit-js-contrib/common";
+import { ContribLogger, getContribLogger, EventsManager } from "@playkit-js-contrib/common";
 import { KitchenSinkItemData } from "./kitchenSinkItemData";
 import { ManagedComponent } from "./components/managed-component";
-import { EventTypes, ItemActiveStateChangeEvent, ItemActiveStates } from "./kitchenSinkManager";
+import { EventTypes, ItemActiveStateChangeEvent, KitchenSinkEvents } from "./kitchenSinkManager";
 import { KitchenSink } from "./components/kitchen-sink";
 
 export interface KitchenSinkItemOptions {
@@ -10,14 +10,7 @@ export interface KitchenSinkItemOptions {
     isActive: (item: KitchenSinkItem) => boolean;
     activate: (item: KitchenSinkItem) => void;
     deactivate: (item: KitchenSinkItem) => void;
-    onActivationStateChange: (
-        type: EventTypes,
-        handler: Handler<ItemActiveStateChangeEvent>
-    ) => void;
-    unregisterActivationStateChange: (
-        type: EventTypes,
-        handler: Handler<ItemActiveStateChangeEvent>
-    ) => void;
+    eventManager: EventsManager<KitchenSinkEvents>;
 }
 
 export interface KitchenSinkItemRenderProps {
@@ -48,7 +41,7 @@ export class KitchenSinkItem {
             method: "constructor"
         });
 
-        this._options.onActivationStateChange(
+        this._options.eventManager.on(
             EventTypes.ItemActiveStateChangeEvent,
             this._activationStateChange
         );
@@ -118,7 +111,7 @@ export class KitchenSinkItem {
             this._logger.warn(`cannot perform requested call, item was marked as destroyed`, {});
             return;
         }
-        this._options.unregisterActivationStateChange(
+        this._options.eventManager.off(
             EventTypes.ItemActiveStateChangeEvent,
             this._activationStateChange
         );
