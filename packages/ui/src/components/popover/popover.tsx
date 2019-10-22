@@ -11,7 +11,7 @@ const defaultProps = {
     triggerMod: TRIGGER_MOD[0],
     className: "popover",
     open: false,
-    closeOnEsc: false
+    closeOnEsc: true
 };
 
 interface PopoverProps {
