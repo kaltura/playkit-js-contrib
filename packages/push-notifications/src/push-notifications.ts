@@ -6,7 +6,8 @@ import {
     RegisterRequestResponse
 } from "./client-api";
 import { SocketWrapper } from "./socket-wrapper";
-import { PlayerAPI, getContribLogger } from "@playkit-js-contrib/common";
+import { getContribLogger, PlayerContribRegistry } from "@playkit-js-contrib/common";
+import { getDomainFromUrl } from "./utils";
 
 export interface EventParams extends Record<string, any> {
     entryId: string;
@@ -29,7 +30,7 @@ export interface PushNotificationsOptions {
     ks: string;
     serviceUrl: string;
     clientTag: string;
-    playerAPI: PlayerAPI;
+    corePlayer: KalturaPlayerTypes.Player;
 }
 
 export interface APINotificationResponse extends APIResponse {
@@ -50,22 +51,8 @@ const logger = getContribLogger({
 });
 
 export class PushNotifications {
-    private static instancePool: any = {}; // Todo by @Eran_Sakal register singleton per player (and remove this line)
-
     private _socketPool: any = {};
     private _clientApi: any;
-
-    // Todo: should use plugin instance
-    static getInstance(options: PushNotificationsOptions): PushNotifications {
-        const domainUrl = PushNotifications._getDomainFromUrl(options.serviceUrl);
-
-        if (!PushNotifications.instancePool[domainUrl]) {
-            const newInstance = new PushNotifications(options);
-            PushNotifications.instancePool[domainUrl] = newInstance;
-        }
-
-        return PushNotifications.instancePool[domainUrl];
-    }
 
     constructor(options: PushNotificationsOptions) {
         this._clientApi = new ClientApi(options);
@@ -73,13 +60,9 @@ export class PushNotifications {
     }
 
     private _onPlayerReset(options: PushNotificationsOptions) {
-        options.playerAPI.eventManager.listen(
-            options.playerAPI.kalturaPlayer,
-            options.playerAPI.kalturaPlayer.Event.PLAYER_RESET,
-            () => {
-                this.reset();
-            }
-        );
+        options.corePlayer.addEventListener(options.corePlayer.Event.PLAYER_RESET, () => {
+            this.reset();
+        });
     }
 
     public reset() {
@@ -172,7 +155,7 @@ export class PushNotifications {
         }
 
         //cache sockets by host name
-        let socketKey = PushNotifications._getDomainFromUrl(result.url);
+        let socketKey = getDomainFromUrl(result.url);
         let socketWrapper = this._socketPool[socketKey];
         if (!socketWrapper) {
             socketWrapper = new SocketWrapper({
@@ -192,9 +175,5 @@ export class PushNotifications {
         );
 
         return Promise.resolve();
-    }
-
-    private static _getDomainFromUrl(url: string) {
-        return url.replace(/^(.*\/\/[^\/?#]*).*$/, "$1");
     }
 }

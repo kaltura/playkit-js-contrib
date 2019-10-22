@@ -1,7 +1,7 @@
-import { OverlayItem } from "./overlayItem";
-import { OverlayManager } from "./overlayManager";
-import { PlayerAPI, PlayerContribServices } from "@playkit-js-contrib/common";
-import { OverlayItemProps, OverlayPositions, OverlayUIModes } from "./overlayItemData";
+import { FloatingItem } from "./floatingItem";
+import { FloatingManager } from "./floatingManager";
+import { PlayerContribRegistry } from "@playkit-js-contrib/common";
+import { FloatingItemProps, FloatingPositions, FloatingUIModes } from "./floatingItemData";
 import { ComponentChild, h } from "preact";
 import { Banner } from "./components/banner";
 import { BannerContainer } from "./components/banner-container";
@@ -18,12 +18,15 @@ export interface BannerOptions {
     content: BannerContent;
     autoClose?: boolean;
     duration?: number;
-    renderContent?: (content: BannerContent, overlayItemProps: OverlayItemProps) => ComponentChild;
+    renderContent?: (
+        content: BannerContent,
+        floatingItemProps: FloatingItemProps
+    ) => ComponentChild;
 }
 
 export interface BannerManagerOptions {
-    overlayManager: OverlayManager;
-    playerApi: PlayerAPI;
+    floatingManager: FloatingManager;
+    corePlayer: KalturaPlayerTypes.Player;
 }
 
 export interface BannerState {
@@ -44,12 +47,12 @@ const MinDuration: number = 5 * 1000;
  * banner manager manages the display (add / remove) of a single banner in the player.
  */
 export class BannerManager {
-    static fromPlayer(playerContribServices: PlayerContribServices, creator: () => BannerManager) {
-        return playerContribServices.register(ResourceToken, 1, creator);
+    static fromPlayer(playerContribRegistry: PlayerContribRegistry, creator: () => BannerManager) {
+        return playerContribRegistry.register(ResourceToken, 1, creator);
     }
 
     private _options: BannerManagerOptions;
-    private _overlayItem: OverlayItem | null = null;
+    private _floatingItem: FloatingItem | null = null;
     private _timerSubscription: any | undefined = undefined;
 
     constructor(private options: BannerManagerOptions) {
@@ -57,13 +60,13 @@ export class BannerManager {
     }
 
     add(props: BannerOptions): BannerState {
-        if (this._overlayItem) {
+        if (this._floatingItem) {
             this.remove();
         }
-        this._overlayItem = this._options.overlayManager.add({
+        this._floatingItem = this._options.floatingManager.add({
             label: "Banner",
-            mode: OverlayUIModes.Immediate,
-            position: OverlayPositions.VisibleArea,
+            mode: FloatingUIModes.Immediate,
+            position: FloatingPositions.InteractiveArea,
             renderContent: this._createRenderBanner(props, {
                 onClose: this._handleCloseEvent.bind(this)
             })
@@ -75,10 +78,10 @@ export class BannerManager {
     }
 
     remove() {
-        if (this._overlayItem) {
+        if (this._floatingItem) {
             if (this._timerSubscription) clearTimeout(this._timerSubscription);
-            this._options.overlayManager.remove(this._overlayItem);
-            this._overlayItem = null;
+            this._options.floatingManager.remove(this._floatingItem);
+            this._floatingItem = null;
         }
     }
 
@@ -90,11 +93,11 @@ export class BannerManager {
         { content, renderContent }: BannerOptions,
         { onClose }: BannerContainerProps
     ) {
-        function _renderContent(overlayItemProps: OverlayItemProps) {
+        function _renderContent(floatingItemProps: FloatingItemProps) {
             return (
                 <BannerContainer onClose={onClose}>
                     {renderContent ? (
-                        renderContent(content, overlayItemProps)
+                        renderContent(content, floatingItemProps)
                     ) : (
                         <Banner content={content} />
                     )}
@@ -116,7 +119,7 @@ export class BannerManager {
     }
 
     private _getState(): BannerState {
-        let playerSize = getPlayerSize(this._options.playerApi.kalturaPlayer);
+        let playerSize = getPlayerSize(this._options.corePlayer);
         return {
             visibilityMode:
                 !playerSize || playerSize.width < MinPlayerWidth

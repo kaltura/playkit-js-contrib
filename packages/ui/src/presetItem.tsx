@@ -1,11 +1,12 @@
 import { h, render } from "preact";
-import { getContribLogger, PlayerAPI } from "@playkit-js-contrib/common";
-import { PresetItemData, PredefinedContainers } from "./presetItemData";
+import { getContribLogger } from "@playkit-js-contrib/common";
+import { PresetItemData, PredefinedContainers, RelativeToTypes } from "./presetItemData";
 import { ManagedComponent } from "./components/managed-component";
 import { ContribLogger } from "@playkit-js-contrib/common";
+import { InjectedComponent } from "./components/injected-component/injected-component";
 
 export interface PresetItemOptions {
-    playerAPI: PlayerAPI;
+    corePlayer: KalturaPlayerTypes.Player;
     data: PresetItemData;
 }
 
@@ -15,27 +16,38 @@ export interface KalturaPlayerPresetComponent {
     label: string;
     presets: string[];
     container: string;
-    render: () => ManagedComponent;
+    get: () => () => ManagedComponent;
+    afterComponent?: string;
+    beforeComponent?: string;
+    replaceComponent?: string;
 }
 
 function getPlayerPresetContainer(container: PredefinedContainers): string {
     if (typeof container === "string") {
         return container;
     }
-    if (container.name === "bottomBar") {
-        return `bottom-bar__${container.position}-controls`;
+
+    if (container.name === "BottomBar") {
+        return `BottomBar${container.position}Controls`;
     }
-    if (container.name === "topBar") {
-        return `top-bar__${container.position}-controls`;
+    if (container.name === "TopBar") {
+        return `TopBar${container.position}Controls`;
     }
-    if (container.name === "sidePanel") {
-        return `side-panel-${container.position}`;
+    if (container.name === "SidePanel") {
+        return `SidePanel${container.position}`;
     }
-    if (container.name === "overlay") {
-        return "player-overlay";
+
+    if (container.name === "PresetArea") {
+        return "PresetArea";
     }
-    if (container.name === "video") {
-        return "player-gui";
+    if (container.name === "VideoArea") {
+        return "VideoArea";
+    }
+    if (container.name === "PlayerArea") {
+        return "PlayerArea";
+    }
+    if (container.name === "InteractiveArea") {
+        return "InteractiveArea";
     }
     return "";
 }
@@ -45,7 +57,7 @@ export class PresetItem {
     private _element: Element | null = null;
     private _logger: ContribLogger;
 
-    constructor(options: PresetItemOptions & { shown?: boolean }) {
+    constructor(options: PresetItemOptions) {
         this._options = options;
         this._logger = getContribLogger({
             module: "contrib-ui",
@@ -65,6 +77,7 @@ export class PresetItem {
 
     get playerConfig(): KalturaPlayerPresetComponent | null {
         const containerName = getPlayerPresetContainer(this._options.data.container);
+        const { relativeTo } = this._options.data;
 
         if (!containerName) {
             this._logger.warn(`unknown container requested`, {
@@ -73,13 +86,28 @@ export class PresetItem {
             return null;
         }
 
-        // TODO sakal change in @playkit-js/playkit-js-ui render to renderChild
-        return {
+        const result: KalturaPlayerPresetComponent = {
             label: this._options.data.label,
             presets: this._options.data.presets,
             container: containerName,
-            render: this._render
+            get: this._render
         };
+
+        if (relativeTo) {
+            switch (relativeTo.type) {
+                case RelativeToTypes.After:
+                    result["afterComponent"] = relativeTo.name;
+                    break;
+                case RelativeToTypes.Before:
+                    result["beforeComponent"] = relativeTo.name;
+                    break;
+                case RelativeToTypes.Replace:
+                    result["replaceComponent"] = relativeTo.name;
+                    break;
+            }
+        }
+
+        return result;
     }
 
     private _render = (): any => {
@@ -87,13 +115,18 @@ export class PresetItem {
             return this._options.data.renderChild();
         }
 
-        const InjectedComponent = h(KalturaPlayer.ui.components.InjectedComponent, {
-            label: this._options.data.label,
-            onCreate: this._onCreate,
-            onDestroy: this._onDestroy
-        });
+        const {
+            data: { label, fillContainer }
+        } = this._options;
 
-        return InjectedComponent;
+        return (
+            <InjectedComponent
+                label={label}
+                fillContainer={fillContainer || false}
+                onCreate={this._onCreate}
+                onDestroy={this._onDestroy}
+            />
+        );
     };
 
     private _onDestroy = (options: { context?: any; parent: HTMLElement }): void => {

@@ -1,9 +1,9 @@
-export class PlayerContribServices {
+export class PlayerContribRegistry {
     private _cache: Record<string, { apiVersion: number; instance: any }> = {};
 
-    static get(player: any): PlayerContribServices {
+    static get(player: any): PlayerContribRegistry {
         player.__contrib__ = player.__contrib__ || {};
-        player.__contrib__.services = player.__contrib__.services || new PlayerContribServices();
+        player.__contrib__.services = player.__contrib__.services || new PlayerContribRegistry();
         return player.__contrib__.services;
     }
 

@@ -23,6 +23,6 @@ export interface KitchenSinkItemData {
     renderIcon: () => ComponentChild;
     expandMode: KitchenSinkExpandModes;
     position: KitchenSinkPositions;
-    fitToContainer?: boolean;
+    fillContainer?: boolean;
     renderContent: (props: KitchenSinkContentRendererProps) => ComponentChild;
 }
