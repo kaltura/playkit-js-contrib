@@ -14,7 +14,6 @@ declare global {
                 bindActions(actions: Record<string, unknown>[]): (...args: any) => void;
             };
             components: {};
-            EventType: any;
         };
         core: {
             registerPlugin(name: string, component: any): void;
