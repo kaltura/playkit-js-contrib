@@ -1,0 +1,13 @@
+.root {
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, .7);
+}
+
+/* TODO should fix in player and remove */
+:global(.playkit-side-panel-content) {
+  & > div {
+    width: 100%;
+    height: 100%;
+  }
+}
