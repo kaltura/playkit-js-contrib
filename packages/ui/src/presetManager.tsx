@@ -1,17 +1,16 @@
-import { PlayerAPI, PlayerContribServices } from "@playkit-js-contrib/common";
+import { PlayerContribRegistry } from "@playkit-js-contrib/common";
 import { PresetItemData } from "./presetItemData";
 import { KalturaPlayerPresetComponent, PresetItem } from "./presetItem";
 
 export interface PresetManagerOptions {
-    playerAPI: PlayerAPI;
+    corePlayer: KalturaPlayerTypes.Player;
 }
 
 const ResourceToken = "PresetManager-v1";
 
-// TODO sakal rename to PlayerUIManager
 export class PresetManager {
-    static fromPlayer(playerContribServices: PlayerContribServices, creator: () => PresetManager) {
-        return playerContribServices.register(ResourceToken, 1, creator);
+    static fromPlayer(playerContribRegistry: PlayerContribRegistry, creator: () => PresetManager) {
+        return playerContribRegistry.register(ResourceToken, 1, creator);
     }
 
     private _isLocked = false;
@@ -23,18 +22,17 @@ export class PresetManager {
         this._options = options;
     }
 
-    add<TProps>(data: PresetItemData & { shown?: boolean}): PresetItem | null {
+    add<TProps>(data: PresetItemData): void {
         if (this._isLocked) {
             console.warn(`cannot add new preset items once player completed its' setup phase`);
             return null;
         }
         const component = new PresetItem({
-            playerAPI: this._options.playerAPI,
+            corePlayer: this._options.corePlayer,
             data
         });
 
         this._pendingComponents.push(component);
-        return component;
     }
 
     lockManager(): void {
@@ -42,8 +40,10 @@ export class PresetManager {
     }
 
     registerComponents(): KalturaPlayerPresetComponent[] {
-        const configs: (KalturaPlayerPresetComponent | null)[] = this._pendingComponents.map(component => component.playerConfig);
-        this._components = [ ...this._components, ...this._pendingComponents];
+        const configs: (KalturaPlayerPresetComponent | null)[] = this._pendingComponents.map(
+            component => component.playerConfig
+        );
+        this._components = [...this._components, ...this._pendingComponents];
         this._pendingComponents = [];
         return configs.filter(Boolean) as KalturaPlayerPresetComponent[];
     }

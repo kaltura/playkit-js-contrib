@@ -35,7 +35,7 @@
   },
   "files": [
     "lib",
-    "player-internals.d.ts",
+    "global-types",
     "LICENSE",
     "CHANGELOG.md"
   ],
