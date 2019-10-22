@@ -132,7 +132,7 @@ export class KitchenSinkItem {
         return (
             <ManagedComponent
                 label={label}
-                fillContainer={false} //todo [sa] is it OK ?????
+                fillContainer={false}
                 renderChildren={() => (
                     <KitchenSink children={renderContent(props)} isActive={this.isActive()} />
                 )}
