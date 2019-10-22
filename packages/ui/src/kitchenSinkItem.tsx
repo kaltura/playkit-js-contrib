@@ -55,14 +55,26 @@ export class KitchenSinkItem {
     }
 
     get data() {
+        if (this._destroyed) {
+            this._logger.warn(`cannot perform requested call, item was marked as destroyed`, {});
+            return;
+        }
         return this._options.data;
     }
 
     get displayName() {
+        if (this._destroyed) {
+            this._logger.warn(`cannot perform requested call, item was marked as destroyed`, {});
+            return;
+        }
         return this._options.data.label;
     }
 
     public update() {
+        if (this._destroyed) {
+            this._logger.warn(`cannot perform requested call, item was marked as destroyed`, {});
+            return;
+        }
         if (!this._componentRef) {
             return;
         }
@@ -71,10 +83,18 @@ export class KitchenSinkItem {
     }
 
     public isActive(): boolean {
+        if (this._destroyed) {
+            this._logger.warn(`cannot perform requested call, item was marked as destroyed`, {});
+            return;
+        }
         return this._options.isActive(this);
     }
 
     public activate(): void {
+        if (this._destroyed) {
+            this._logger.warn(`cannot perform requested call, item was marked as destroyed`, {});
+            return;
+        }
         this._options.activate(this);
     }
 
@@ -86,21 +106,34 @@ export class KitchenSinkItem {
     };
 
     public deactivate(): void {
+        if (this._destroyed) {
+            this._logger.warn(`cannot perform requested call, item was marked as destroyed`, {});
+            return;
+        }
         this._options.deactivate(this);
     }
 
     public destroy(): void {
+        if (this._destroyed) {
+            this._logger.warn(`cannot perform requested call, item was marked as destroyed`, {});
+            return;
+        }
         this._options.unregisterActivationStateChange(
             EventTypes.ItemActiveStateChangeEvent,
             this._activationStateChange
         );
-        this._destroyed = true;
         this.update();
         this._componentRef = null;
         this._options = null;
+        this._destroyed = true;
     }
 
     public renderContentChild = (props: KitchenSinkItemRenderProps): ComponentChild => {
+        if (this._destroyed) {
+            this._logger.warn(`cannot perform requested call, item was marked as destroyed`, {});
+            return;
+        }
+
         const { renderContent, label } = this._options.data;
 
         return (
