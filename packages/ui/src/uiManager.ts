@@ -62,7 +62,7 @@ export class UIManager {
         this._options.toastManager && this._options.toastManager.reset();
     }
 
-    private _loadFont() {
+    private _loadFont(): void {
         let fontFamily = this._options.corePlayer.config.contrib.ui.fonts.fontFamily;
 
         const fontCss = `.kaltura-player-container {
@@ -83,5 +83,24 @@ export class UIManager {
         //adding as last child
         lastHeadChild.parentNode.insertBefore(style, lastHeadChild.nextSibling);
         style.appendChild(document.createTextNode(fontCss));
+    }
+
+    private _doesFontExist(fontName): boolean {
+        // creating an in-memory Canvas element
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+        // the text whose final pixel size we want to measure
+        const text = "abcdefghiiiiiiiiijklmnopqrstuvwwwwwwwwwwxyz0123456789";
+        // baseline font
+        context.font = `72px monospace`;
+        // size of the baseline text
+        const baselineSize = context.measureText(text).width;
+        // specifying the font whose existence we want to check
+        context.font = `72px ${fontName},monospace`;
+        // checking the size of the font we want to check
+        const newSize = context.measureText(text).width;
+        // If the size of the two text instances is the same, the font does not exist
+        // because it is being rendered using the same font
+        return newSize !== baselineSize;
     }
 }
