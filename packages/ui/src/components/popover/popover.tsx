@@ -1,14 +1,23 @@
 import { h, Component } from "preact";
 import * as styles from "./popover.scss";
 
-const VERTICAL_POSITIONS = ["top", "bottom"];
-const HORIZONTAL_POSITIONS = ["left", "right"];
-const TRIGGER_MOD = ["click", "hover"];
+export enum PopoverVerticalPositions {
+    Top = "top",
+    Bottom = "bottom"
+}
+export enum PopoverHorizontalPositions {
+    Left = "left",
+    Right = "right"
+}
+export enum PopoverTriggerMode {
+    Click = "click",
+    Hover = "hover"
+}
 
 const defaultProps = {
-    verticalPosition: VERTICAL_POSITIONS[0],
-    horizontalPosition: HORIZONTAL_POSITIONS[0],
-    triggerMod: TRIGGER_MOD[0],
+    verticalPosition: PopoverVerticalPositions.Top,
+    horizontalPosition: PopoverHorizontalPositions.Left,
+    triggerMode: PopoverTriggerMode.Click,
     className: "popover",
     open: false,
     closeOnEsc: true
@@ -17,12 +26,12 @@ const defaultProps = {
 interface PopoverProps {
     onClose?: () => void;
     onOpen?: () => void;
-    verticalPosition: "top" | "bottom";
-    horizontalPosition: "right" | "left";
+    verticalPosition: PopoverVerticalPositions.Top | PopoverVerticalPositions.Bottom;
+    horizontalPosition: PopoverHorizontalPositions.Right | PopoverHorizontalPositions.Left;
     className: string;
     open: boolean;
     closeOnEsc: boolean;
-    triggerMod: "click" | "hover";
+    triggerMode: PopoverTriggerMode.Click | PopoverTriggerMode.Hover;
     anchorEl: JSX.Element;
     children: JSX.Element | JSX.Element[];
 }
@@ -46,8 +55,8 @@ export class Popover extends Component<PopoverProps> {
         }
     };
     private _getTrigger = () => {
-        const { triggerMod } = this.props;
-        return TRIGGER_MOD.indexOf(triggerMod) > -1 ? triggerMod : defaultProps.triggerMod;
+        const { triggerMode } = this.props;
+        return triggerMode in PopoverTriggerMode ? triggerMode : defaultProps.triggerMode;
     };
     private _handleClick = () => {
         const trigger = this._getTrigger();
@@ -75,11 +84,11 @@ export class Popover extends Component<PopoverProps> {
         }
         const popoverPosition = {
             vertical:
-                VERTICAL_POSITIONS.indexOf(props.verticalPosition) > -1
+                props.verticalPosition in PopoverVerticalPositions
                     ? props.verticalPosition
                     : defaultProps.verticalPosition,
             horizontal:
-                HORIZONTAL_POSITIONS.indexOf(props.horizontalPosition) > -1
+                props.horizontalPosition in PopoverHorizontalPositions
                     ? props.horizontalPosition
                     : defaultProps.horizontalPosition
         };
@@ -93,21 +102,20 @@ export class Popover extends Component<PopoverProps> {
                 >
                     {props.anchorEl}
                 </div>
-                {props.open && (
-                    <div
-                        aria-expanded="true"
-                        onKeyDown={this.props.onClose}
-                        tabIndex={-1}
-                        className={[
-                            props.className,
-                            styles.popoverComponent,
-                            styles[popoverPosition.vertical],
-                            styles[popoverPosition.horizontal]
-                        ].join(" ")}
-                    >
-                        {props.children}
-                    </div>
-                )}
+                <div
+                    aria-expanded="true"
+                    onKeyDown={this.props.onClose}
+                    tabIndex={-1}
+                    className={[
+                        props.className,
+                        styles.popoverComponent,
+                        props.open ? styles.visible : "",
+                        styles[popoverPosition.vertical],
+                        styles[popoverPosition.horizontal]
+                    ].join(" ")}
+                >
+                    {props.children}
+                </div>
             </div>
         );
     }
