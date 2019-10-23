@@ -19,5 +19,4 @@ export * from "./cuepointFloatingEngine";
 export * from "./common.types";
 export * from "./components/managed-component";
 export * from "./components/managed-component";
-export * from "./downloader";
-export * from "./printer";
+export * from "./localContentUtils";
