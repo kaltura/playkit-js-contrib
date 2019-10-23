@@ -7,6 +7,7 @@ import { BannerManager } from "./bannerManager";
 import { ToastManager } from "./toastManager";
 
 export interface UIManagerOptions {
+    corePlayer: KalturaPlayerTypes.Player;
     upperBarManager: UpperBarManager;
     floatingManager: FloatingManager;
     kitchenSinkManager: KitchenSinkManager;
@@ -23,6 +24,7 @@ export class UIManager {
     }
 
     constructor(private _options: UIManagerOptions) {
+        //todo [sa] call loadFont in a better way...
         this._loadFont();
     }
 
@@ -61,11 +63,7 @@ export class UIManager {
     }
 
     private _loadFont() {
-        //todo [sa] load font from config
-        //todo [sa] use Lato font family - currently just testing
-
-        // @ts-ignore
-        let fontFamily = config.contrib.ui.fonts.fontFamily;
+        let fontFamily = this._options.corePlayer.config.contrib.ui.fonts.fontFamily;
 
         const fontCss = `.kaltura-player-container {
                 font-family: inherit;
