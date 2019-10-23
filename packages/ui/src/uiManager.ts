@@ -63,15 +63,20 @@ export class UIManager {
     private _loadFont() {
         //todo [sa] load font from config
         //todo [sa] use Lato font family - currently just testing
-        const fontCss = `.playkit-player .playkit-player-gui  {
+
+        // @ts-ignore
+        let fontFamily = config.contrib.ui.fonts.fontFamily;
+
+        const fontCss = `.kaltura-player-container {
                 font-family: inherit;
+            }         
+            .playkit-player {
+                font-family: ${fontFamily};
             }
-        
-            .playkit-player-gui-content {
-                font-family: cursive, sans-serif;
+            .playkit-player .playkit-player-gui  {
+                font-family: ${fontFamily};
             }
-        
-            button {
+            button, textarea {
                 font-family: inherit;
             }`;
         const lastHeadChild = (document.head || document.getElementsByTagName("head")[0])
