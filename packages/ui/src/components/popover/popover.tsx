@@ -14,107 +14,150 @@ export enum PopoverTriggerMode {
     Hover = "hover"
 }
 
+const CLOSE_ON_HOVER_DELAY = 500;
+
 const defaultProps = {
     verticalPosition: PopoverVerticalPositions.Top,
     horizontalPosition: PopoverHorizontalPositions.Left,
     triggerMode: PopoverTriggerMode.Click,
     className: "popover",
-    open: false,
     closeOnEsc: true
 };
 
 interface PopoverProps {
     onClose?: () => void;
     onOpen?: () => void;
-    verticalPosition: PopoverVerticalPositions.Top | PopoverVerticalPositions.Bottom;
-    horizontalPosition: PopoverHorizontalPositions.Right | PopoverHorizontalPositions.Left;
+    verticalPosition: PopoverVerticalPositions;
+    horizontalPosition: PopoverHorizontalPositions;
     className: string;
-    open: boolean;
     closeOnEsc: boolean;
-    triggerMode: PopoverTriggerMode.Click | PopoverTriggerMode.Hover;
-    anchorEl: JSX.Element;
+    triggerMode: PopoverTriggerMode;
+    content: JSX.Element;
     children: JSX.Element | JSX.Element[];
 }
 
-export class Popover extends Component<PopoverProps> {
+interface PopoverState {
+    open: boolean;
+}
+
+export class Popover extends Component<PopoverProps, PopoverState> {
+    private _closeTimeout: number | null;
+    private _controlElement = null;
     static defaultProps = {
         ...defaultProps
     };
+    state = {
+        open: false
+    };
     componentDidMount() {
-        if (this.props.closeOnEsc && this.props.onClose) {
-            document.addEventListener("keydown", this._handleEscButtonPressed);
-        }
+        document.addEventListener("click", this._handleClickOutside);
+        document.addEventListener("keydown", this._handleEscButtonPressed);
     }
+
     componentWillUnmount() {
+        document.removeEventListener("click", this._handleClickOutside);
         document.removeEventListener("keydown", this._handleEscButtonPressed);
+        clearTimeout(this._closeTimeout);
     }
-    private _handleEscButtonPressed = (e: KeyboardEvent) => {
-        const { onClose } = this.props;
-        if (e.keyCode === 27 && onClose) {
-            onClose();
+
+    private _handleClickOutside = (e: any) => {
+        if (!!this._controlElement && !this._controlElement.contains(e.target) && this.state.open) {
+            this._closePopover();
         }
     };
-    private _getTrigger = () => {
-        const { triggerMode } = this.props;
-        return triggerMode in PopoverTriggerMode ? triggerMode : defaultProps.triggerMode;
+
+    private _openPopover = () => {
+        const { onOpen } = this.props;
+        this.setState({ open: true }, () => {
+            if (onOpen) {
+                onOpen();
+            }
+        });
+    };
+
+    private _closePopover = () => {
+        const { onClose } = this.props;
+        this.setState({ open: false }, () => {
+            if (onClose) {
+                onClose();
+            }
+        });
+    };
+
+    private _handleEscButtonPressed = (e: KeyboardEvent) => {
+        // check if ESC or Enter pressed
+        if (this.state.open && (e.keyCode === 27 || e.keyCode === 13)) {
+            this._closePopover();
+        }
     };
     private _handleClick = () => {
-        const trigger = this._getTrigger();
-        if (trigger === "click") {
-            this._handleOpenOrClose();
+        if (this.props.triggerMode === PopoverTriggerMode.Click) {
+            if (this.state.open) {
+                this._closePopover();
+            } else {
+                this._openPopover();
+            }
         }
     };
-    private _handleHover = () => {
-        const trigger = this._getTrigger();
-        if (trigger === "hover") {
-            this._handleOpenOrClose();
+    private _handleMouseEnter = () => {
+        if (this.props.triggerMode === PopoverTriggerMode.Hover && !this.state.open) {
+            this._openPopover();
         }
     };
-    private _handleOpenOrClose = () => {
-        const { onOpen, onClose, open } = this.props;
-        if (!open && onOpen) {
-            onOpen();
-        } else if (open && onClose) {
-            onClose();
+    private _handleMouseLeave = () => {
+        if (this.props.triggerMode === PopoverTriggerMode.Hover) {
+            this._closeTimeout = setTimeout(this._closePopover, CLOSE_ON_HOVER_DELAY);
+        }
+    };
+    private _handleHoverOnPopover = () => {
+        if (this.props.triggerMode === PopoverTriggerMode.Hover) {
+            if (this.state.open && this._closeTimeout) {
+                clearTimeout(this._closeTimeout);
+                this._closeTimeout = null;
+            } else {
+                this._closePopover();
+            }
         }
     };
     render(props: PopoverProps): JSX.Element | null {
-        if (!props.anchorEl || !props.children) {
+        if (!props.content || !props.children) {
             return null;
         }
-        const popoverPosition = {
-            vertical:
-                props.verticalPosition in PopoverVerticalPositions
-                    ? props.verticalPosition
-                    : defaultProps.verticalPosition,
-            horizontal:
-                props.horizontalPosition in PopoverHorizontalPositions
-                    ? props.horizontalPosition
-                    : defaultProps.horizontalPosition
-        };
+        const verticalAlignment =
+            props.verticalPosition === PopoverVerticalPositions.Top
+                ? PopoverVerticalPositions.Top
+                : PopoverVerticalPositions.Bottom;
+        const horizontalAlignment =
+            props.horizontalPosition === PopoverHorizontalPositions.Left
+                ? PopoverHorizontalPositions.Left
+                : PopoverHorizontalPositions.Right;
         return (
             <div className={styles.popoverContainer}>
                 <div
                     className="popover-anchor-container"
                     onClick={this._handleClick}
-                    onMouseEnter={this._handleHover}
-                    onMouseLeave={this._handleHover}
+                    onMouseEnter={this._handleMouseEnter}
+                    onMouseLeave={this._handleMouseLeave}
+                    ref={node => {
+                        this._controlElement = node;
+                    }}
                 >
-                    {props.anchorEl}
+                    {props.children}
                 </div>
                 <div
-                    aria-expanded="true"
-                    onKeyDown={this.props.onClose}
+                    aria-expanded={this.state.open ? "true" : "false"}
                     tabIndex={-1}
+                    onMouseEnter={this._handleHoverOnPopover}
+                    onMouseLeave={this._handleHoverOnPopover}
                     className={[
                         props.className,
                         styles.popoverComponent,
-                        props.open ? styles.visible : "",
-                        styles[popoverPosition.vertical],
-                        styles[popoverPosition.horizontal]
+                        this.state.open ? styles.visible : "",
+                        styles[verticalAlignment],
+                        styles[horizontalAlignment]
                     ].join(" ")}
                 >
-                    {props.children}
+                    {props.content}
                 </div>
             </div>
         );
