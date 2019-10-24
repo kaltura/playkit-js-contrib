@@ -59,6 +59,7 @@ export class FontManager {
                         this._overrideCorePlayerFontStyles(data.fontFamily);
                         this._loadedFontName = data.downloadData.name;
                     }
+                    //todo [sa] should we override core player font style even if we don't have the font ???
                 })
                 .catch(err => {
                     logger.error(`Failed to download font`, {
