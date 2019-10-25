@@ -11,6 +11,7 @@ import { EventsManager, PlayerContribRegistry } from "@playkit-js-contrib/common
 import { PresetNames } from "./presetItemData";
 import { KitchenSinkContainer } from "./components/kitchen-sink-container/kitchenSinkContainer";
 import { KitchenSinkAdapter } from "./components/kitchen-sink-adapter";
+import { ManagedComponent } from "./components/managed-component";
 
 export interface KitchenSinkManagerOptions {
     corePlayer: KalturaPlayerTypes.Player;
@@ -37,6 +38,12 @@ export type KitchenSinkEvents = ItemActiveStateChangeEvent;
 
 const ResourceToken = "KitchenSinkManager-v1";
 
+interface KitchenSinkPanel {
+    ref: ManagedComponent | null;
+    items: KitchenSinkItem[];
+    activeItem: KitchenSinkItem | null;
+}
+
 export class KitchenSinkManager {
     static fromPlayer(
         playerContribRegistry: PlayerContribRegistry,
@@ -47,18 +54,11 @@ export class KitchenSinkManager {
 
     private _events: EventsManager<KitchenSinkEvents> = new EventsManager<KitchenSinkEvents>();
 
-    private _items: Record<KitchenSinkPositions, KitchenSinkItem[]> = {
-        [KitchenSinkPositions.Bottom]: [],
-        [KitchenSinkPositions.Right]: [],
-        [KitchenSinkPositions.Top]: [],
-        [KitchenSinkPositions.Left]: []
-    };
-
-    private _activeItems: Record<KitchenSinkPositions, KitchenSinkItem> = {
-        [KitchenSinkPositions.Bottom]: null,
-        [KitchenSinkPositions.Right]: null,
-        [KitchenSinkPositions.Top]: null,
-        [KitchenSinkPositions.Left]: null
+    private _panels: Record<KitchenSinkPositions, KitchenSinkPanel> = {
+        [KitchenSinkPositions.Bottom]: { ref: null, items: [], activeItem: null },
+        [KitchenSinkPositions.Right]: { ref: null, items: [], activeItem: null },
+        [KitchenSinkPositions.Top]: { ref: null, items: [], activeItem: null },
+        [KitchenSinkPositions.Left]: { ref: null, items: [], activeItem: null }
     };
 
     private _options: KitchenSinkManagerOptions;
@@ -106,8 +106,13 @@ export class KitchenSinkManager {
             deactivate: this._deactivateItem,
             eventManager: this._events
         };
+
+        const relevantPanel = this._panels[data.position];
         const item = new KitchenSinkItem(itemOptions);
-        this._items[data.position].push(item);
+        relevantPanel.items.push(item);
+        if (relevantPanel.ref) {
+            relevantPanel.ref.update();
+        }
 
         this.options.upperBarManager.add({
             label: data.label,
@@ -137,19 +142,21 @@ export class KitchenSinkManager {
 
     private _activateItem = (item: KitchenSinkItem): void => {
         const { position, expandMode } = item.data;
+        const relevantPanel = this._panels[position];
+
         // trying to activate an already active item
-        if (this._activeItems[position] === item) return;
+        if (relevantPanel.activeItem === item) return;
         // switch between items if currently there is an active one (without collapsing / expanding KS)
-        if (this._activeItems[position]) {
+        if (relevantPanel.activeItem) {
             //trigger item de-activation event
             this._events.emit({
                 type: EventTypes.ItemActiveStateChangeEvent,
                 state: ItemActiveStates.InActive,
-                item: this._activeItems[position]
+                item: relevantPanel.activeItem
             });
         }
         //update new item as active
-        this._activeItems[position] = item;
+        relevantPanel.activeItem = item;
         //trigger new item activation event
         this._events.emit({
             type: EventTypes.ItemActiveStateChangeEvent,
@@ -162,22 +169,24 @@ export class KitchenSinkManager {
 
     private _deactivateItem = (item: KitchenSinkItem): void => {
         const { position } = item.data;
+        const relevantPanel = this._panels[position];
+
         //item is not active
-        if (this._activeItems[position] !== item) return;
+        if (relevantPanel.activeItem !== item) return;
         //collapse kitchenSink component
         this._collapse(position);
         //trigger item de-activation event
         this._events.emit({
             type: EventTypes.ItemActiveStateChangeEvent,
             state: ItemActiveStates.InActive,
-            item: this._activeItems[position]
+            item: relevantPanel.activeItem
         });
         //remove item from _activeItems
-        this._activeItems[position] = null;
+        relevantPanel.activeItem = null;
     };
 
     private _isActive = (item: KitchenSinkItem): boolean => {
-        return this._activeItems[item.data.position] === item;
+        return this._panels[item.data.position].activeItem === item;
     };
 
     private _expand = (
@@ -199,14 +208,25 @@ export class KitchenSinkManager {
         this._kitchenSinkAdapterRef.collapse(position);
     }
 
-    private _renderChild = (position: KitchenSinkPositions): ComponentChild => {
-        const items = this._items[position].map(item => {
+    private _renderKitchenSink(position: KitchenSinkPositions) {
+        const items = this._panels[position].items.map(item => {
             const itemProps: KitchenSinkItemRenderProps = {
                 onClose: this._deactivateItem.bind(this, item)
             };
             return item.renderContentChild(itemProps);
         });
         return <KitchenSinkContainer>{items}</KitchenSinkContainer>;
+    }
+
+    private _renderChild = (position: KitchenSinkPositions): ComponentChild => {
+        return (
+            <ManagedComponent
+                label={"kitchen-sink-manager"}
+                renderChildren={() => this._renderKitchenSink(position)}
+                isShown={() => true}
+                ref={ref => (this._panels[position].ref = ref)}
+            />
+        );
     };
 
     private _setRef = (ref: KitchenSinkAdapter | null) => {

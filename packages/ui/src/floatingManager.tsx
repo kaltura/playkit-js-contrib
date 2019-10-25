@@ -142,15 +142,16 @@ export class FloatingManager {
         };
     }
 
-    private _renderChildren = (position: FloatingPositions) => {
+    private _renderItems = (position: FloatingPositions) => {
         const props = this._getRendererProps({});
         return this._items[position].map(item => item.renderFloatingChild(props));
     };
+
     private _renderChild = (position: FloatingPositions): ComponentChild => {
         return (
             <ManagedComponent
                 label={"floating-manager"}
-                renderChildren={() => this._renderChildren(position)}
+                renderChildren={() => this._renderItems(position)}
                 isShown={() => true}
                 ref={ref => (this._componentRef[position] = ref)}
             />
