@@ -126,7 +126,8 @@ export class FontManager {
         // try to load cached font data from localStorage
         const cachedFontData = this._loadFontFromLocalStorage(fontName);
         if (cachedFontData && cachedFontData !== "") {
-            return Promise.resolve(cachedFontData);
+            //@ts-ignore
+            return Promise.resolve(cachedFontData); //todo [sa] why do I get a TS error...
         }
 
         // download font and cache to localStorage
@@ -137,7 +138,7 @@ export class FontManager {
                     logger.info(`font ${fontName} was downloaded successfully`, {
                         method: "_downloadAndCacheFont"
                     });
-                    this._saveFontToLocalStorage(`${FontKeyPrefix}${fontName}`, result.data);
+                    this._saveFontToLocalStorage(`${fontName}`, result.data);
                     return result.data;
                 } else {
                     logger.warn(
