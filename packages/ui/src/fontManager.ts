@@ -34,27 +34,38 @@ export class FontManager {
         if (data.downloadData && data.downloadData.name && data.downloadData.url) {
             // font exists in the system, no need to load / download it
             if (this._checkFontExistence(data.downloadData.name)) {
-                logger.info(
-                    `Font ${data.downloadData.name} already exists, no need to download it`,
-                    {
-                        method: "loadFont"
-                    }
-                );
+                logger.info(`Font ${data.downloadData.name} already exists, no need to reload it`, {
+                    method: "loadFont"
+                });
                 return;
             }
             // download and inject font
-            this._downloadAndCacheFont(data.downloadData.url, data.downloadData.name).then(
-                fontData => {
-                    if (fontData) {
-                        this._injectFontRawStyle(data.downloadData.name, fontData);
+            try {
+                this._downloadAndCacheFont(data.downloadData.url, data.downloadData.name).then(
+                    fontData => {
+                        if (fontData) {
+                            this._injectFontRawStyle(data.downloadData.name, fontData);
+                        }
                     }
-                }
-            );
+                );
+            } catch (err) {
+                logger.warn(
+                    `Failed to load and inject font ${data.downloadData.name}
+                 from ${data.downloadData.url} to core player style.`,
+                    {
+                        method: "loadFont",
+                        data: {
+                            error: err
+                        }
+                    }
+                );
+            }
         }
     }
 
     private _overrideCorePlayerFontStyles(fontFamily: string): void {
-        const fontCss = `.kaltura-player-container {
+        try {
+            const fontCss = `.kaltura-player-container {
                 font-family: inherit;
             }         
             .playkit-player {
@@ -66,31 +77,49 @@ export class FontManager {
             button, textarea {
                 font-family: inherit;
             }`;
-        const lastHeadChild = (document.head || document.getElementsByTagName("head")[0])
-            .lastElementChild;
-        const style = document.createElement("style");
-        //adding as last child
-        lastHeadChild.parentNode.insertBefore(style, lastHeadChild.nextSibling);
-        style.appendChild(document.createTextNode(fontCss));
+            const lastHeadChild = (document.head || document.getElementsByTagName("head")[0])
+                .lastElementChild;
+            const style = document.createElement("style");
+            //adding as last child
+            lastHeadChild.parentNode.insertBefore(style, lastHeadChild.nextSibling);
+            style.appendChild(document.createTextNode(fontCss));
+        } catch (err) {
+            logger.warn(`Failed to override core player font with ${fontFamily}`, {
+                method: "_overrideCorePlayerFontStyles",
+                data: {
+                    error: err
+                }
+            });
+        }
     }
 
     private _checkFontExistence(fontName): boolean {
-        // creating an in-memory Canvas element
-        const canvas = document.createElement("canvas");
-        const context = canvas.getContext("2d");
-        // the text whose final pixel size we want to measure
-        const text = "abcdefghiiiiiiiiijklmnopqrstuvwwwwwwwwwwxyz0123456789";
-        // baseline font
-        context.font = `72px monospace`;
-        // size of the baseline text
-        const baselineSize = context.measureText(text).width;
-        // specifying the font whose existence we want to check
-        context.font = `72px ${fontName},monospace`;
-        // checking the size of the font we want to check
-        const newSize = context.measureText(text).width;
-        // If the size of the two text instances is the same, the font does not exist
-        // because it is being rendered using the same font
-        return newSize !== baselineSize;
+        try {
+            // creating an in-memory Canvas element
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d");
+            // the text whose final pixel size we want to measure
+            const text = "abcdefghiiiiiiiiijklmnopqrstuvwwwwwwwwwwxyz0123456789";
+            // baseline font
+            context.font = `72px monospace`;
+            // size of the baseline text
+            const baselineSize = context.measureText(text).width;
+            // specifying the font whose existence we want to check
+            context.font = `72px ${fontName},monospace`;
+            // checking the size of the font we want to check
+            const newSize = context.measureText(text).width;
+            // If the size of the two text instances is the same, the font does not exist
+            // because it is being rendered using the same font
+            return newSize !== baselineSize;
+        } catch (err) {
+            logger.warn(`Failed to determine if font ${fontName} exists in the system.`, {
+                method: "_checkFontExistence",
+                data: {
+                    error: err
+                }
+            });
+            return false;
+        }
     }
 
     private _downloadAndCacheFont(url: string, fontName: string): Promise<string | null> {
@@ -104,16 +133,22 @@ export class FontManager {
         return axios
             .get(url)
             .then((result: any) => {
-                if (result.data && typeof result.data === "string") {
+                if (result.data && typeof result.data === "string" && result.data !== "") {
                     logger.info(`font ${fontName} was downloaded successfully`, {
                         method: "_downloadAndCacheFont"
                     });
                     this._saveFontToLocalStorage(`${FontKeyPrefix}${fontName}`, result.data);
                     return result.data;
                 } else {
-                    logger.warn(`failed to downloaded font ${fontName}`, {
-                        method: "_downloadAndCacheFont"
-                    });
+                    logger.warn(
+                        `failed to downloaded font ${fontName} due to unexpected font data`,
+                        {
+                            method: "_downloadAndCacheFont",
+                            data: {
+                                error: result.data ? result.data : "empty font data"
+                            }
+                        }
+                    );
                     return null;
                 }
             })
@@ -129,12 +164,21 @@ export class FontManager {
     }
 
     private _injectFontRawStyle(fontName: string, fontData: string): void {
-        const style = document.createElement("style");
-        style.innerHTML = fontData;
-        (document.head || document.getElementsByTagName("head")[0]).appendChild(style);
-        logger.info(`font "${fontName}" raw data style was injected`, {
-            method: "_injectFontRawStyle"
-        });
+        try {
+            const style = document.createElement("style");
+            style.innerHTML = fontData;
+            (document.head || document.getElementsByTagName("head")[0]).appendChild(style);
+            logger.info(`font "${fontName}" raw data style was injected`, {
+                method: "_injectFontRawStyle"
+            });
+        } catch (err) {
+            logger.warn(`Faile to inject font ${fontName} data to core plyaer style.`, {
+                method: "_injectFontRawStyle",
+                data: {
+                    error: err
+                }
+            });
+        }
     }
 
     private _loadFontFromLocalStorage(fontName: string): string | null {
