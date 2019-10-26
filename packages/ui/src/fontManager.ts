@@ -1,6 +1,6 @@
 import axios from "axios";
 import { getContribLogger } from "@playkit-js-contrib/common";
-import PlayerConfig = KalturaPlayerTypes.PlayerConfig;
+import Fonts = KalturaPlayerTypes.PlayerConfig.Fonts;
 
 const logger = getContribLogger({
     module: "ui",
@@ -12,7 +12,7 @@ const FontKeyPrefix: string = "contrib-plugins-font-";
 export class FontManager {
     private static _instance: FontManager;
 
-    private _loadedFontName: string;
+    private _loadedFontData: Fonts;
 
     private constructor() {}
 
@@ -23,56 +23,33 @@ export class FontManager {
         return FontManager._instance;
     }
 
-    public loadFont(data: PlayerConfig.Fonts): void {
+    public loadFont(data: Fonts): void {
+        // a previous request for loading a font was already made
+        if (this._fontLoaded(data)) return;
+        // making sure no additional calls for loading font will be accepted
+        this._loadedFontData = data; //todo [sa] should we save the data only on successful flow ???
+        // override player font style
+        this._overrideCorePlayerFontStyles(data.fontFamily);
         // if download data exists
         if (data.downloadData && data.downloadData.name && data.downloadData.url) {
-            // font was already loaded and it's style was already injected
-            if (data.downloadData.name === this._loadedFontName) {
-                logger.info(`Font ${data.downloadData.name} was already loaded in page`, {
-                    method: "loadFont"
-                });
-                return;
-            }
             // font exists in the system, no need to load / download it
             if (this._checkFontExistence(data.downloadData.name)) {
-                logger.info(`Font ${data.downloadData.name} already exists`, {
-                    method: "loadFont"
-                });
-                this._overrideCorePlayerFontStyles(data.fontFamily);
-                return;
-            }
-            // font data was cached to localStorage
-            const cachedFontValue = this._loadFontFromLocalStorage(
-                `${FontKeyPrefix}${data.downloadData.name}`
-            );
-            if (cachedFontValue && cachedFontValue !== "") {
-                this._injectFontRawStyle(cachedFontValue);
-                this._overrideCorePlayerFontStyles(data.fontFamily);
-                this._loadedFontName = data.downloadData.name;
-                return;
-            }
-            // font needs to be downloaded
-            this._downloadAndCacheFont(data.downloadData.url, data.downloadData.name)
-                .then(fontData => {
-                    if (fontData) {
-                        this._injectFontRawStyle(fontData);
-                        this._overrideCorePlayerFontStyles(data.fontFamily);
-                        this._loadedFontName = data.downloadData.name;
+                logger.info(
+                    `Font ${data.downloadData.name} already exists, no need to download it`,
+                    {
+                        method: "loadFont"
                     }
-                    //todo [sa] should we override core player font style even if we don't have the font ???
-                })
-                .catch(err => {
-                    logger.error(`Failed to download font`, {
-                        method: "loadFont -> _downloadFont",
-                        data: {
-                            error: err
-                        }
-                    });
-                    //todo [sa] should we override core player font style even if we don't have the font ???
-                });
-        } else {
-            // no download data exists, only override core player font style
-            this._overrideCorePlayerFontStyles(data.fontFamily);
+                );
+                return;
+            }
+            // download and inject font
+            this._downloadAndCacheFont(data.downloadData.url, data.downloadData.name).then(
+                fontData => {
+                    if (fontData) {
+                        this._injectFontRawStyle(data.downloadData.name, fontData);
+                    }
+                }
+            );
         }
     }
 
@@ -117,58 +94,95 @@ export class FontManager {
     }
 
     private _downloadAndCacheFont(url: string, fontName: string): Promise<string | null> {
-        return axios.get(url).then((result: any) => {
-            if (result.data && typeof result.data === "string") {
-                logger.info(`font ${fontName} was downloaded successfully`, {
-                    method: "_downloadAndCacheFont"
-                });
-                this._saveFontToLocalStorage(`${FontKeyPrefix}${fontName}`, result.data);
-                return result.data;
-            } else {
-                logger.error(`failed to downloaded font ${fontName}`, {
-                    method: "_downloadAndCacheFont"
+        // try to load cached font data from localStorage
+        const cachedFontData = this._loadFontFromLocalStorage(fontName);
+        if (cachedFontData && cachedFontData !== "") {
+            return Promise.resolve(cachedFontData);
+        }
+
+        // download font and cache to localStorage
+        return axios
+            .get(url)
+            .then((result: any) => {
+                if (result.data && typeof result.data === "string") {
+                    logger.info(`font ${fontName} was downloaded successfully`, {
+                        method: "_downloadAndCacheFont"
+                    });
+                    this._saveFontToLocalStorage(`${FontKeyPrefix}${fontName}`, result.data);
+                    return result.data;
+                } else {
+                    logger.warn(`failed to downloaded font ${fontName}`, {
+                        method: "_downloadAndCacheFont"
+                    });
+                    return null;
+                }
+            })
+            .catch(err => {
+                logger.warn(`Failed to download font ${fontName}`, {
+                    method: "loadFont -> _downloadFont",
+                    data: {
+                        error: err
+                    }
                 });
                 return null;
-            }
-        });
+            });
     }
 
-    private _injectFontRawStyle(fontValue: string): void {
+    private _injectFontRawStyle(fontName: string, fontData: string): void {
         const style = document.createElement("style");
-        style.innerHTML = fontValue;
+        style.innerHTML = fontData;
         (document.head || document.getElementsByTagName("head")[0]).appendChild(style);
-        logger.info(`font raw style was injected`, {
+        logger.info(`font "${fontName}" raw data style was injected`, {
             method: "_injectFontRawStyle"
         });
     }
 
-    private _loadFontFromLocalStorage(fontKey: string): string | null {
+    private _loadFontFromLocalStorage(fontName: string): string | null {
         try {
-            return localStorage.getItem(fontKey);
+            return localStorage.getItem(`${FontKeyPrefix}${fontName}`);
         } catch (err) {
-            logger.error(`Error loading font from localStorage`, {
-                method: "_loadFontFromLocalStorage",
-                data: {
-                    error: err
+            logger.warn(
+                `Failed to load font "${fontName}" data, key: ${FontKeyPrefix}${fontName} from localStorage`,
+                {
+                    method: "_loadFontFromLocalStorage",
+                    data: {
+                        error: err
+                    }
                 }
-            });
+            );
             return null;
         }
     }
 
-    private _saveFontToLocalStorage(fontKey: string, fontValue: string): void {
+    private _saveFontToLocalStorage(fontName: string, fontValue: string): void {
         try {
-            localStorage.setItem(fontKey, fontValue);
-            logger.info(`font cached into localStorage`, {
+            localStorage.setItem(`${FontKeyPrefix}${fontName}`, fontValue);
+            logger.info(`font "${fontName}" was cached into localStorage`, {
                 method: "_saveFontToLocalStorage"
             });
         } catch (err) {
-            logger.error(`Failed to cache font into localStorage`, {
+            logger.warn(`Failed to cache font "${fontName}" into localStorage`, {
                 method: "_saveFontToLocalStorage",
                 data: {
                     error: err
                 }
             });
         }
+    }
+
+    private _fontLoaded(data: Fonts): boolean {
+        if (this._loadedFontData) {
+            if (this._loadedFontData.fontFamily === data.fontFamily) {
+                logger.info(`${data.fontFamily} was already loaded and set.`, {});
+            } else {
+                logger.warn(
+                    `This request for loading font will be ignored since
+                 an earlier call for loading ${this._loadedFontData.fontFamily} was made.`,
+                    {}
+                );
+            }
+            return true;
+        }
+        return false;
     }
 }

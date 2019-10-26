@@ -188,7 +188,7 @@ declare namespace KalturaPlayerTypes {
 
         export interface Fonts {
             fontFamily: string;
-            downloadData: {
+            downloadData?: {
                 name: string;
                 url: string;
             };
