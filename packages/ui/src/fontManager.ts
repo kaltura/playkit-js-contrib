@@ -1,6 +1,7 @@
 import axios from "axios";
-import { getContribLogger } from "@playkit-js-contrib/common";
+import { getContribLogger, ObjectUtils } from "@playkit-js-contrib/common";
 import Fonts = KalturaPlayerTypes.PlayerConfig.Fonts;
+import TestingFontOptions = KalturaPlayerTypes.PlayerConfig.TestingFontOptions;
 
 const logger = getContribLogger({
     module: "ui",
@@ -8,6 +9,12 @@ const logger = getContribLogger({
 });
 
 const FontKeyPrefix: string = "contrib-plugins-font-";
+
+const DefaultTestingOptions: TestingFontOptions = {
+    text: "abcdefghiiiiiiiiijklmnopqrstuvwwwwwwwwwwxyz0123456789",
+    size: 72,
+    fontName: "monospace"
+};
 
 // shared property for indicating current loaded fontFamily to support multiple contrib managers in a single page
 // ( multiple players instances )
@@ -35,7 +42,7 @@ export class FontManager {
             currentFontFamily = data.fontFamily;
             // if download data exists
             if (data.downloadData && data.downloadData.name && data.downloadData.url) {
-                this._handleFontDownloadProcess(data.downloadData.name, data.downloadData.url);
+                this._handleFontDownloadProcess(data);
             }
         } catch (err) {
             logger.warn(
@@ -69,37 +76,46 @@ export class FontManager {
         //adding as last child
         lastHeadChild.parentNode.insertBefore(style, lastHeadChild.nextSibling);
         style.appendChild(document.createTextNode(fontCss));
+        logger.info(`Overridden Core player font-family style with: ${fontFamily}`, {
+            method: "_overrideCorePlayerFontStyles"
+        });
     }
 
-    private _handleFontDownloadProcess(fontName: string, url: string): void {
+    private _handleFontDownloadProcess(data: Fonts): void {
+        const configTestingOptions = data.testingFont ? data.testingFont : {};
+        const fontTestingOptions = ObjectUtils.mergeDeep(
+            DefaultTestingOptions,
+            configTestingOptions
+        ) as TestingFontOptions;
         // font exists in the system, no need to load / download it
-        if (this._checkFontExistence(fontName)) {
-            logger.info(`Font ${fontName} already exists, no need to reload it`, {
+        if (this._checkFontExistence(data.downloadData.name, fontTestingOptions)) {
+            logger.info(`Font ${data.downloadData.name} already exists, no need to reload it`, {
                 method: "loadFont"
             });
             return;
         }
         // download and inject font
-        this._downloadAndCacheFont(fontName, url).then(fontData => {
+        this._downloadAndCacheFont(data.downloadData.name, data.downloadData.url).then(fontData => {
             if (fontData) {
-                this._injectFontRawStyle(fontName, fontData);
+                this._injectFontRawStyle(data.downloadData.name, fontData);
             }
         });
     }
 
-    private _checkFontExistence(fontName): boolean {
+    private _checkFontExistence(fontName, testingOptions: TestingFontOptions): boolean {
         try {
             // creating an in-memory Canvas element
             const canvas = document.createElement("canvas");
             const context = canvas.getContext("2d");
             // the text whose final pixel size we want to measure
-            const text = "abcdefghiiiiiiiiijklmnopqrstuvwwwwwwwwwwxyz0123456789";
+            const text = testingOptions.text;
+            const fontSize = `${testingOptions.size}px`;
             // baseline font
-            context.font = `72px monospace`;
+            context.font = `${fontSize} ${testingOptions.fontName}`;
             // size of the baseline text
             const baselineSize = context.measureText(text).width;
             // specifying the font whose existence we want to check
-            context.font = `72px ${fontName},monospace`;
+            context.font = `${fontSize} ${fontName},${testingOptions.fontName}`;
             // checking the size of the font we want to check
             const newSize = context.measureText(text).width;
             // If the size of the two text instances is the same, the font does not exist
@@ -212,12 +228,16 @@ export class FontManager {
     private _isFontLoaded(fontFamily: string): boolean {
         if (currentFontFamily === "") return false;
         if (currentFontFamily === fontFamily) {
-            logger.info(`${fontFamily} was already loaded and set.`, {});
+            logger.info(`${fontFamily} was already loaded and set.`, {
+                method: "_isFontLoaded"
+            });
         } else {
             logger.warn(
                 `This request for loading font will be ignored since
                  an earlier call for loading ${fontFamily} was made.`,
-                {}
+                {
+                    method: "_isFontLoaded"
+                }
             );
         }
         return true;
