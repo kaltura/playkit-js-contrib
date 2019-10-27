@@ -40,9 +40,18 @@ export class FontManager {
             this._overrideCorePlayerFontStyles(data.fontFamily);
             // making sure no additional calls for loading font will be accepted
             currentFontFamily = data.fontFamily;
-            // if download data exists
-            if (data.downloadData && data.downloadData.name && data.downloadData.url) {
+            // check if download data exists
+            if (!data.downloadData) return;
+            if (data.downloadData.name && data.downloadData.url) {
                 this._handleFontDownloadProcess(data);
+            } else {
+                //download data object is incomplete
+                logger.warn(
+                    "ContribFonts downloadData object should contain both name and url properties.",
+                    {
+                        method: "loadFont"
+                    }
+                );
             }
         } catch (err) {
             logger.warn(
