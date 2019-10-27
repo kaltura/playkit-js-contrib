@@ -9,10 +9,12 @@ const logger = getContribLogger({
 
 const FontKeyPrefix: string = "contrib-plugins-font-";
 
+// shared property for indicating current loaded fontFamily to support multiple contrib managers in a single page
+// ( multiple players instances )
+let currentFontFamily: string = "";
+
 export class FontManager {
     private static _instance: FontManager;
-
-    private _loadedFontData: Fonts;
 
     private constructor() {}
 
@@ -25,47 +27,31 @@ export class FontManager {
 
     public loadFont(data: Fonts): void {
         // a previous request for loading a font was already made
-        if (this._fontLoaded(data)) return;
-        // making sure no additional calls for loading font will be accepted
-        this._loadedFontData = data; //todo [sa] should we save the data only on successful flow ???
-        // override player font style
-        this._overrideCorePlayerFontStyles(data.fontFamily);
-        // if download data exists
-        if (data.downloadData && data.downloadData.name && data.downloadData.url) {
-            // font exists in the system, no need to load / download it
-            if (this._checkFontExistence(data.downloadData.name)) {
-                logger.info(`Font ${data.downloadData.name} already exists, no need to reload it`, {
-                    method: "loadFont"
-                });
-                return;
+        if (this._isFontLoaded(data.fontFamily)) return;
+        try {
+            // override player font style
+            this._overrideCorePlayerFontStyles(data.fontFamily);
+            // making sure no additional calls for loading font will be accepted
+            currentFontFamily = data.fontFamily;
+            // if download data exists
+            if (data.downloadData && data.downloadData.name && data.downloadData.url) {
+                this._handleFontDownloadProcess(data.downloadData.name, data.downloadData.url);
             }
-            // download and inject font
-            try {
-                this._downloadAndCacheFont(data.downloadData.url, data.downloadData.name).then(
-                    fontData => {
-                        if (fontData) {
-                            this._injectFontRawStyle(data.downloadData.name, fontData);
-                        }
+        } catch (err) {
+            logger.warn(
+                `Failed to load font and override core player style with ${data.fontFamily}`,
+                {
+                    method: "loadFont",
+                    data: {
+                        error: err
                     }
-                );
-            } catch (err) {
-                logger.warn(
-                    `Failed to load and inject font ${data.downloadData.name}
-                 from ${data.downloadData.url} to core player style.`,
-                    {
-                        method: "loadFont",
-                        data: {
-                            error: err
-                        }
-                    }
-                );
-            }
+                }
+            );
         }
     }
 
     private _overrideCorePlayerFontStyles(fontFamily: string): void {
-        try {
-            const fontCss = `.kaltura-player-container {
+        const fontCss = `.kaltura-player-container {
                 font-family: inherit;
             }         
             .playkit-player {
@@ -77,20 +63,28 @@ export class FontManager {
             button, textarea {
                 font-family: inherit;
             }`;
-            const lastHeadChild = (document.head || document.getElementsByTagName("head")[0])
-                .lastElementChild;
-            const style = document.createElement("style");
-            //adding as last child
-            lastHeadChild.parentNode.insertBefore(style, lastHeadChild.nextSibling);
-            style.appendChild(document.createTextNode(fontCss));
-        } catch (err) {
-            logger.warn(`Failed to override core player font with ${fontFamily}`, {
-                method: "_overrideCorePlayerFontStyles",
-                data: {
-                    error: err
-                }
+        const lastHeadChild = (document.head || document.getElementsByTagName("head")[0])
+            .lastElementChild;
+        const style = document.createElement("style");
+        //adding as last child
+        lastHeadChild.parentNode.insertBefore(style, lastHeadChild.nextSibling);
+        style.appendChild(document.createTextNode(fontCss));
+    }
+
+    private _handleFontDownloadProcess(fontName: string, url: string): void {
+        // font exists in the system, no need to load / download it
+        if (this._checkFontExistence(fontName)) {
+            logger.info(`Font ${fontName} already exists, no need to reload it`, {
+                method: "loadFont"
             });
+            return;
         }
+        // download and inject font
+        this._downloadAndCacheFont(fontName, url).then(fontData => {
+            if (fontData) {
+                this._injectFontRawStyle(fontName, fontData);
+            }
+        });
     }
 
     private _checkFontExistence(fontName): boolean {
@@ -122,7 +116,7 @@ export class FontManager {
         }
     }
 
-    private _downloadAndCacheFont(url: string, fontName: string): Promise<string | null> {
+    private _downloadAndCacheFont(fontName: string, url: string): Promise<string | null> {
         // try to load cached font data from localStorage
         const cachedFontData = this._loadFontFromLocalStorage(fontName);
         if (cachedFontData && cachedFontData !== "") {
@@ -140,22 +134,22 @@ export class FontManager {
                     });
                     this._saveFontToLocalStorage(`${fontName}`, result.data);
                     return result.data;
-                } else {
-                    logger.warn(
-                        `failed to downloaded font ${fontName} due to unexpected font data`,
-                        {
-                            method: "_downloadAndCacheFont",
-                            data: {
-                                error: result.data ? result.data : "empty font data"
-                            }
-                        }
-                    );
-                    return null;
                 }
+                // got an unexpected result
+                logger.warn(
+                    `failed to downloaded font ${fontName} due to an unexpected font data`,
+                    {
+                        method: "_downloadAndCacheFont",
+                        data: {
+                            error: result.data ? result.data : "empty font data"
+                        }
+                    }
+                );
+                return null;
             })
             .catch(err => {
                 logger.warn(`Failed to download font ${fontName}`, {
-                    method: "loadFont -> _downloadFont",
+                    method: "_downloadFont",
                     data: {
                         error: err
                     }
@@ -173,7 +167,7 @@ export class FontManager {
                 method: "_injectFontRawStyle"
             });
         } catch (err) {
-            logger.warn(`Faile to inject font ${fontName} data to core plyaer style.`, {
+            logger.warn(`Failed to inject font ${fontName} data to core player style.`, {
                 method: "_injectFontRawStyle",
                 data: {
                     error: err
@@ -215,19 +209,17 @@ export class FontManager {
         }
     }
 
-    private _fontLoaded(data: Fonts): boolean {
-        if (this._loadedFontData) {
-            if (this._loadedFontData.fontFamily === data.fontFamily) {
-                logger.info(`${data.fontFamily} was already loaded and set.`, {});
-            } else {
-                logger.warn(
-                    `This request for loading font will be ignored since
-                 an earlier call for loading ${this._loadedFontData.fontFamily} was made.`,
-                    {}
-                );
-            }
-            return true;
+    private _isFontLoaded(fontFamily: string): boolean {
+        if (currentFontFamily === "") return false;
+        if (currentFontFamily === fontFamily) {
+            logger.info(`${fontFamily} was already loaded and set.`, {});
+        } else {
+            logger.warn(
+                `This request for loading font will be ignored since
+                 an earlier call for loading ${fontFamily} was made.`,
+                {}
+            );
         }
-        return false;
+        return true;
     }
 }
