@@ -182,11 +182,11 @@ declare namespace KalturaPlayerTypes {
 
         export interface Contrib {
             ui: {
-                fonts: Fonts;
+                fonts: ContribFonts;
             };
         }
 
-        export interface Fonts {
+        export interface ContribFonts {
             fontFamily: string;
             testingFont?: TestingFontOptions;
             downloadData?: {

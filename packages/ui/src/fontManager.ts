@@ -1,6 +1,6 @@
 import axios from "axios";
 import { getContribLogger, ObjectUtils } from "@playkit-js-contrib/common";
-import Fonts = KalturaPlayerTypes.PlayerConfig.Fonts;
+import ContribFonts = KalturaPlayerTypes.PlayerConfig.ContribFonts;
 import TestingFontOptions = KalturaPlayerTypes.PlayerConfig.TestingFontOptions;
 
 const logger = getContribLogger({
@@ -32,7 +32,7 @@ export class FontManager {
         return FontManager._instance;
     }
 
-    public loadFont(data: Fonts): void {
+    public loadFont(data: ContribFonts): void {
         // a previous request for loading a font was already made
         if (this._isFontLoaded(data.fontFamily)) return;
         try {
@@ -81,7 +81,7 @@ export class FontManager {
         });
     }
 
-    private _handleFontDownloadProcess(data: Fonts): void {
+    private _handleFontDownloadProcess(data: ContribFonts): void {
         const configTestingOptions = data.testingFont ? data.testingFont : {};
         const fontTestingOptions = ObjectUtils.mergeDeep(
             DefaultTestingOptions,
