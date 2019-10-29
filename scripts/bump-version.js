@@ -3,6 +3,7 @@
 const chalk = require('chalk');
 const path = require('path');
 const spawnSync = require('child_process').spawnSync;
+var util = require('util');
 
 const rootPath = path.resolve(__dirname,'../');
 const lernaPath = 'node_modules/.bin/lerna';
@@ -11,9 +12,10 @@ const args = process.argv.splice(2);
 (function() {
   const result = spawnSync(lernaPath, ['version', '--no-push', '--no-git-tag-version', ...args ], {cwd: rootPath, stdio: ['inherit', 'inherit', 'pipe']});
 
-  if (result.stderr) {
-    console.log(chalk.red(result.stderr));
-    process.exitCode = 1;
+  console.log(result.stderr.toString('utf8'));
+
+  if (result.stderr.indexOf('lerna success version finished') === -1) {
+    process.exit(1);
     return;
   }
   const {version: packageVersion} = require('../lerna.json');
