@@ -19,16 +19,6 @@
     },
     "main": "./lib/index.js",
     "types": "./lib/index.d.ts",
-    "devDependencies": {
-        "fs-extra": "^8.1.0",
-        "preact": "^8.4.2",
-        "ts-loader": "^6.0.4",
-        "typescript": "^3.2.2",
-        "webpack": "^4.29.6",
-        "webpack-cli": "^3.3.0",
-        "webpack-merge": "^4.2.1",
-        "webpack-node-externals": "^1.7.2"
-    },
     "publishConfig": {
         "access": "public"
     },
@@ -38,7 +28,7 @@
         "CHANGELOG.md"
     ],
     "dependencies": {
-        "@playkit-js-contrib/common": "^2.0.1-next.0",
-        "@playkit-js-contrib/ui": "^2.0.1-next.0"
+        "@playkit-js-contrib/common": "file:../common",
+        "@playkit-js-contrib/ui": "file:../ui"
     }
 }
