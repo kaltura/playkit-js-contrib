@@ -2,8 +2,7 @@
 
 const chalk = require('chalk');
 const path = require('path');
-const util = require('util');
-const spawnSync = util.promisify(require('child_process').spawnSync);
+const spawnSync = require('child_process').spawnSync;
 
 const rootPath = path.resolve(__dirname,'../');
 const lernaPath = 'node_modules/.bin/lerna';
