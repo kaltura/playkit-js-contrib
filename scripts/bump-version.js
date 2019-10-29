@@ -9,8 +9,13 @@ const lernaPath = 'node_modules/.bin/lerna';
 const args = process.argv.splice(2);
 
 (function() {
-  spawnSync(lernaPath, ['version', '--no-push', '--no-git-tag-version', ...args ], {cwd: rootPath, stdio: 'inherit'});
+  const result = spawnSync(lernaPath, ['version', '--no-push', '--no-git-tag-version', ...args ], {cwd: rootPath, stdio: ['inherit', 'inherit', 'pipe']});
 
+  if (result.stderr) {
+    console.log(chalk.red(result.stderr));
+    process.exitCode = 1;
+    return;
+  }
   const {version: packageVersion} = require('../lerna.json');
   console.log(chalk`
     {green Successfully updated contrib libraries versions to {bold ${packageVersion}} and updated relevant CHANGELOG.md files.}
