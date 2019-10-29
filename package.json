@@ -16,7 +16,7 @@
     "reset": "lerna run reset && rm -rf node_modules",
     "setup": "npm i && lerna link",
     "lerna": "lerna",
-    "deploy:manual-version": "node scripts/manual-version.js"
+    "bump-version": "node scripts/bump-version.js"
   },
   "devDependencies": {
     "@types/linkify-it": "^2.1.0",
