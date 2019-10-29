@@ -40,5 +40,6 @@
     "CHANGELOG.md"
   ],
   "dependencies": {
+    "core-js": "^3.1.4"
   }
 }
