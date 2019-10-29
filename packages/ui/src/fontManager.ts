@@ -145,7 +145,6 @@ export class FontManager {
         // try to load cached font data from localStorage
         const cachedFontData = this._loadFontFromLocalStorage(fontName);
         if (cachedFontData && cachedFontData !== "") {
-            //@ts-ignore
             return Promise.resolve(cachedFontData); //todo [sa] why do I get a TS error...
         }
 

@@ -13,7 +13,6 @@ export class ObjectUtils {
                 }
             });
         } else if (typeof data === "object") {
-            //@ts-ignore
             node = Object.assign({}, data);
             Object.keys(node).forEach(key => {
                 if (
@@ -50,11 +49,9 @@ export class ObjectUtils {
         if (ObjectUtils.isObject(target) && ObjectUtils.isObject(source)) {
             for (const key in source) {
                 if (ObjectUtils.isObject(source[key])) {
-                    //@ts-ignore
                     if (!target[key]) Object.assign(target, { [key]: {} });
                     ObjectUtils.mergeDeep(target[key], source[key]);
                 } else {
-                    //@ts-ignore
                     Object.assign(target, { [key]: source[key] });
                 }
             }
