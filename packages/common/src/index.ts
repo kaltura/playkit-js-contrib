@@ -9,3 +9,4 @@ export * from "./events-manager";
 export * from "./contrib-logger";
 export * from "./uuid";
 export * from "./debouce";
+export * from "./objectUtils";

@@ -24,6 +24,7 @@ declare namespace KalturaPlayerTypes {
         targetId?: string;
         ui?: PlayerConfig.UI;
         session: PlayerConfig.Session;
+        contrib: PlayerConfig.Contrib;
     }
 
     namespace PlayerConfig {
@@ -177,6 +178,27 @@ declare namespace KalturaPlayerTypes {
             stargetId?: string;
             debug?: boolean;
             log?: Log;
+        }
+
+        export interface Contrib {
+            ui: {
+                fonts: ContribFonts;
+            };
+        }
+
+        export interface ContribFonts {
+            fontFamily: string;
+            testingFont?: TestingFontOptions;
+            downloadData?: {
+                name: string;
+                url: string;
+            };
+        }
+
+        export interface TestingFontOptions {
+            text: string;
+            size: number;
+            fontName: string;
         }
     }
 }

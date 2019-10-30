@@ -10,7 +10,6 @@ const _logger = getContribLogger({
     class: "core-plugin-proxy"
 });
 
-// @ts-ignore
 export class CorePluginProxy extends KalturaPlayer.core.BasePlugin {
     static isValid(player: any) {
         return true;
