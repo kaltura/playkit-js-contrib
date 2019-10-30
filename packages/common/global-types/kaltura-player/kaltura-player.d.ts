@@ -20,6 +20,9 @@ declare global {
             BasePlugin: {
                 new (...args: any[]): KalturaPlayerTypes.BasePlugin;
             };
+            BaseMiddleware: {
+                new (): KalturaPlayerTypes.BaseMiddleware;
+            };
             utils: {
                 Object: {
                     mergeDeep(target: Record<string, any>, ...sources: Record<string, any>[]);
