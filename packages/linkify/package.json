@@ -16,8 +16,8 @@
         "build:dev": "webpack --mode development",
         "reset": "npm run clean && rm -rf node_modules",
         "analyze": "npm run build && npx source-map-explorer lib/index.js",
-        "lint:js": "eslint ./src --ext .ts,.tsx",
-        "lint:js:fix": "eslint ./src --ext .ts,.tsx --fix"
+        "lint:js": "tsc --noEmit && eslint ./src --ext .ts,.tsx",
+        "lint:js:fix": "tsc --noEmit && eslint ./src --ext .ts,.tsx --fix"
     },
     "main": "./lib/index.js",
     "types": "./lib/index.d.ts",

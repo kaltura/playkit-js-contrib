@@ -4,8 +4,9 @@
         "es6": true
     },
     "extends": [
-        "plugin:react/recommended",
-        "plugin:@typescript-eslint/recommended"
+        "plugin:@typescript-eslint/recommended",
+        "prettier/@typescript-eslint",
+        "plugin:prettier/recommended"
     ],
     "globals": {
         "Atomics": "readonly",
@@ -24,14 +25,8 @@
     ],
     "rules": {
         "@typescript-eslint/no-unused-vars": [0, { "varsIgnorePattern": "^h$" }],
-        "react/react-in-jsx-scope": "off"
-    },
-    "settings": {
-        "eslint.validate": [
-            "javascript",
-            "javascriptreact",
-            { "language": "typescript", "autoFix": true },
-            { "language": "typescriptreact", "autoFix": true }
-        ]
+        "react/react-in-jsx-scope": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-empty-function": "off"
     }
 }
