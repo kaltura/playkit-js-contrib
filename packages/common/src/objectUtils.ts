@@ -37,9 +37,9 @@ export class ObjectUtils {
     }
 
     /**
-     * @param {any} target - The target object.
-     * @param {any} sources - The objects to merge.
-     * @returns {Object} - The merged object.
+     * @param {T} target - The target object.
+     * @param {T} sources - The objects to merge.
+     * @returns {T} - The merged object.
      */
     public static mergeDeep<T extends Object>(target: T, ...sources: Partial<T>[]): T {
         if (!sources.length) {

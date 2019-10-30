@@ -42,19 +42,19 @@ export class FontManager {
             options.playerConfig &&
             options.playerConfig.contrib &&
             options.playerConfig.contrib.ui &&
-            options.playerConfig.contrib.ui
+            options.playerConfig.contrib.ui.fonts
                 ? options.playerConfig.contrib.ui.fonts
                 : {};
         this._fontConfig = ObjectUtils.mergeDeep<ContribFonts>(
-            DefaultFontOptions,
-            playerConfig || {}
+            ObjectUtils.copyDeep<ContribFonts>(DefaultFontOptions),
+            playerConfig
         );
     }
 
     public loadFont(): void {
         // a previous request for loading a font was already made
         if (this._isFontLoaded()) return;
-        const { fontFamily, downloadData } = this._fontConfig;
+        const { fontFamily } = this._fontConfig;
         try {
             // override player font style
             this._overrideCorePlayerFontStyles();
