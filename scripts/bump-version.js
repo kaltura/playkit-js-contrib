@@ -10,11 +10,9 @@ const lernaPath = 'node_modules/.bin/lerna';
 const args = process.argv.splice(2);
 
 (function() {
-  const result = spawnSync(lernaPath, ['version', '--no-push', '--no-git-tag-version', ...args ], {cwd: rootPath, stdio: ['inherit', 'inherit', 'pipe']});
+  const result = spawnSync(lernaPath, ['version', '--no-push', '--no-git-tag-version', ...args ], {cwd: rootPath, stdio: 'inherit'});
 
-  console.log(result.stderr.toString('utf8'));
-
-  if (result.stderr.indexOf('lerna success version finished') === -1) {
+  if (result.status) {
     process.exit(1);
     return;
   }
@@ -33,4 +31,3 @@ const args = process.argv.splice(2);
     {bold git push --follow-tags}  
   `);
 })();
-
