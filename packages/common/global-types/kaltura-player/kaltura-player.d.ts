@@ -3,6 +3,7 @@ import * as ContribPreact from "preact";
 declare global {
     const KalturaPlayer: {
         ui: {
+            EventType: Record<string, string>;
             redux: {
                 connect: (...args: any) => any;
             };
@@ -13,7 +14,6 @@ declare global {
                 bindActions(actions: Record<string, unknown>[]): (...args: any) => void;
             };
             components: {};
-            EventType: any;
         };
         core: {
             registerPlugin(name: string, component: any): void;
