@@ -8,3 +8,4 @@ export * from "./kalturaLiveServices";
 export * from "./events-manager";
 export * from "./contrib-logger";
 export * from "./uuid";
+export * from "./objectUtils";
