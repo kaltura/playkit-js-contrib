@@ -14,7 +14,7 @@ export function debounce<F extends Procedure>(
         isImmediate: false
     }
 ): F {
-    let timeoutId: NodeJS.Timeout;
+    let timeoutId: any;
 
     return function(this: any, ...args: any[]) {
         const context = this;
