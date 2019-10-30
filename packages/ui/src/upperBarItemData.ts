@@ -1,8 +1,8 @@
 import { UpperBarItemProps } from "./upperBarItem";
-import { ComponentChild } from 'preact';
+import { ComponentChild } from "preact";
 
 export interface UpperBarItemData {
-    label: string,
+    label: string;
     renderItem: (upperBarUIProps: UpperBarItemProps) => ComponentChild;
     onClick: () => void;
 }
