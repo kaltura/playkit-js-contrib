@@ -4,13 +4,13 @@ import {
   getContribLogger,
   EventsManager,
 } from '@playkit-js-contrib/common';
-import {KitchenSinkItemData} from './kitchenSinkItemData';
+import {KitchenSinkItemData} from './kitchen-sink-item-data';
 import {ManagedComponent} from './components/managed-component';
 import {
   EventTypes,
   ItemActiveStateChangeEvent,
   KitchenSinkEvents,
-} from './kitchenSinkManager';
+} from './kitchen-sink-manager';
 import {KitchenSink} from './components/kitchen-sink';
 
 export interface KitchenSinkItemOptions {

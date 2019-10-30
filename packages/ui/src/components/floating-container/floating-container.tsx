@@ -1,22 +1,15 @@
-import {Component, h} from 'preact';
-import {ContribLogger, getContribLogger} from '@playkit-js-contrib/common';
-import * as styles from './_kitchenSink.scss';
+import {h, Component} from 'preact';
+import * as styles from './_floating-container.scss';
+import {getContribLogger} from '@playkit-js-contrib/common';
+import {ContribLogger} from '@playkit-js-contrib/common';
 
-export interface KitchenSinkProps {
-  isActive: boolean;
-}
-
-export class KitchenSink extends Component<KitchenSinkProps> {
-  static defaultProps = {
-    isActive: false,
-  };
-
+export class FloatingContainer extends Component {
   private _logger: ContribLogger | null = null;
 
   componentDidMount(): void {
     this._logger = getContribLogger({
       module: 'contrib-ui',
-      class: 'KitchenSink',
+      class: 'FloatingContainer',
     });
     this._logger.info(`mount component`, {
       method: 'componentDidMount',
@@ -39,11 +32,6 @@ export class KitchenSink extends Component<KitchenSinkProps> {
         method: 'render',
       });
     }
-
-    return <div className={this._getClass()}>{this.props.children}</div>;
-  }
-
-  private _getClass(): string {
-    return styles.root + ' ' + (this.props.isActive ? styles.active : '');
+    return <div className={styles.root}>{this.props.children}</div>;
   }
 }

@@ -1,11 +1,11 @@
-import {UpperBarManager} from './upperBarManager';
-import {FloatingManager} from './floatingManager';
-import {KitchenSinkManager} from './kitchenSinkManager';
+import {UpperBarManager} from './upper-bar-manager';
+import {FloatingManager} from './floating-manager';
+import {KitchenSinkManager} from './kitchen-sink-manager';
 import {PlayerContribRegistry} from '@playkit-js-contrib/common';
-import {PresetManager} from './presetManager';
-import {BannerManager} from './bannerManager';
-import {ToastManager} from './toastManager';
-import {FontManager} from './fontManager';
+import {PresetManager} from './preset-manager';
+import {BannerManager} from './banner-manager';
+import {ToastManager} from './toast-manager';
+import {FontManager} from './font-manager';
 
 export interface UIManagerOptions {
   corePlayer: KalturaPlayerTypes.Player;

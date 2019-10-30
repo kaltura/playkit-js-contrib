@@ -1,6 +1,6 @@
 import {PlayerContribRegistry} from '@playkit-js-contrib/common';
-import {PresetItemData} from './presetItemData';
-import {KalturaPlayerPresetComponent, PresetItem} from './presetItem';
+import {PresetItemData} from './preset-item-data';
+import {KalturaPlayerPresetComponent, PresetItem} from './preset-item';
 
 export interface PresetManagerOptions {
   corePlayer: KalturaPlayerTypes.Player;

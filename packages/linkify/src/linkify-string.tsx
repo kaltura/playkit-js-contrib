@@ -1,6 +1,6 @@
 import {Component, ComponentChild, h} from 'preact';
 import * as LinkifyIt from 'linkify-it';
-import defaultComponentRenderer from './decorators/defaultComponentRenderer';
+import defaultComponentRenderer from './decorators/default-component-renderer';
 
 export interface LinkifyStringProps {
   text: string;

@@ -1,5 +1,5 @@
 import {Component, h} from 'preact';
-import * as styles from './_kitchenSinkContainer.scss';
+import * as styles from './_kitchen-sink-container.scss';
 import {ContribLogger, getContribLogger} from '@playkit-js-contrib/common';
 
 export interface KitchenSinkContainerRendererProps {}

@@ -1,5 +1,5 @@
 import {h, ComponentChild} from 'preact';
-import {UpperBarItemData} from './upperBarItemData';
+import {UpperBarItemData} from './upper-bar-item-data';
 import {ContribLogger} from '@playkit-js-contrib/common';
 import {getContribLogger} from '@playkit-js-contrib/common';
 

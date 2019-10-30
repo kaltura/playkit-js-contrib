@@ -1,15 +1,15 @@
-import {FloatingItem} from './floatingItem';
+import {FloatingItem} from './floating-item';
 import {
   FloatingItemData,
   FloatingItemProps,
   FloatingPositions,
-} from './floatingItemData';
-import {PresetManager} from './presetManager';
+} from './floating-item-data';
+import {PresetManager} from './preset-manager';
 import {PlayerContribRegistry} from '@playkit-js-contrib/common';
-import {PresetNames} from './presetItemData';
+import {PresetNames} from './preset-item-data';
 import {ComponentChild, h} from 'preact';
 import {PlayerSize, VideoSize} from './common.types';
-import {getPlayerSize, getVideoSize} from './playerUtils';
+import {getPlayerSize, getVideoSize} from './player-utils';
 import {ManagedComponent} from './components/managed-component';
 
 export interface FloatingManagerOptions {

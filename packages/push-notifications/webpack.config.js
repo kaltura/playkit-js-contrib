@@ -1,7 +1,7 @@
 const path = require("path");
 var nodeExternals = require('webpack-node-externals');
 
-const libraryName = 'pushNotification';
+const libraryName = 'push-notification';
 
 module.exports = (env, options) => {
   return {

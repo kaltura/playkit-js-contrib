@@ -1,13 +1,13 @@
 import {PlayerContribRegistry, UUID} from '@playkit-js-contrib/common';
-import {FloatingManager} from './floatingManager';
+import {FloatingManager} from './floating-manager';
 import {
   FloatingItemProps,
   FloatingPositions,
   FloatingUIModes,
-} from './floatingItemData';
-import {FloatingItem} from './floatingItem';
+} from './floating-item-data';
+import {FloatingItem} from './floating-item';
 import {ToastProps} from './components/toast/toast';
-import {ToastsContainer} from './components/toasts-container/toastsContainer';
+import {ToastsContainer} from './components/toasts-container';
 import {h} from 'preact';
 
 export interface ToastManagerOptions {

@@ -1,17 +1,22 @@
-import {h, Component} from 'preact';
-import * as styles from './_upperBar.scss';
-import {getContribLogger} from '@playkit-js-contrib/common';
-import {ContribLogger} from '@playkit-js-contrib/common';
+import {Component, h} from 'preact';
+import {ContribLogger, getContribLogger} from '@playkit-js-contrib/common';
+import * as styles from './_kitchen-sink.scss';
 
-export interface UpperBarProps {}
+export interface KitchenSinkProps {
+  isActive: boolean;
+}
 
-export class UpperBar extends Component<UpperBarProps> {
+export class KitchenSink extends Component<KitchenSinkProps> {
+  static defaultProps = {
+    isActive: false,
+  };
+
   private _logger: ContribLogger | null = null;
 
   componentDidMount(): void {
     this._logger = getContribLogger({
       module: 'contrib-ui',
-      class: 'UpperBar',
+      class: 'KitchenSink',
     });
     this._logger.info(`mount component`, {
       method: 'componentDidMount',
@@ -34,6 +39,11 @@ export class UpperBar extends Component<UpperBarProps> {
         method: 'render',
       });
     }
-    return <div className={styles.root}>{this.props.children}</div>;
+
+    return <div className={this._getClass()}>{this.props.children}</div>;
+  }
+
+  private _getClass(): string {
+    return styles.root + ' ' + (this.props.isActive ? styles.active : '');
   }
 }

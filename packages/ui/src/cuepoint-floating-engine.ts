@@ -1,4 +1,4 @@
-import {ScaleCalculation, scaleVideo} from './scaleVideo';
+import {ScaleCalculation, scaleVideo} from './scale-video';
 import {CuepointEngine} from '@playkit-js-contrib/common';
 import {PlayerSize, VideoSize} from './common.types';
 import {getContribLogger} from '@playkit-js-contrib/common';

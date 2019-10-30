@@ -3,7 +3,7 @@ import {ContribLogger, getContribLogger} from '@playkit-js-contrib/common';
 import {
   KitchenSinkExpandModes,
   KitchenSinkPositions,
-} from '../../kitchenSinkItemData';
+} from '../../kitchen-sink-item-data';
 
 export interface KitchenSinkAdapterProps {
   updateSidePanelMode: (

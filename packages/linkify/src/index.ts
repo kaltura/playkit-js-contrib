@@ -1,1 +1,1 @@
-export * from './linkifyString';
+export * from './linkify-string';

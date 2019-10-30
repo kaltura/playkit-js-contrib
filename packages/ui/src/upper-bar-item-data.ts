@@ -1,4 +1,4 @@
-import {UpperBarItemProps} from './upperBarItem';
+import {UpperBarItemProps} from './upper-bar-item';
 import {ComponentChild} from 'preact';
 
 export interface UpperBarItemData {

@@ -1,6 +1,6 @@
 import {Component, h} from 'preact';
 import {ContribLogger, getContribLogger} from '@playkit-js-contrib/common';
-import * as styles from './_bannerContainer.scss';
+import * as styles from './_banner-container.scss';
 
 export interface BannerContainerProps {
   onClose: () => void;

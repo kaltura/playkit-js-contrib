@@ -1,11 +1,11 @@
 import {ComponentChild, h, render} from 'preact';
-import {UpperBarItem} from './upperBarItem';
-import {UpperBarItemData} from './upperBarItemData';
+import {UpperBarItem} from './upper-bar-item';
+import {UpperBarItemData} from './upper-bar-item-data';
 import {UpperBar} from './components/upper-bar';
-import {PresetManager} from './presetManager';
-import {PresetNames} from './presetItemData';
+import {PresetManager} from './preset-manager';
+import {PresetNames} from './preset-item-data';
 import {PlayerContribRegistry} from '@playkit-js-contrib/common';
-import {PresetItem} from './presetItem';
+import {PresetItem} from './preset-item';
 import {ManagedComponent} from './components/managed-component';
 
 export interface UpperBarManagerOptions {

@@ -1,16 +1,16 @@
-import {FloatingItem} from './floatingItem';
-import {FloatingManager} from './floatingManager';
+import {FloatingItem} from './floating-item';
+import {FloatingManager} from './floating-manager';
 import {PlayerContribRegistry} from '@playkit-js-contrib/common';
 import {
   FloatingItemProps,
   FloatingPositions,
   FloatingUIModes,
-} from './floatingItemData';
+} from './floating-item-data';
 import {ComponentChild, h} from 'preact';
 import {Banner} from './components/banner';
 import {BannerContainer} from './components/banner-container';
-import {BannerContainerProps} from './components/banner-container/bannerContainer';
-import {getPlayerSize} from './playerUtils';
+import {BannerContainerProps} from './components/banner-container/banner-container';
+import {getPlayerSize} from './player-utils';
 
 export interface BannerContent {
   text: string;

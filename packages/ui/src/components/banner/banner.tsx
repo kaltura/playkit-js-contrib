@@ -1,6 +1,6 @@
 import {Component, h} from 'preact';
 import {ContribLogger, getContribLogger} from '@playkit-js-contrib/common';
-import {BannerContent} from '../../bannerManager';
+import {BannerContent} from '../../banner-manager';
 import * as styles from './_banner.scss';
 
 export interface BannerProps {

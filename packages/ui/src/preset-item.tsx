@@ -4,7 +4,7 @@ import {
   PresetItemData,
   PredefinedContainers,
   RelativeToTypes,
-} from './presetItemData';
+} from './preset-item-data';
 import {ManagedComponent} from './components/managed-component';
 import {ContribLogger} from '@playkit-js-contrib/common';
 import {InjectedComponent} from './components/injected-component/injected-component';

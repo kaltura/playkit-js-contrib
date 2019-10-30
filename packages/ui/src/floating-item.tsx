@@ -4,7 +4,7 @@ import {
   FloatingItemData,
   FloatingItemProps,
   FloatingUIModes,
-} from './floatingItemData';
+} from './floating-item-data';
 import {ManagedComponent} from './components/managed-component';
 
 export interface FloatingItemOptions {

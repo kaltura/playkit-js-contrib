@@ -1,6 +1,6 @@
 import {Component, h} from 'preact';
 import * as styles from './_toast.scss';
-import {ToastSeverity} from '../../toastManager';
+import {ToastSeverity} from '../../toast-manager';
 
 export interface ToastProps {
   id: string;

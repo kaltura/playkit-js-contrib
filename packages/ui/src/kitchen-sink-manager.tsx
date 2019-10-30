@@ -3,13 +3,13 @@ import {
   KitchenSinkExpandModes,
   KitchenSinkItemData,
   KitchenSinkPositions,
-} from './kitchenSinkItemData';
-import {KitchenSinkItem, KitchenSinkItemRenderProps} from './kitchenSinkItem';
-import {UpperBarManager} from './upperBarManager';
-import {PresetManager} from './presetManager';
+} from './kitchen-sink-item-data';
+import {KitchenSinkItem, KitchenSinkItemRenderProps} from './kitchen-sink-item';
+import {UpperBarManager} from './upper-bar-manager';
+import {PresetManager} from './preset-manager';
 import {EventsManager, PlayerContribRegistry} from '@playkit-js-contrib/common';
-import {PresetNames} from './presetItemData';
-import {KitchenSinkContainer} from './components/kitchen-sink-container/kitchenSinkContainer';
+import {PresetNames} from './preset-item-data';
+import {KitchenSinkContainer} from './components/kitchen-sink-container/kitchen-sink-container';
 import {KitchenSinkAdapter} from './components/kitchen-sink-adapter';
 import {ManagedComponent} from './components/managed-component';
 
