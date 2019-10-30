@@ -23,5 +23,15 @@
         "@typescript-eslint"
     ],
     "rules": {
+        "@typescript-eslint/no-unused-vars": [0, { "varsIgnorePattern": "^h$" }],
+        "react/react-in-jsx-scope": "off"
+    },
+    "settings": {
+        "eslint.validate": [
+            "javascript",
+            "javascriptreact",
+            { "language": "typescript", "autoFix": true },
+            { "language": "typescriptreact", "autoFix": true }
+        ]
     }
 }
