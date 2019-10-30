@@ -15,6 +15,10 @@ export type ContribPluginData<TConfig extends Record<string, any>> = {
 export type ContribPluginFactory<TConfig> = (data: ContribPluginData<TConfig>) => ContribPlugin;
 export type CorePluginFactory = (...args: any[]) => CorePlugin;
 
+function createCorePlugin(...args: any[]) {
+    return new CorePlugin(...args);
+}
+
 export class ContribPluginManager {
     static registerPlugin<TConfig extends Record<string, any>>(
         pluginName: string,
@@ -26,8 +30,8 @@ export class ContribPluginManager {
     ) {
         ContribPluginFactories.factories[pluginName] = {
             contribPluginFactory,
-            corePluginFactory: overrides.corePluginFactory,
-            defaultConfig: overrides.defaultConfig
+            corePluginFactory: (overrides ? overrides.corePluginFactory : null) || createCorePlugin,
+            defaultConfig: (overrides ? overrides.defaultConfig : null) || {}
         };
         KalturaPlayer.core.registerPlugin(pluginName, CorePluginProxy);
     }

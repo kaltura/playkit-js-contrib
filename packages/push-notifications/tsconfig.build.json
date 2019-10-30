@@ -3,8 +3,7 @@
 
     "compilerOptions": {
         "outDir": "./lib",
-        "declaration": true,
-        "lib": ["DOM", "ES5", "ScriptHost", "ES2015.Promise"]
+        "declaration": true
     },
 
     "include": ["src/**/*"]

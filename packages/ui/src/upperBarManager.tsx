@@ -6,6 +6,7 @@ import { PresetManager } from "./presetManager";
 import { PresetNames } from "./presetItemData";
 import { PlayerContribRegistry } from "@playkit-js-contrib/common";
 import { PresetItem } from "./presetItem";
+import { ManagedComponent } from "./components/managed-component";
 
 export interface UpperBarManagerOptions {
     corePlayer: KalturaPlayerTypes.Player;
@@ -22,6 +23,7 @@ export class UpperBarManager {
         return playerContribRegistry.register(ResourceToken, 1, creator);
     }
 
+    private _rootElement: ManagedComponent | null;
     private _items: UpperBarItem[] = [];
     private _options: UpperBarManagerOptions;
 
@@ -37,6 +39,18 @@ export class UpperBarManager {
 
     private _renderChild = (): ComponentChild => {
         const items = this._items.map(item => item.renderChild({}));
+        return (
+            <ManagedComponent
+                label={"upper-bar-manager"}
+                renderChildren={() => this._renderItems()}
+                isShown={() => true}
+                ref={ref => (this._rootElement = ref)}
+            />
+        );
+    };
+
+    private _renderItems = () => {
+        const items = this._items.map(item => item.renderChild({}));
         return <UpperBar>{items}</UpperBar>;
     };
 
@@ -51,6 +65,9 @@ export class UpperBarManager {
         };
         const item = new UpperBarItem(itemOptions);
         this._items.push(item);
+        if (this._rootElement) {
+            this._rootElement.update();
+        }
         return item;
     }
 
