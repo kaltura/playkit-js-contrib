@@ -18,4 +18,3 @@ export * from "./scaleVideo";
 export * from "./cuepointFloatingEngine";
 export * from "./common.types";
 export * from "./components/managed-component";
-export * from "./localContentUtils";
