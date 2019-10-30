@@ -1,6 +1,8 @@
 module.exports = {
-  "singleQuote": true,
-  "trailingComma": "all",
-  "printWidth": 100,
-  "proseWrap": "never",
+  parser: 'typescript',
+  bracketSpacing: false,
+  singleQuote: true,
+  jsxBracketSameLine: true,
+  trailingComma: 'es5',
+  printWidth: 80
 }
