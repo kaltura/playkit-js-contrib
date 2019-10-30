@@ -63,10 +63,10 @@ export class ObjectUtils {
     }
 
     public static mergeDefaults<T extends Object>(
-        source: Partial<T>,
+        target: Partial<T>,
         defaults: T,
         ...additional: Partial<T>[]
     ): T {
-        return ObjectUtils.mergeDeep(source, defaults, ...additional) as T;
+        return ObjectUtils.mergeDeep(target, defaults, ...additional) as T;
     }
 }
