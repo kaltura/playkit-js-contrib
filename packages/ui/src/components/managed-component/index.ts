@@ -1,1 +1,1 @@
-export * from "./managed-component";
+export * from './managed-component';

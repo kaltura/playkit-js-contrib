@@ -1,43 +1,45 @@
-import { Component, h } from "preact";
-import * as styles from "./_kitchenSinkContainer.scss";
-import { ContribLogger, getContribLogger } from "@playkit-js-contrib/common";
+import {Component, h} from 'preact';
+import * as styles from './_kitchenSinkContainer.scss';
+import {ContribLogger, getContribLogger} from '@playkit-js-contrib/common';
 
 export interface KitchenSinkContainerRendererProps {}
 
-export class KitchenSinkContainer extends Component<KitchenSinkContainerRendererProps> {
-    static defaultProps = {
-        updateSidePanelMode: () => {}
-    };
+export class KitchenSinkContainer extends Component<
+  KitchenSinkContainerRendererProps
+> {
+  static defaultProps = {
+    updateSidePanelMode: () => {},
+  };
 
-    private _logger: ContribLogger | null = null;
+  private _logger: ContribLogger | null = null;
 
-    componentDidMount(): void {
-        this._logger = getContribLogger({
-            module: "contrib-ui",
-            class: "KitchenSinkContainer"
-        });
-        this._logger.info(`mount component`, {
-            method: "componentDidMount"
-        });
+  componentDidMount(): void {
+    this._logger = getContribLogger({
+      module: 'contrib-ui',
+      class: 'KitchenSinkContainer',
+    });
+    this._logger.info(`mount component`, {
+      method: 'componentDidMount',
+    });
+  }
+
+  componentWillUnmount(): void {
+    if (!this._logger) {
+      return;
     }
 
-    componentWillUnmount(): void {
-        if (!this._logger) {
-            return;
-        }
+    this._logger.info(`unmount component`, {
+      method: 'componentWillUnmount',
+    });
+  }
 
-        this._logger.info(`unmount component`, {
-            method: "componentWillUnmount"
-        });
+  render(props: any) {
+    if (this._logger) {
+      this._logger.trace(`render component`, {
+        method: 'render',
+      });
     }
 
-    render(props: any) {
-        if (this._logger) {
-            this._logger.trace(`render component`, {
-                method: "render"
-            });
-        }
-
-        return <div className={styles.root}>{this.props.children}</div>;
-    }
+    return <div className={styles.root}>{this.props.children}</div>;
+  }
 }

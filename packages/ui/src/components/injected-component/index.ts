@@ -1,1 +1,1 @@
-export { InjectedComponent } from "./injected-component";
+export {InjectedComponent} from './injected-component';

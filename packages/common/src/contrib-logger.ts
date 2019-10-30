@@ -1,145 +1,158 @@
-import { ILogger, ILogLevel } from "./js-logger.types";
+import {Logger, LogLevel} from './js-logger.types';
 function isJSLogger(logger: any): logger is JSLogger {
-    return logger && "setLevel" in logger;
+  return logger && 'setLevel' in logger;
 }
 
 export interface ContribLogger {
-    debug(message: string, context: MessageOptions): void;
-    info(message: string, context: MessageOptions): void;
-    trace(message: string, context: MessageOptions): void;
-    warn(message: string, context: MessageOptions): void;
-    error(message: string, context: MessageOptions): void;
+  debug(message: string, context: MessageOptions): void;
+  info(message: string, context: MessageOptions): void;
+  trace(message: string, context: MessageOptions): void;
+  warn(message: string, context: MessageOptions): void;
+  error(message: string, context: MessageOptions): void;
 }
 
-function getPlayerLogger(options: { corePlayer?: any; loggerName?: string }): JSLogger | null {
-    const { corePlayer, loggerName } = options;
+function getPlayerLogger(options: {
+  corePlayer?: any;
+  loggerName?: string;
+}): JSLogger | null {
+  const {corePlayer, loggerName} = options;
 
-    const getLoggerFn = corePlayer ? corePlayer.getLogger : KalturaPlayer.ui.utils.getLogger;
+  const getLoggerFn = corePlayer
+    ? corePlayer.getLogger
+    : KalturaPlayer.ui.utils.getLogger;
 
-    if (!getLoggerFn) {
-        return null;
-    }
-    const logger = getLoggerFn(loggerName);
+  if (!getLoggerFn) {
+    return null;
+  }
+  const logger = getLoggerFn(loggerName);
 
-    if (!isJSLogger(logger)) {
-        return null;
-    }
+  if (!isJSLogger(logger)) {
+    return null;
+  }
 
-    return logger;
+  return logger;
 }
 
 export class NoopLogger implements ContribLogger {
-    debug(message: string, context: MessageOptions): void {}
-    info(message: string, context: MessageOptions): void {}
-    trace(message: string, context: MessageOptions): void {}
-    warn(message: string, context: MessageOptions): void {}
-    error(message: string, context: MessageOptions): void {}
+  debug(message: string, context: MessageOptions): void {}
+  info(message: string, context: MessageOptions): void {}
+  trace(message: string, context: MessageOptions): void {}
+  warn(message: string, context: MessageOptions): void {}
+  error(message: string, context: MessageOptions): void {}
 }
 
 const globalLogger = getPlayerLogger({});
 const defaultNoopLogger = new NoopLogger();
 
-interface JSLogger extends ILogger {}
-type LoggerMethods = "debug" | "trace" | "warn" | "error" | "info";
+interface JSLogger extends Logger {}
+type LoggerMethods = 'debug' | 'trace' | 'warn' | 'error' | 'info';
 
 export class ProxyLogger implements ContribLogger {
-    constructor(private _logger: JSLogger, private _defaultOptions: LoggerOptions) {}
+  constructor(
+    private _logger: JSLogger,
+    private _defaultOptions: LoggerOptions
+  ) {}
 
-    private _log(
-        loggerMethod: LoggerMethods,
-        level: ILogLevel,
-        message: string,
-        messageContext: MessageOptions
-    ): void {
-        if (!this._logger.enabledFor(level)) {
-            return;
-        }
-
-        const className = messageContext.class || this._defaultOptions.class || "_";
-        const module = this._defaultOptions.module || "";
-        const method = messageContext.method ? `.${messageContext.method}()` : "";
-        const context = this._defaultOptions.context ? `'${this._defaultOptions.context}'` : "";
-
-        const formattedMessage = `[${module}::${className}(${context})${method}] ${message}`;
-
-        if (messageContext.data) {
-            (this._logger as any)[loggerMethod](formattedMessage, messageContext.data);
-        } else {
-            (this._logger as any)[loggerMethod](formattedMessage);
-        }
+  private _log(
+    loggerMethod: LoggerMethods,
+    level: LogLevel,
+    message: string,
+    messageContext: MessageOptions
+  ): void {
+    if (!this._logger.enabledFor(level)) {
+      return;
     }
 
-    debug(message: string, context: MessageOptions): void {
-        if (!globalLogger) {
-            return;
-        }
-        this._log("debug", globalLogger.DEBUG, message, context);
+    const className = messageContext.class || this._defaultOptions.class || '_';
+    const module = this._defaultOptions.module || '';
+    const method = messageContext.method ? `.${messageContext.method}()` : '';
+    const context = this._defaultOptions.context
+      ? `'${this._defaultOptions.context}'`
+      : '';
+
+    const formattedMessage = `[${module}::${className}(${context})${method}] ${message}`;
+
+    if (messageContext.data) {
+      (this._logger as any)[loggerMethod](
+        formattedMessage,
+        messageContext.data
+      );
+    } else {
+      (this._logger as any)[loggerMethod](formattedMessage);
     }
-    info(message: string, context: MessageOptions): void {
-        if (!globalLogger) {
-            return;
-        }
-        this._log("info", globalLogger.INFO, message, context);
+  }
+
+  debug(message: string, context: MessageOptions): void {
+    if (!globalLogger) {
+      return;
     }
-    trace(message: string, context: MessageOptions): void {
-        if (!globalLogger) {
-            return;
-        }
-        this._log("trace", globalLogger.TRACE, message, context);
+    this._log('debug', globalLogger.DEBUG, message, context);
+  }
+  info(message: string, context: MessageOptions): void {
+    if (!globalLogger) {
+      return;
     }
-    warn(message: string, context: MessageOptions): void {
-        if (!globalLogger) {
-            return;
-        }
-        this._log("warn", globalLogger.WARN, message, context);
+    this._log('info', globalLogger.INFO, message, context);
+  }
+  trace(message: string, context: MessageOptions): void {
+    if (!globalLogger) {
+      return;
     }
-    error(message: string, context: MessageOptions): void {
-        if (!globalLogger) {
-            return;
-        }
-        this._log("error", globalLogger.ERROR, message, context);
+    this._log('trace', globalLogger.TRACE, message, context);
+  }
+  warn(message: string, context: MessageOptions): void {
+    if (!globalLogger) {
+      return;
     }
+    this._log('warn', globalLogger.WARN, message, context);
+  }
+  error(message: string, context: MessageOptions): void {
+    if (!globalLogger) {
+      return;
+    }
+    this._log('error', globalLogger.ERROR, message, context);
+  }
 }
 
 export interface LoggerOptions {
-    class?: string;
-    module?: string;
-    context?: string;
+  class?: string;
+  module?: string;
+  context?: string;
 }
 
 export interface MessageOptions {
-    class?: string;
-    method?: string;
-    data?: Record<string, any>;
+  class?: string;
+  method?: string;
+  data?: Record<string, any>;
 }
 
 export function getContribLogger(
-    options: { corePlayer?: any } & LoggerOptions = {}
+  options: {corePlayer?: any} & LoggerOptions = {}
 ): ContribLogger {
-    const { corePlayer } = options;
+  const {corePlayer} = options;
 
-    const loggerName = `${corePlayer ? corePlayer._playerId : "global"}_contrib`;
-    const logger = getPlayerLogger({ corePlayer, loggerName });
+  const loggerName = `${corePlayer ? corePlayer._playerId : 'global'}_contrib`;
+  const logger = getPlayerLogger({corePlayer, loggerName});
 
-    if (!logger) {
-        return defaultNoopLogger;
-    }
+  if (!logger) {
+    return defaultNoopLogger;
+  }
 
-    return new ProxyLogger(logger, options);
+  return new ProxyLogger(logger, options);
 }
 
 export function enableLogIfNeeded() {
-    try {
-        if (document.URL.indexOf("debugKalturaPlayer") !== -1) {
-            const logger = getPlayerLogger({});
+  try {
+    if (document.URL.indexOf('debugKalturaPlayer') !== -1) {
+      const logger = getPlayerLogger({});
 
-            if (!logger) {
-                return;
-            }
+      if (!logger) {
+        return;
+      }
 
-            logger.setLevel(logger.TRACE);
-        }
-    } catch (e) {
-        // do nothing
+      logger.setLevel(logger.TRACE);
     }
+  } catch (e) {
+    // do nothing
+  }
 }

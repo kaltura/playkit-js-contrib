@@ -1,1 +1,1 @@
-export { KitchenSinkContainer } from "./kitchenSinkContainer";
+export {KitchenSinkContainer} from './kitchenSinkContainer';
