@@ -8,7 +8,9 @@ import {
     BannerManager,
     BannerManagerOptions,
     ToastManager,
-    ToastManagerOptions
+    ToastManagerOptions,
+    FontManager,
+    FontManagerOptions
 } from "@playkit-js-contrib/ui";
 import { enableLogIfNeeded } from "@playkit-js-contrib/common";
 
@@ -53,7 +55,8 @@ export class ContribServices {
                     kitchenSinkManager: this.kitchenSinkManager,
                     floatingManager: this.floatingManager,
                     bannerManager: this.bannerManager,
-                    toastManager: this.toastManager
+                    toastManager: this.toastManager,
+                    fontManager: this.fontManager
                 };
 
                 return new UIManager(options);
@@ -123,6 +126,16 @@ export class ContribServices {
             };
 
             return new ToastManager(options);
+        });
+    }
+
+    public get fontManager(): FontManager {
+        return FontManager.fromPlayer(this.playerContribRegistry, () => {
+            const options: FontManagerOptions = {
+                playerConfig: this._options.corePlayer.config
+            };
+
+            return new FontManager(options);
         });
     }
 }

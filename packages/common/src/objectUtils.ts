@@ -1,9 +1,9 @@
 export class ObjectUtils {
     /**
-     * @param {any} data - The data to copy.
-     * @returns {any} - The copied data.
+     * @param {T} data - The data to copy.
+     * @returns {T} - The copied data.
      */
-    public static copyDeep(data: any): any {
+    public static copyDeep<T extends Object>(data: T): T {
         let node;
         if (Array.isArray(data)) {
             node = data.length > 0 ? data.slice(0) : [];
@@ -29,8 +29,8 @@ export class ObjectUtils {
     }
 
     /**
-     * @param {any} item - The item to check.
-     * @returns {boolean} - Whether the item is an object.
+     * @param {T} item - The item to check.
+     * @returns {T} - Whether the item is an object.
      */
     public static isObject(item: any) {
         return item && typeof item === "object" && !Array.isArray(item);
@@ -41,7 +41,7 @@ export class ObjectUtils {
      * @param {any} sources - The objects to merge.
      * @returns {Object} - The merged object.
      */
-    public static mergeDeep(target: any, ...sources): Object {
+    public static mergeDeep<T extends Object>(target: T, ...sources: Partial<T>[]): T {
         if (!sources.length) {
             return target;
         }

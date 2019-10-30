@@ -1,7 +1,14 @@
 import axios from "axios";
-import { getContribLogger, ObjectUtils } from "@playkit-js-contrib/common";
+import { getContribLogger, ObjectUtils, PlayerContribRegistry } from "@playkit-js-contrib/common";
 import ContribFonts = KalturaPlayerTypes.PlayerConfig.ContribFonts;
 import TestingFontOptions = KalturaPlayerTypes.PlayerConfig.TestingFontOptions;
+import PlayerConfig = KalturaPlayerTypes.PlayerConfig;
+
+export interface FontManagerOptions {
+    playerConfig: PlayerConfig;
+}
+
+const ResourceToken: string = "FontManager-v1";
 
 const logger = getContribLogger({
     module: "ui",
@@ -10,10 +17,13 @@ const logger = getContribLogger({
 
 const FontKeyPrefix: string = "contrib-plugins-font-";
 
-const DefaultTestingOptions: TestingFontOptions = {
-    text: "abcdefghiiiiiiiiijklmnopqrstuvwwwwwwwwwwxyz0123456789",
-    size: 72,
-    fontName: "monospace"
+const DefaultFontOptions: ContribFonts = {
+    fontFamily: "Lato, sans-serif",
+    testingFont: {
+        text: "abcdefghiiiiiiiiijklmnopqrstuvwwwwwwwwwwxyz0123456789",
+        size: 72,
+        fontName: "monospace"
+    }
 };
 
 // shared property for indicating current loaded fontFamily to support multiple contrib managers in a single page
@@ -21,52 +31,51 @@ const DefaultTestingOptions: TestingFontOptions = {
 let currentFontFamily: string = "";
 
 export class FontManager {
-    private static _instance: FontManager;
-
-    private constructor() {}
-
-    public static getInstance(): FontManager {
-        if (!FontManager._instance) {
-            FontManager._instance = new FontManager();
-        }
-        return FontManager._instance;
+    static fromPlayer(playerContribRegistry: PlayerContribRegistry, creator: () => FontManager) {
+        return playerContribRegistry.register(ResourceToken, 1, creator);
     }
 
-    public loadFont(data: ContribFonts): void {
+    private _fontConfig: ContribFonts;
+
+    constructor(options: FontManagerOptions) {
+        const playerConfig =
+            options.playerConfig &&
+            options.playerConfig.contrib &&
+            options.playerConfig.contrib.ui &&
+            options.playerConfig.contrib.ui
+                ? options.playerConfig.contrib.ui.fonts
+                : {};
+        this._fontConfig = ObjectUtils.mergeDeep<ContribFonts>(
+            DefaultFontOptions,
+            playerConfig || {}
+        );
+    }
+
+    public loadFont(): void {
         // a previous request for loading a font was already made
-        if (this._isFontLoaded(data.fontFamily)) return;
+        if (this._isFontLoaded()) return;
+        const { fontFamily, downloadData } = this._fontConfig;
         try {
             // override player font style
-            this._overrideCorePlayerFontStyles(data.fontFamily);
+            this._overrideCorePlayerFontStyles();
             // making sure no additional calls for loading font will be accepted
-            currentFontFamily = data.fontFamily;
-            // check if download data exists
-            if (!data.downloadData) return;
-            if (data.downloadData.name && data.downloadData.url) {
-                this._handleFontDownloadProcess(data);
-            } else {
-                //download data object is incomplete
-                logger.warn(
-                    "ContribFonts downloadData object should contain both name and url properties.",
-                    {
-                        method: "loadFont"
-                    }
-                );
-            }
+            currentFontFamily = fontFamily;
+            // download font data if needed
+            this._handleFontDownloadProcess();
         } catch (err) {
-            logger.warn(
-                `Failed to load font and override core player style with ${data.fontFamily}`,
-                {
-                    method: "loadFont",
-                    data: {
-                        error: err
-                    }
+            logger.warn(`Failed to load font and override core player style with ${fontFamily}`, {
+                method: "loadFont",
+                data: {
+                    error: err
                 }
-            );
+            });
         }
     }
 
-    private _overrideCorePlayerFontStyles(fontFamily: string): void {
+    public reset(): void {}
+
+    private _overrideCorePlayerFontStyles(): void {
+        const { fontFamily } = this._fontConfig;
         const fontCss = `.kaltura-player-container {
                 font-family: inherit;
             }         
@@ -90,23 +99,31 @@ export class FontManager {
         });
     }
 
-    private _handleFontDownloadProcess(data: ContribFonts): void {
-        const configTestingOptions = data.testingFont ? data.testingFont : {};
-        const fontTestingOptions = ObjectUtils.mergeDeep(
-            DefaultTestingOptions,
-            configTestingOptions
-        ) as TestingFontOptions;
+    private _handleFontDownloadProcess(): void {
+        const { downloadData, testingFont } = this._fontConfig;
+        if (!downloadData) return;
+        if (!downloadData.name || !downloadData.url) {
+            //download data object is incomplete
+            logger.warn(
+                "Configuration provided for contrib.ui.fonts.downloadData is invalid" +
+                    " (did you remember to provide both url and name?).",
+                {
+                    method: "loadFont"
+                }
+            );
+            return;
+        }
         // font exists in the system, no need to load / download it
-        if (this._checkFontExistence(data.downloadData.name, fontTestingOptions)) {
-            logger.info(`Font ${data.downloadData.name} already exists, no need to reload it`, {
+        if (this._checkFontExistence(downloadData.name, testingFont)) {
+            logger.info(`Font ${downloadData.name} already exists, no need to reload it`, {
                 method: "loadFont"
             });
             return;
         }
         // download and inject font
-        this._downloadAndCacheFont(data.downloadData.name, data.downloadData.url).then(fontData => {
+        this._downloadAndCacheFont(downloadData.name, downloadData.url).then(fontData => {
             if (fontData) {
-                this._injectFontRawStyle(data.downloadData.name, fontData);
+                this._injectFontRawStyle(downloadData.name, fontData);
             }
         });
     }
@@ -145,7 +162,7 @@ export class FontManager {
         // try to load cached font data from localStorage
         const cachedFontData = this._loadFontFromLocalStorage(fontName);
         if (cachedFontData && cachedFontData !== "") {
-            return Promise.resolve(cachedFontData); //todo [sa] why do I get a TS error...
+            return Promise.resolve(cachedFontData);
         }
 
         // download font and cache to localStorage
@@ -233,16 +250,12 @@ export class FontManager {
         }
     }
 
-    private _isFontLoaded(fontFamily: string): boolean {
+    private _isFontLoaded(): boolean {
         if (currentFontFamily === "") return false;
-        if (currentFontFamily === fontFamily) {
-            logger.info(`${fontFamily} was already loaded and set.`, {
-                method: "_isFontLoaded"
-            });
-        } else {
+        if (currentFontFamily !== this._fontConfig.fontFamily) {
             logger.warn(
                 `This request for loading font will be ignored since
-                 an earlier call for loading ${fontFamily} was made.`,
+                 an earlier call for loading ${this._fontConfig.fontFamily} was made.`,
                 {
                     method: "_isFontLoaded"
                 }

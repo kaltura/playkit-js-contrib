@@ -13,6 +13,7 @@ export * from "./kitchenSinkItem";
 export * from "./kitchenSinkItemData";
 export * from "./kitchenSinkManager";
 export * from "./presetManager";
+export * from "./fontManager";
 export * from "./presetItemData";
 export * from "./scaleVideo";
 export * from "./cuepointFloatingEngine";
