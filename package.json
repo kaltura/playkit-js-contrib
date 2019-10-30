@@ -17,7 +17,7 @@
     "setup": "npm i && lerna link",
     "lerna": "lerna",
     "lerna:bump-version": "node scripts/bump-version.js",
-    "lerna:lint:js": "lerna run lint:js:fix",
+    "lerna:lint:fix": "lerna run lint:js:fix",
     "husky:pre-commit": "lint-staged",
     "husky:commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
   },
@@ -59,9 +59,16 @@
   },
   "lint-staged": {
     "packages/**/*.{ts,tsx}": [
-      "prettier",
-      "npm run --silent lerna:lint:js"
+      "prettier --write",
+      "npm run --silent lerna:lint:fix",
+      "git add"
     ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run husky:pre-commit",
+      "commit-msg": "npm run husky:commit-msg"
+    }
   },
   "dependencies": {
     "@playkit-js-contrib/common": "file:packages/common",
