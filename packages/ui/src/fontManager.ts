@@ -45,8 +45,9 @@ export class FontManager {
             options.playerConfig.contrib.ui.fonts
                 ? options.playerConfig.contrib.ui.fonts
                 : {};
-        this._fontConfig = ObjectUtils.mergeDeep<ContribFonts>(
-            ObjectUtils.copyDeep<ContribFonts>(DefaultFontOptions),
+        this._fontConfig = ObjectUtils.mergeDefaults<ContribFonts>(
+            {},
+            DefaultFontOptions,
             playerConfig
         );
     }

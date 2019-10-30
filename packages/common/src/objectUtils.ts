@@ -41,7 +41,10 @@ export class ObjectUtils {
      * @param {T} sources - The objects to merge.
      * @returns {T} - The merged object.
      */
-    public static mergeDeep<T extends Object>(target: T, ...sources: Partial<T>[]): T {
+    public static mergeDeep<T extends Object>(
+        target: Partial<T>,
+        ...sources: Partial<T>[]
+    ): Partial<T> {
         if (!sources.length) {
             return target;
         }
@@ -57,5 +60,13 @@ export class ObjectUtils {
             }
         }
         return ObjectUtils.mergeDeep(target, ...sources);
+    }
+
+    public static mergeDefaults<T extends Object>(
+        source: Partial<T>,
+        defaults: T,
+        ...additional: Partial<T>[]
+    ): T {
+        return ObjectUtils.mergeDeep(source, defaults, ...additional) as T;
     }
 }
