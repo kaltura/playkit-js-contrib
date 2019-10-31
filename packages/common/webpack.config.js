@@ -11,7 +11,7 @@ module.exports = (env, options) => {
     externals: [nodeExternals(
       {
         importType: 'umd',
-        whitelist:["uuid"]
+        whitelist:["uuid", "core-js"]
       }
     )],
     resolve: {
