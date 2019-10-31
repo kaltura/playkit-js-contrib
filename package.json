@@ -17,6 +17,7 @@
     "lerna:publish": "npm run clean && npm ci && npm run build && lerna publish from-package",
     "lerna:lint:fix": "lerna run lint:js:fix",
     "lerna:lint": "lerna run lint:js",
+    "lint:fix": "eslint --fix",
     "husky:pre-commit": "lint-staged",
     "husky:commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
   },
@@ -58,7 +59,7 @@
   },
   "lint-staged": {
     "packages/**/*.{ts,tsx}": [
-      "npm run --silent lerna:lint:fix",
+      "npm run --silent lint:fix",
       "git add"
     ]
   },
