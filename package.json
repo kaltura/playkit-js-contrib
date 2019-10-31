@@ -16,8 +16,9 @@
     "reset": "lerna run reset && rm -rf node_modules",
     "setup": "npm i && lerna link",
     "lerna": "lerna",
-    "lerna:bump-version": "node scripts/bump-version.js",
+    "lerna:bump-version": "npm run build && npm run lerna:lint && node scripts/bump-version.js",
     "lerna:lint:fix": "lerna run lint:js:fix",
+    "lerna:lint": "lerna run lint:js",
     "husky:pre-commit": "lint-staged",
     "husky:commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
   },
