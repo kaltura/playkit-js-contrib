@@ -7,6 +7,7 @@
             "@playkit-js-contrib/common": ["common/src"],
             "@playkit-js-contrib/plugin": ["plugin/src"],
             "@playkit-js-contrib/push-notifications": ["push-notifications/src"],
+            "@playkit-js-contrib/linkify": ["linkify/src"],
             "@playkit-js-contrib/ui": ["ui/src"]
         }
     }
