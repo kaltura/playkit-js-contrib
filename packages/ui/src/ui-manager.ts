@@ -6,6 +6,7 @@ import {PresetManager} from './preset-manager';
 import {BannerManager} from './banner-manager';
 import {ToastManager} from './toast-manager';
 import {FontManager} from './font-manager';
+import {OverlayManager} from './overlay-manager';
 
 export interface UIManagerOptions {
   corePlayer: KalturaPlayerTypes.Player;
@@ -16,6 +17,7 @@ export interface UIManagerOptions {
   bannerManager: BannerManager;
   toastManager: ToastManager;
   fontManager: FontManager;
+  overlayManager: OverlayManager;
 }
 
 const ResourceToken = 'UIManager-v1';
@@ -63,6 +65,10 @@ export class UIManager {
     return this._options.fontManager;
   }
 
+  get overlay(): OverlayManager {
+    return this._options.overlayManager;
+  }
+
   reset(): void {
     this._options.upperBarManager && this._options.upperBarManager.reset();
     this._options.floatingManager && this._options.floatingManager.reset();
@@ -71,5 +77,6 @@ export class UIManager {
     this._options.bannerManager && this._options.bannerManager.reset();
     this._options.toastManager && this._options.toastManager.reset();
     this._options.fontManager && this._options.fontManager.reset();
+    this._options.overlayManager && this._options.overlayManager.reset();
   }
 }

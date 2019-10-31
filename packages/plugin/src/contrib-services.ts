@@ -11,6 +11,7 @@ import {
   ToastManagerOptions,
   FontManager,
   FontManagerOptions,
+  OverlayManager,
 } from '@playkit-js-contrib/ui';
 import {enableLogIfNeeded} from '@playkit-js-contrib/common';
 
@@ -57,6 +58,7 @@ export class ContribServices {
           bannerManager: this.bannerManager,
           toastManager: this.toastManager,
           fontManager: this.fontManager,
+          overlayManager: this.overlayManager,
         };
 
         return new UIManager(options);
@@ -136,6 +138,16 @@ export class ContribServices {
       };
 
       return new FontManager(options);
+    });
+  }
+
+  public get overlayManager(): OverlayManager {
+    return OverlayManager.fromPlayer(this.playerContribRegistry, () => {
+      const options = {
+        presetManager: this.presetManager,
+      };
+
+      return new OverlayManager(options);
     });
   }
 }
