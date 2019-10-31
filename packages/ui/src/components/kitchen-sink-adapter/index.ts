@@ -1,1 +1,1 @@
-export * from "./kitchen-sink-adapter";
+export * from './kitchen-sink-adapter';

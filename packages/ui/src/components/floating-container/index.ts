@@ -1,1 +1,1 @@
-export { FloatingContainer } from "./floatingContainer";
+export {FloatingContainer} from './floating-container';
