@@ -1,12 +1,17 @@
 {
-    "packages": ["packages/*"],
+    "packages": [
+        "packages/*"
+    ],
     "npmClient": "npm",
     "command": {
         "publish": {
             "conventionalCommits": true,
             "allowBranch": "master",
-            "ignoreChanges": ["ignored-file", "*.md"]
+            "ignoreChanges": [
+                "ignored-file",
+                "*.md"
+            ]
         }
     },
-    "version": "2.0.1-next.0"
+    "version": "2.1.0"
 }
