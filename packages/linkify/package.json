@@ -28,5 +28,8 @@
         "lib",
         "LICENSE",
         "CHANGELOG.md"
-    ]
+    ],
+    "dependencies": {
+      "linkify-it": "^2.2.0"
+    }
 }
