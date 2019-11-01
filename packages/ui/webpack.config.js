@@ -1,19 +1,15 @@
 const path = require("path");
-var nodeExternals = require('webpack-node-externals');
 const CopyPlugin = require('copy-webpack-plugin');
 
 const libraryName = 'ui';
+const { createExternals } = require('../../utils/webpack-utils');
 
 module.exports = (env, options) => {
   return {
     entry: {
       [`playkit-js-contrib-${libraryName}`]: './src/index.ts',
     },
-    externals: [nodeExternals(
-      {
-        importType: 'umd'
-      }
-    )],
+    externals: createExternals(),
     resolve: {
       extensions: [".ts", ".tsx", ".js", ".jsx", ".scss", ".svg"],
       modules: [path.resolve(__dirname, "../../node_modules"), path.resolve(__dirname, "node_modules")],
