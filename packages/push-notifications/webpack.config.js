@@ -1,20 +1,13 @@
 const path = require("path");
-var nodeExternals = require('webpack-node-externals');
-
 const libraryName = 'push-notification';
+const { createExternals } = require('../../utils/webpack-utils');
 
 module.exports = (env, options) => {
   return {
     entry: {
       [`playkit-js-contrib-${libraryName}`]: './src/index.ts'
     },
-    externals: [function(context, request, callback) {
-      if (request.indexOf('@playkit-js') === 0) {
-        return callback(null, 'umd ' + request);
-      }
-
-      callback();
-    }],
+    externals: createExternals(),
     resolve: {
       extensions: [".ts", ".tsx", ".js", ".jsx"],
       modules: [path.resolve(__dirname, "../../node_modules"), path.resolve(__dirname, "node_modules")],

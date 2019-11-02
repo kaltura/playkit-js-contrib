@@ -1,5 +1,5 @@
 const path = require("path");
-var nodeExternals = require('webpack-node-externals');
+const { createExternals } = require('../../utils/webpack-utils');
 
 const libraryName = 'linkify';
 
@@ -8,13 +8,7 @@ module.exports = (env, options) => {
     entry: {
       [`playkit-js-contrib-${libraryName}`]: './src/index.ts'
     },
-    externals: [function(context, request, callback) {
-      if (request.indexOf('@playkit-js') === 0 || request.indexOf('preact') === 0) {
-        return callback(null, 'umd ' + request);
-      }
-
-      callback();
-    }],
+    externals: createExternals(),
     resolve: {
       extensions: [".ts", ".tsx", ".js", ".jsx", ".scss", ".svg"],
       modules: [path.resolve(__dirname, "../../node_modules"), path.resolve(__dirname, "node_modules")],
