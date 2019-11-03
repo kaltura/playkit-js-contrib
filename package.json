@@ -8,6 +8,7 @@
     "url": "https://github.com/kaltura/playkit-js-contrib"
   },
   "scripts": {
+    "postinstall": "patch-package",
     "clean": "lerna run clean",
     "build": "lerna run build",
     "reset": "lerna run reset && rm -rf node_modules",

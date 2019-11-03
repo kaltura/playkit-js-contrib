@@ -1,0 +1,13 @@
+diff --git a/node_modules/@commitlint/is-ignored/lib/defaults.js b/node_modules/@commitlint/is-ignored/lib/defaults.js
+index d353b73..9df2783 100644
+--- a/node_modules/@commitlint/is-ignored/lib/defaults.js
++++ b/node_modules/@commitlint/is-ignored/lib/defaults.js
+@@ -18,7 +18,7 @@ var isSemver = function (c) {
+ };
+ var test = function (r) { return r.test.bind(r); };
+ exports.wildcards = [
+-    test(/^((Merge pull request)|(Merge (.*?) into (.*?)|(Merge branch (.*?)))(?:\r?\n)*$)/m),
++    test(/^((Merge pull request)|(Merge (.*?) into (.*?)|(Merge branch (.*?)))(?:\r?\n)*)/m),
+     test(/^(R|r)evert (.*)/),
+     test(/^(fixup|squash)!/),
+     isSemver,
