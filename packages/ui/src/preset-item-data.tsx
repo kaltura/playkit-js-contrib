@@ -20,6 +20,22 @@ export enum PresetNames {
   Live = 'Live',
 }
 
+export enum ReservedPresetAreas {
+  'PresetFloating',
+  'BottomBarLeftSide',
+  'BottomBarRightSide',
+  'TopBarLeftSide',
+  'TopBarRightSide',
+  'SidePanelTop',
+  'SidePanelLeft',
+  'SidePanelRight',
+  'SidePanelBottom',
+  'PresetArea',
+  'InteractiveArea',
+  'PlayerArea',
+  'VideoArea',
+}
+
 export enum RelativeToTypes {
   Before = 'Before',
   After = 'After',
@@ -29,6 +45,7 @@ export enum RelativeToTypes {
 export interface PresetItemData {
   label: string;
   fillContainer?: boolean;
+  presetAreas?: Record<string, (ReservedPresetAreas | string)[]>;
   presets: (PresetNames | string)[];
   container: PredefinedContainers;
   shareAdvancedPlayerAPI?: boolean;
