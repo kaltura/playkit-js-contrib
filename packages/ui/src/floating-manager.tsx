@@ -4,7 +4,7 @@ import {
   FloatingItemProps,
   FloatingPositions,
 } from './floating-item-data';
-import {PresetManager} from './preset-manager';
+import {PresetManager, PresetManagerEventTypes} from './preset-manager';
 import {PlayerContribRegistry} from '@playkit-js-contrib/common';
 import {PresetNames} from './preset-item-data';
 import {ComponentChild, h} from 'preact';
@@ -37,7 +37,6 @@ export class FloatingManager {
     [FloatingPositions.VideoArea]: null,
     [FloatingPositions.PresetArea]: null,
   };
-  private _options: FloatingManagerOptions;
   private _cache: {
     canvas: {
       playerSize: PlayerSize;
@@ -50,22 +49,22 @@ export class FloatingManager {
     },
   };
 
-  constructor(private options: FloatingManagerOptions) {
-    this._options = options;
-    this.options.presetManager.add({
+  constructor(private _options: FloatingManagerOptions) {
+    this._options.presetManager.add({
       label: 'floating-manager',
       presets: [PresetNames.Playback, PresetNames.Live],
       container: {name: 'PresetArea'},
       renderChild: () => this._renderChild(FloatingPositions.PresetArea),
     });
 
-    this.options.presetManager.add({
+    this._options.presetManager.add({
       label: 'floating-manager',
       presets: [PresetNames.Playback, PresetNames.Live],
       container: {name: 'VideoArea'},
       renderChild: () => this._renderChild(FloatingPositions.VideoArea),
     });
-    this.options.presetManager.add({
+
+    this._options.presetManager.add({
       label: 'floating-manager',
       presets: [PresetNames.Playback, PresetNames.Live],
       container: {name: 'InteractiveArea'},
@@ -85,7 +84,7 @@ export class FloatingManager {
 
     const itemOptions = {
       presetManager,
-      ...this.options,
+      ...this._options,
       data,
     };
 
@@ -195,9 +194,12 @@ export class FloatingManager {
       this._updateComponents();
     });
 
-    corePlayer.addEventListener(corePlayer.Event.RESIZE, () => {
-      this._updateCachedCanvas();
-      this._updateComponents();
-    });
+    this._options.presetManager.on(
+      PresetManagerEventTypes.PresetResizeEvent,
+      () => {
+        this._updateCachedCanvas();
+        this._updateComponents();
+      }
+    );
   }
 }

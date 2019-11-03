@@ -7,9 +7,9 @@ import {
 import {KitchenSinkItemData} from './kitchen-sink-item-data';
 import {ManagedComponent} from './components/managed-component';
 import {
-  EventTypes,
   ItemActiveStateChangeEvent,
   KitchenSinkEvents,
+  KitchenSinkEventTypes,
 } from './kitchen-sink-manager';
 import {KitchenSink} from './components/kitchen-sink';
 
@@ -50,7 +50,7 @@ export class KitchenSinkItem {
     });
 
     this._options.eventManager.on(
-      EventTypes.ItemActiveStateChangeEvent,
+      KitchenSinkEventTypes.ItemActiveStateChangeEvent,
       this._activationStateChange
     );
   }
@@ -118,7 +118,7 @@ export class KitchenSinkItem {
     }
 
     this._options.eventManager.off(
-      EventTypes.ItemActiveStateChangeEvent,
+      KitchenSinkEventTypes.ItemActiveStateChangeEvent,
       this._activationStateChange
     );
     this.update();
