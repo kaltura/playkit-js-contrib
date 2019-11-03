@@ -10,8 +10,6 @@ export interface OverlayItemOptions {
 export class OverlayItem {
   private _destroyed = false;
   private _options: OverlayItemOptions;
-  private _isShown = false;
-  private _componentRef: ManagedComponent | null = null;
   private _logger: ContribLogger;
 
   constructor(options: OverlayItemOptions) {
@@ -36,14 +34,6 @@ export class OverlayItem {
     return this._options.data;
   }
 
-  public update() {
-    if (!this._componentRef) {
-      return;
-    }
-
-    this._componentRef.update();
-  }
-
   /**
    * destory the ui item
    */
@@ -55,15 +45,6 @@ export class OverlayItem {
   }
 
   renderOverlayChild(props: OverlayItemProps) {
-    const {label} = this._options.data;
-
-    return this._destroyed ? null : (
-      <ManagedComponent
-        label={label}
-        renderChildren={() => this._options.data.renderContent(props)}
-        isShown={() => true}
-        ref={ref => (this._componentRef = ref)}
-      />
-    );
+    return this._destroyed ? null : this._options.data.renderContent(props);
   }
 }

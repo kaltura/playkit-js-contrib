@@ -35,6 +35,7 @@ export class OverlayManager {
     this._options = options;
     this.options.presetManager.add({
       label: 'overlay-manager',
+      fillContainer: true,
       presets: [PresetNames.Playback, PresetNames.Live],
       container: {name: 'PlayerArea'},
       renderChild: () => this._renderChild(OverlayPositions.PlayerArea),
