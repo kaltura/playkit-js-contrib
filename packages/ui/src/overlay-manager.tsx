@@ -1,16 +1,11 @@
+import {ComponentChild, h} from 'preact';
 import {OverlayItem} from './overlay-item';
-import {
-  OverlayItemData,
-  OverlayItemProps,
-  OverlayPositions,
-} from './overlay-item-data';
+import {OverlayItemData, OverlayPositions} from './overlay-item-data';
 import {PresetManager} from './preset-manager';
 import {PlayerContribRegistry} from '@playkit-js-contrib/common';
 import {PresetNames} from './preset-item-data';
-import {ComponentChild, h} from 'preact';
-import {PlayerSize, VideoSize} from './common.types';
-import {getPlayerSize, getVideoSize} from './player-utils';
 import {ManagedComponent} from './components/managed-component';
+import {OverlayItemContainer} from './components/overlay-item-container';
 
 export interface OverlayManagerOptions {
   presetManager: PresetManager;
@@ -108,7 +103,11 @@ export class OverlayManager {
       return null;
     }
 
-    return this._items[position][0].renderOverlayChild({});
+    return (
+      <OverlayItemContainer
+        renderContent={() => this._items[position][0].renderOverlayChild({})}
+      />
+    );
   };
 
   private _renderChild = (position: OverlayPositions): ComponentChild => {
