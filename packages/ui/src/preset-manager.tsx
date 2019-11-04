@@ -56,13 +56,13 @@ export class PresetManager {
 
   private _registerToPlayer = (player: KalturaPlayerTypes.Player) => {
     // player.addEventListener(
-    //   KalturaPlayer.ui.EventType.ACTIVE_PRESET_CHANGED,
+    //   KalturaPlayer.ui.EventType.UI_PRESET_CHANGE,
     //   this._notifyPresetChanged
     // );
 
     player.addEventListener(
-      KalturaPlayer.ui.EventType.ACTIVE_PRESET_RESIZE,
-      this._notifyActivePresetResize
+      KalturaPlayer.ui.EventType.UI_PRESET_RESIZE,
+      this._notifyUIPresetResize
     );
 
     // player.addEventListener(
@@ -81,7 +81,7 @@ export class PresetManager {
   //   console.log(`sakal preset-manager: _notifyVideoResize`);
   // };
 
-  private _notifyActivePresetResize = () => {
+  private _notifyUIPresetResize = () => {
     this._events.emit({
       type: PresetManagerEventTypes.PresetResizeEvent,
     });
@@ -89,13 +89,13 @@ export class PresetManager {
 
   private _unregisterToPlayer = (player: KalturaPlayerTypes.Player) => {
     // player.removeEventListener(
-    //   KalturaPlayer.ui.EventType.ACTIVE_PRESET_CHANGED,
+    //   KalturaPlayer.ui.EventType.UI_PRESET_CHANGE,
     //   this._notifyPresetChanged
     // );
 
     player.removeEventListener(
-      KalturaPlayer.ui.EventType.ACTIVE_PRESET_RESIZE,
-      this._notifyActivePresetResize
+      KalturaPlayer.ui.EventType.UI_PRESET_RESIZE,
+      this._notifyUIPresetResize
     );
 
     // player.removeEventListener(
