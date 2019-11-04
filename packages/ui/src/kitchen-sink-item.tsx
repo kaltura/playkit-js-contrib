@@ -112,7 +112,7 @@ export class KitchenSinkItem {
     this._options.deactivate(this);
   }
 
-  public destroy(): void {
+  public _destroy(): void {
     if (this._isDestroyed()) {
       return;
     }

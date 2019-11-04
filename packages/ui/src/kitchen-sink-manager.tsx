@@ -152,7 +152,7 @@ export class KitchenSinkManager {
 
     this._deactivateItem(item);
     const {upperBarItem} = relevantPanel.items[itemsIndex];
-    item.destroy();
+    item._destroy();
     this.options.upperBarManager.remove(upperBarItem);
     relevantPanel.items.splice(itemsIndex, 1);
 
