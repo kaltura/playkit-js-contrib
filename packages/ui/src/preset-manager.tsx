@@ -54,33 +54,32 @@ export class PresetManager {
     });
   }
 
-  // TODO sakal move to core player manager
   private _registerToPlayer = (player: KalturaPlayerTypes.Player) => {
-    player.addEventListener(
-      KalturaPlayer.ui.EventType.ACTIVE_PRESET_CHANGED,
-      this._notifyPresetChanged
-    );
+    // player.addEventListener(
+    //   KalturaPlayer.ui.EventType.ACTIVE_PRESET_CHANGED,
+    //   this._notifyPresetChanged
+    // );
 
     player.addEventListener(
       KalturaPlayer.ui.EventType.ACTIVE_PRESET_RESIZE,
       this._notifyActivePresetResize
     );
 
-    player.addEventListener(
-      KalturaPlayer.ui.EventType.VIDEO_RESIZE,
-      this._notifyVideoResize
-    );
+    // player.addEventListener(
+    //   KalturaPlayer.ui.EventType.VIDEO_RESIZE,
+    //   this._notifyVideoResize
+    // );
   };
 
-  private _notifyPresetChanged = () => {
-    // TODO sakal implement
-    console.log(`sakal preset-manager: _notifyPresetChanged`);
-  };
-
-  private _notifyVideoResize = () => {
-    // TODO sakal implement
-    console.log(`sakal preset-manager: _notifyVideoResize`);
-  };
+  // private _notifyPresetChanged = () => {
+  //   // TODO implement
+  //   console.log(`sakal preset-manager: _notifyPresetChanged`);
+  // };
+  //
+  // private _notifyVideoResize = () => {
+  //   // TODO implement
+  //   console.log(`sakal preset-manager: _notifyVideoResize`);
+  // };
 
   private _notifyActivePresetResize = () => {
     this._events.emit({
@@ -89,20 +88,20 @@ export class PresetManager {
   };
 
   private _unregisterToPlayer = (player: KalturaPlayerTypes.Player) => {
-    player.removeEventListener(
-      KalturaPlayer.ui.EventType.ACTIVE_PRESET_CHANGED,
-      this._notifyPresetChanged
-    );
+    // player.removeEventListener(
+    //   KalturaPlayer.ui.EventType.ACTIVE_PRESET_CHANGED,
+    //   this._notifyPresetChanged
+    // );
 
     player.removeEventListener(
       KalturaPlayer.ui.EventType.ACTIVE_PRESET_RESIZE,
       this._notifyActivePresetResize
     );
 
-    player.removeEventListener(
-      KalturaPlayer.ui.EventType.VIDEO_RESIZE,
-      this._notifyVideoResize
-    );
+    // player.removeEventListener(
+    //   KalturaPlayer.ui.EventType.VIDEO_RESIZE,
+    //   this._notifyVideoResize
+    // );
   };
 
   on: EventsManager<PresetManagerEvents>['on'] = this._events.on.bind(
