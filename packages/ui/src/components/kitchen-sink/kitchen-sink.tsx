@@ -1,9 +1,11 @@
 import {Component, h} from 'preact';
 import {ContribLogger, getContribLogger} from '@playkit-js-contrib/common';
 import * as styles from './_kitchen-sink.scss';
+import KitchenSinkConfig = KalturaPlayerTypes.PlayerConfig.KitchenSinkConfig;
 
 export interface KitchenSinkProps {
   isActive: boolean;
+  kitchenSinkConfig: KitchenSinkConfig;
 }
 
 export class KitchenSink extends Component<KitchenSinkProps> {
@@ -40,7 +42,20 @@ export class KitchenSink extends Component<KitchenSinkProps> {
       });
     }
 
-    return <div className={this._getClass()}>{this.props.children}</div>;
+    const {backgroundColor, blur} = this.props.kitchenSinkConfig.theme;
+
+    return (
+      <div className={this._getClass()}>
+        <div
+          className={styles.backgroundLayout}
+          style={`
+                background-color:${backgroundColor}; 
+                backdrop-filter: blur(${blur});
+             `}
+        />
+        <div className={styles.children}>{this.props.children}</div>
+      </div>
+    );
   }
 
   private _getClass(): string {

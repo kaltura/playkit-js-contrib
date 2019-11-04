@@ -7,11 +7,16 @@ import {
 import {KitchenSinkItem, KitchenSinkItemRenderProps} from './kitchen-sink-item';
 import {UpperBarManager} from './upper-bar-manager';
 import {PresetManager} from './preset-manager';
-import {EventsManager, PlayerContribRegistry} from '@playkit-js-contrib/common';
+import {
+  EventsManager,
+  ObjectUtils,
+  PlayerContribRegistry,
+} from '@playkit-js-contrib/common';
 import {PresetNames} from './preset-item-data';
 import {KitchenSinkContainer} from './components/kitchen-sink-container/kitchen-sink-container';
 import {KitchenSinkAdapter} from './components/kitchen-sink-adapter';
 import {ManagedComponent} from './components/managed-component';
+import KitchenSinkConfig = KalturaPlayerTypes.PlayerConfig.KitchenSinkConfig;
 
 export interface KitchenSinkManagerOptions {
   corePlayer: KalturaPlayerTypes.Player;
@@ -44,6 +49,13 @@ interface KitchenSinkPanel {
   activeItem: KitchenSinkItem | null;
 }
 
+const DefaultKitchenSinkConfig: KitchenSinkConfig = {
+  theme: {
+    backgroundColor: 'rgba(0, 0, 0, .7)',
+    blur: '16px',
+  },
+};
+
 export class KitchenSinkManager {
   static fromPlayer(
     playerContribRegistry: PlayerContribRegistry,
@@ -65,6 +77,7 @@ export class KitchenSinkManager {
 
   private _options: KitchenSinkManagerOptions;
   private _kitchenSinkAdapterRef: KitchenSinkAdapter | null = null;
+  private _kitchenSinkConfig: KitchenSinkConfig;
 
   on: EventsManager<KitchenSinkEvents>['on'] = this._events.on.bind(
     this._events
@@ -75,6 +88,21 @@ export class KitchenSinkManager {
 
   constructor(private options: KitchenSinkManagerOptions) {
     this._options = options;
+
+    const playerConfig =
+      options.corePlayer &&
+      options.corePlayer.config &&
+      options.corePlayer.config.contrib &&
+      options.corePlayer.config.contrib.ui &&
+      options.corePlayer.config.contrib.ui.kitchenSink
+        ? options.corePlayer.config.contrib.ui.kitchenSink
+        : {};
+    this._kitchenSinkConfig = ObjectUtils.mergeDefaults<KitchenSinkConfig>(
+      {},
+      DefaultKitchenSinkConfig,
+      playerConfig
+    );
+
     this.options.presetManager.add({
       label: 'kitchen-sink-right',
       fillContainer: true,
@@ -111,6 +139,7 @@ export class KitchenSinkManager {
       activate: this._activateItem,
       deactivate: this._deactivateItem,
       eventManager: this._events,
+      kitchenSinkConfig: this._kitchenSinkConfig,
     };
 
     const relevantPanel = this._panels[data.position];
