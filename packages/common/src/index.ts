@@ -10,3 +10,4 @@ export * from './contrib-logger';
 export * from './uuid';
 export * from './debouce';
 export * from './object-utils';
+export * from './array-utils';
