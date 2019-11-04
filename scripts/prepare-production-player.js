@@ -6,21 +6,50 @@ const path = require('path');
 const {spawnSync} = require('child_process');
 var util = require('util');
 const semver = require('semver');
+const os = require("os");
+var inquirer = require('inquirer');
 
 const args = process.argv.splice(2);
 
-const getKalturaGitPath = name => `https://github.com/kaltura/${name}.git`;
-
+// environment variables
 const workspacePath = path.resolve(__dirname, '../.tmp-prod-workspace');
-const playerRepoName = 'kaltura-player-js';
-const playerRepoBranch = 'v0.48.0';
-const playerUIRepoName = 'playkit-js-ui';
-const playerUILibraryName = `@playkit-js/${playerUIRepoName}`;
-const playerUIRepoBranch = 'FEC-9282-contrib';
+const contribDistPath = path.resolve(__dirname, '../vamb-player');
 
-async function gitClone(name, branch) {
+
+// static variables
+const playerRepoName = 'kaltura-player-js';
+const playerRepoPath = path.resolve(workspacePath, playerRepoName);
+const playerRepoDistPath = path.resolve(playerRepoPath, 'dist');
+const playerRepoPackageJsonPath = path.resolve(playerRepoPath, 'package.json');
+const playerRepoNodeModules = path.resolve(workspacePath, playerRepoName, 'node_modules');
+
+const playerUIRepoName = 'playkit-js-ui';
+const playerUIRepoLibraryName = `@playkit-js/${playerUIRepoName}`;
+const playerUIRepoPath = path.resolve(workspacePath, playerUIRepoName);
+const playerUIRepoPackageJsonPath = path.resolve(playerUIRepoPath, 'package.json');
+
+
+function getKalturaGitPath(name) {
+  return `https://github.com/kaltura/${name}.git`;
+}
+
+
+function runSpawn(command, args, extra = {}) {
+  const stdio = typeof extra.stdio === 'string' ? [extra.stdio,extra.stdio, 'pipe'] :
+    Array.isArray(extra.stdio) && extra.stdio.length === 3 ? [extra.stdio[0], extra.stdio[1], 'pipe'] : 'inherit' // 'pipe'
+  const result = spawnSync(command, args, { ...extra, stdio});
+
+  if (result.status === null || result.status !== 0) {
+    throw new Error(result.stderr || 'general error');
+  }
+
+  return result;
+}
+
+
+function gitClone(name, branch) {
   console.log(chalk.blue(`git clone kaltura/${name} branch ${branch}`));
-  return spawnSync(
+  return runSpawn(
     'git',
     [
       'clone',
@@ -35,31 +64,230 @@ async function gitClone(name, branch) {
   );
 }
 
+function verifyRepositoriesVersions() {
+  const playerPackageJson = fs.readJsonSync(playerRepoPackageJsonPath);
+  const playerVersion = playerPackageJson['dependencies'][playerUIRepoLibraryName];
+
+  const playerUIPackageJson = fs.readJsonSync(playerUIRepoPackageJsonPath);
+  const playerUIVersion = playerUIPackageJson.version;
+
+  console.log(chalk.blue(`verify player ui library version`));
+  if (!semver.satisfies(playerUIVersion, playerVersion)) {
+    throw new Error(`player ui library version '${playerUIVersion}' doesn't satisfy the required player dependency '${playerVersion}'`);
+  }
+}
+
+function installDependencies() {
+
+  console.log(chalk.blue('install player ui dependencies'));
+  runSpawn(
+    'yarn',
+    [
+    ],
+    {cwd: playerUIRepoPath }
+  );
+
+  console.log(chalk.blue('install player dependencies'));
+  runSpawn(
+    'yarn',
+    [
+    ],
+    {cwd: playerRepoPath }
+  );
+}
+
+function symlinkDependencies() {
+  const destination = path.resolve(playerRepoNodeModules, playerUIRepoLibraryName);
+
+  console.log(chalk.blue('symlink player ui into player'));
+  fs.removeSync(destination);
+  runSpawn(
+    'ln',
+    [
+      '-s',
+      playerUIRepoPath,
+      destination,
+    ]
+  );
+}
+
+function alterPlayerVersion() {
+  const playerPackageJson = fs.readJsonSync(playerRepoPackageJsonPath);
+
+  if (playerPackageJson['version'].indexOf('vamb') !== -1) {
+    return;
+  }
+
+  const contribVersion = promptContribVersion(`${playerPackageJson['version']}-vamb.${vambVersion}`);
+
+  playerPackageJson['version'] = contribVersion;
+  fs.writeJsonSync(playerRepoPackageJsonPath, playerPackageJson, {spaces: 2});
+}
+
+function buildPlayer() {
+  console.log(chalk.blue('delete player dist'));
+  fs.emptyDirSync(playerRepoDistPath);
+
+  console.log(chalk.blue('build player'));
+  runSpawn(
+    'yarn',
+    [
+      'build:ovp'
+    ],
+    {cwd: playerRepoPath }
+  );
+}
+
+function prepareLocalVersion() {
+  fs.emptyDirSync(contribDistPath);
+
+  const distFolder = path.resolve(contribDistPath, getPlayerVersion());
+
+  fs.copySync(
+    `${playerRepoDistPath}/kaltura-ovp-player.js`,
+    `${distFolder}/kaltura-ovp-player.js`,
+  );
+
+  fs.copySync(
+    `${playerRepoDistPath}/kaltura-ovp-player.js.map`,
+    `${distFolder}/kaltura-ovp-player.js.map`,
+  )
+
+  const {stdout: playerHash} = runSpawn('git', ['rev-parse', 'HEAD'], {cwd: playerRepoPath,
+  stdio: 'pipe'});
+
+  const {stdout: playerUIHash} = runSpawn('git', ['rev-parse', 'HEAD'], {cwd: playerUIRepoPath,
+    stdio: 'pipe'});
+
+  const contribGitHashesPath = path.resolve(contribDistPath, 'version-sha1.json');
+  const contribGitHashes = {
+    github: {
+      [playerRepoName]: playerHash.toString().trim('\\n'),
+      [playerUIRepoName]: playerUIHash.toString().trim('\\n')
+    }
+  };
+
+  fs.writeJsonSync(contribGitHashesPath, contribGitHashes, {spaces: 2});
+
+}
+
+function deleteWorkspaceFolder() {
+  console.log(chalk.blue('remove temp folder'));
+  fs.removeSync(workspacePath);
+}
+
+function getPlayerVersion() {
+  const playerPackageJson = fs.readJsonSync(playerRepoPackageJsonPath);
+  return playerPackageJson['version'];
+}
+function showSummary() {
+  const playerContribVersion = getPlayerVersion();
+  const tagName = `v${playerContribVersion}`;
+
+  console.log(chalk`
+    {green Successfully created contrib VAMB artifacts.
+     
+    Version :${playerContribVersion}  
+    Destination folder: vamb-player}
+    
+    Before committing please test version.
+    Also, make sure temp folder '${workspacePath}' was deleted, if not delete it manually. 
+      
+    To abort changes run:
+    {bold git reset --hard}
+    
+    To commit changes to github run:
+    {bold git commit -am "chore(release): prepare player contrib production version ${playerContribVersion}"}
+    {bold git tag -a ${tagName} -m "${tagName}"}
+    {bold git push --follow-tags}  
+  `);
+}
+
+function verifyEnvironment() {
+  console.log(chalk.blue(`verify operation system is MacOS`));
+  if (os.type() !== "Darwin") {
+    throw new Error('please run this script in MacOS');
+  }
+  console.log(chalk.blue('verify environment'));
+  runSpawn('yarn', ['-v'], { stdio: 'inherit'});
+  runSpawn('git', ['--version'], { stdio: 'inherit'});
+}
+
+async function cloneRepositories() {
+
+  const {playerUIRepoBranch, playerRepoTag} = await promptParameters();
+  console.log(chalk.blue('create production workspace'));
+  fs.emptyDirSync(workspacePath);
+  gitClone(playerRepoName, playerRepoTag);
+  gitClone(playerUIRepoName, playerUIRepoBranch);
+}
+
+async function promptWelcome() {
+  const {ready} = await inquirer.prompt(
+    [{
+      name: 'ready',
+      type: 'confirm',
+      message: 'Welcome!\nThis script will create a contrib version of core player.\nIt is going to take a while so go and grab a cup of coffee. Are you ready to begin?'
+    }]
+  );
+
+  if (!ready) {
+    console.log('See you next time....');
+  }
+
+  return ready;
+}
+
+async function promptParameters() {
+  const parameters = await inquirer.prompt(
+    [{
+      name: 'playerRepoTag',
+      type: 'input',
+      message: 'what is the tag name of requested repository kaltura/kaltura-player-js?'
+    },
+      {
+        name: 'playerUIRepoBranch',
+        type: 'input',
+        message: 'what is the branch name of requested repository kaltura/playkit-js-ui?',
+        default: 'FEC-9282-contrib'
+      }]
+  );
+  return parameters;
+}
+
+async function promptContribVersion(defaultValue) {
+  const {contribVersion} = await inquirer.prompt(
+    [{
+      name: 'contribVersion',
+      type: 'input',
+      message: 'what is the desired contrib player version?',
+      default: defaultValue
+    }
+    ]
+  );
+  return contribVersion;
+}
+
 (async function() {
   try {
-    // console.log(chalk.blue('create production workspace'));
-    // await fs.emptyDir(workspacePath);
-    //
-    // await gitClone(playerRepoName, playerRepoBranch);
-    // await gitClone(playerUIRepoName, playerUIRepoBranch);
 
-    const playerPath = path.resolve(workspacePath, playerRepoName, 'package.json');
-    const playerPackageJson = fs.readJsonSync(playerPath);
-    const playerVersion = playerPackageJson['dependencies'][playerUILibraryName];
-
-    const playerUIPath = path.resolve(workspacePath, playerUIRepoName, 'package.json');
-    const playerUIPackageJson = fs.readJsonSync(playerUIPath);
-    const playerUIVersion = playerUIPackageJson.version;
-
-    console.log(chalk.blue(`verify player ui library version`));
-    if (!semver.satisfies(playerUIVersion, playerVersion)) {
-      throw new Error(`player ui library version '${playerUIVersion}' doesn't satisfy the required player dependency '${playerVersion}'`);
+    if (!promptWelcome()) {
+      return;
     }
-    // todo check that the version of package.json in kaltura
 
-
-    console.log('success!');
+    verifyEnvironment();
+    await cloneRepositories();
+    verifyRepositoriesVersions();
+    installDependencies();
+    symlinkDependencies();
+    alterPlayerVersion();
+    buildPlayer();
+    prepareLocalVersion();
+    deleteWorkspaceFolder();
+    showSummary();
   } catch (err) {
-    throw err;
+    console.error(err);
   }
 })();
+
+

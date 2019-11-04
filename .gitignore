@@ -4,4 +4,5 @@ node_modules
 .rpt2_cache
 .DS_Store
 .tmp-prod-workspace
+.tmp-prod-workspace/**/*
 lerna-debug.log
