@@ -32,6 +32,6 @@ export class OverlayItemContainer extends Component<OverlayContainerProps> {
     if (!content) {
       return null;
     }
-    return <div className={styles.overlayItem}>{content}</div>;
+    return <div className={styles.overlayItemContainer}>{content}</div>;
   }
 }
