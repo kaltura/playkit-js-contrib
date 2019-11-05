@@ -1,10 +1,6 @@
 import {h, render} from 'preact';
 import {getContribLogger} from '@playkit-js-contrib/common';
-import {
-  PresetItemData,
-  PredefinedContainers,
-  RelativeToTypes,
-} from './preset-item-data';
+import {PresetItemData, RelativeToTypes} from './preset-item-data';
 import {ManagedComponent} from './components/managed-component';
 import {ContribLogger} from '@playkit-js-contrib/common';
 import {InjectedComponent} from './components/injected-component/injected-component';
@@ -24,36 +20,6 @@ export interface KalturaPlayerPresetComponent {
   afterComponent?: string;
   beforeComponent?: string;
   replaceComponent?: string;
-}
-
-function getPlayerPresetContainer(container: PredefinedContainers): string {
-  if (typeof container === 'string') {
-    return container;
-  }
-
-  if (container.name === 'BottomBar') {
-    return `BottomBar${container.position}Controls`;
-  }
-  if (container.name === 'TopBar') {
-    return `TopBar${container.position}Controls`;
-  }
-  if (container.name === 'SidePanel') {
-    return `SidePanel${container.position}`;
-  }
-
-  if (container.name === 'PresetArea') {
-    return 'PresetArea';
-  }
-  if (container.name === 'VideoArea') {
-    return 'VideoArea';
-  }
-  if (container.name === 'PlayerArea') {
-    return 'PlayerArea';
-  }
-  if (container.name === 'InteractiveArea') {
-    return 'InteractiveArea';
-  }
-  return '';
 }
 
 export class PresetItem {
@@ -79,41 +45,45 @@ export class PresetItem {
     });
   }
 
-  get playerConfig(): KalturaPlayerPresetComponent | null {
-    const containerName = getPlayerPresetContainer(
-      this._options.data.container
-    );
-    const {relativeTo} = this._options.data;
+  get playerConfig(): KalturaPlayerPresetComponent[] {
+    const configs: KalturaPlayerPresetComponent[] = [];
 
-    if (!containerName) {
-      this._logger.warn(`unknown container requested`, {
-        method: 'playerConfig',
-      });
-      return null;
-    }
+    for (const presetType in this._options.data.presetAreas) {
+      const presetContainer = this._options.data.presetAreas[presetType];
+      const {relativeTo} = this._options.data;
 
-    const result: KalturaPlayerPresetComponent = {
-      label: this._options.data.label,
-      presets: this._options.data.presets,
-      container: containerName,
-      get: this._render,
-    };
-
-    if (relativeTo) {
-      switch (relativeTo.type) {
-        case RelativeToTypes.After:
-          result['afterComponent'] = relativeTo.name;
-          break;
-        case RelativeToTypes.Before:
-          result['beforeComponent'] = relativeTo.name;
-          break;
-        case RelativeToTypes.Replace:
-          result['replaceComponent'] = relativeTo.name;
-          break;
+      if (!presetContainer) {
+        this._logger.warn(`unknown container requested`, {
+          method: 'playerConfig',
+        });
+        continue;
       }
+
+      const result: KalturaPlayerPresetComponent = {
+        label: this._options.data.label,
+        presets: [presetType],
+        container: presetContainer,
+        get: this._render,
+      };
+
+      if (relativeTo) {
+        switch (relativeTo.type) {
+          case RelativeToTypes.After:
+            result['afterComponent'] = relativeTo.name;
+            break;
+          case RelativeToTypes.Before:
+            result['beforeComponent'] = relativeTo.name;
+            break;
+          case RelativeToTypes.Replace:
+            result['replaceComponent'] = relativeTo.name;
+            break;
+        }
+      }
+
+      configs.push(result);
     }
 
-    return result;
+    return configs;
   }
 
   private _render = (): any => {

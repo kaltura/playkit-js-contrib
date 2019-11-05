@@ -3,15 +3,32 @@ import {UpperBarItem} from './upper-bar-item';
 import {UpperBarItemData} from './upper-bar-item-data';
 import {UpperBar} from './components/upper-bar';
 import {PresetManager} from './preset-manager';
-import {PresetNames} from './preset-item-data';
-import {ArrayUtils, PlayerContribRegistry} from '@playkit-js-contrib/common';
+import {
+  ArrayUtils,
+  ObjectUtils,
+  PlayerContribRegistry,
+} from '@playkit-js-contrib/common';
 import {PresetItem} from './preset-item';
 import {ManagedComponent} from './components/managed-component';
+import {PresetsUtils} from './presets-utils';
+import PlayerConfig = KalturaPlayerTypes.PlayerConfig;
+import ContribPresetAreasMapping = KalturaPlayerTypes.PlayerConfig.ContribPresetAreasMapping;
 
 export interface UpperBarManagerOptions {
   corePlayer: KalturaPlayerTypes.Player;
   presetManager: PresetManager;
 }
+
+const ReservedPresets = {
+  Playback: {
+    TopBarRightControls: 'TopBarRightControls',
+  },
+  Live: {
+    TopBarRightControls: 'TopBarRightControls',
+  },
+};
+
+const acceptableTypes = ['TopBarRightControls'];
 
 const ResourceToken = 'UpperBarManager-v1';
 
@@ -29,10 +46,17 @@ export class UpperBarManager {
 
   constructor(options: UpperBarManagerOptions) {
     this._options = options;
+
+    const groupedPresets = PresetsUtils.groupPresetAreasByType({
+      managerName: 'upperBar',
+      config: this._options.corePlayer.config,
+      defaults: ReservedPresets,
+      acceptableTypes,
+    });
+
     this._options.presetManager.add({
       label: 'upper-bar-manager',
-      presets: [PresetNames.Playback, PresetNames.Live],
-      container: {name: 'TopBar', position: 'Right'},
+      presetAreas: groupedPresets['TopBarRightControls'],
       renderChild: this._renderChild,
     });
   }

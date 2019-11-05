@@ -5,17 +5,34 @@ import {
   FloatingPositions,
 } from './floating-item-data';
 import {PresetManager} from './preset-manager';
-import {PlayerContribRegistry} from '@playkit-js-contrib/common';
-import {PresetNames} from './preset-item-data';
+import {ObjectUtils, PlayerContribRegistry} from '@playkit-js-contrib/common';
 import {ComponentChild, h} from 'preact';
 import {PlayerSize, VideoSize} from './common.types';
 import {getPlayerSize, getVideoSize} from './player-utils';
 import {ManagedComponent} from './components/managed-component';
+import PlayerConfig = KalturaPlayerTypes.PlayerConfig;
+import ContribPresetAreasMapping = KalturaPlayerTypes.PlayerConfig.ContribPresetAreasMapping;
+import {PresetsUtils} from './presets-utils';
 
 export interface FloatingManagerOptions {
   corePlayer: KalturaPlayerTypes.Player;
   presetManager: PresetManager;
 }
+
+const ReservedPresets = {
+  Playback: {
+    VideoArea: 'VideoArea',
+    PresetArea: 'PresetArea',
+    InteractiveArea: 'InteractiveArea',
+  },
+  Live: {
+    VideoArea: 'VideoArea',
+    PresetArea: 'PresetArea',
+    InteractiveArea: 'InteractiveArea',
+  },
+};
+
+const acceptableTypes = ['VideoArea', 'PresetArea', 'InteractiveArea'];
 
 const ResourceToken = 'FloatingManager-v1';
 
@@ -52,24 +69,20 @@ export class FloatingManager {
 
   constructor(private options: FloatingManagerOptions) {
     this._options = options;
-    this.options.presetManager.add({
-      label: 'floating-manager',
-      presets: [PresetNames.Playback, PresetNames.Live],
-      container: {name: 'PresetArea'},
-      renderChild: () => this._renderChild(FloatingPositions.PresetArea),
+
+    const groupedPresets = PresetsUtils.groupPresetAreasByType({
+      managerName: 'floating',
+      config: this._options.corePlayer.config,
+      defaults: ReservedPresets,
+      acceptableTypes,
     });
 
-    this.options.presetManager.add({
-      label: 'floating-manager',
-      presets: [PresetNames.Playback, PresetNames.Live],
-      container: {name: 'VideoArea'},
-      renderChild: () => this._renderChild(FloatingPositions.VideoArea),
-    });
-    this.options.presetManager.add({
-      label: 'floating-manager',
-      presets: [PresetNames.Playback, PresetNames.Live],
-      container: {name: 'InteractiveArea'},
-      renderChild: () => this._renderChild(FloatingPositions.InteractiveArea),
+    Object.keys(groupedPresets).forEach(presetType => {
+      this.options.presetManager.add({
+        label: 'floating-manager',
+        presetAreas: groupedPresets[presetType],
+        renderChild: () => this._renderChild(FloatingPositions[presetType]),
+      });
     });
     this._addPlayerBindings();
     this._updateCachedCanvas();

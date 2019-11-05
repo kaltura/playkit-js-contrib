@@ -113,6 +113,7 @@ export class ContribServices {
     return OverlayManager.fromPlayer(this.playerContribRegistry, () => {
       const options = {
         presetManager: this.presetManager,
+        config: this._options.corePlayer.config,
       };
 
       return new OverlayManager(options);

@@ -1,20 +1,5 @@
 import {ComponentChild} from 'preact';
 
-export type VerticalPositions = 'Top' | 'Bottom';
-export type HorizontalPositions = 'Left' | 'Right';
-
-// TODO sakal consider changing to enum
-export type PredefinedContainers =
-  | {name: 'PresetFloating'}
-  | {name: 'BottomBar'; position: HorizontalPositions}
-  | {name: 'TopBar'; position: HorizontalPositions}
-  | {name: 'SidePanel'; position: HorizontalPositions | VerticalPositions}
-  | {name: 'PresetArea'}
-  | {name: 'VideoArea'}
-  | {name: 'InteractiveArea'}
-  | {name: 'PlayerArea'}
-  | string;
-
 export enum PresetNames {
   Playback = 'Playback',
   Live = 'Live',
@@ -22,10 +7,10 @@ export enum PresetNames {
 
 export enum ReservedPresetAreas {
   'PresetFloating',
-  'BottomBarLeftSide',
-  'BottomBarRightSide',
-  'TopBarLeftSide',
-  'TopBarRightSide',
+  'BottomBarLeftControls',
+  'BottomBarRightControls',
+  'TopBarLeftControls',
+  'TopBarRightControls',
   'SidePanelTop',
   'SidePanelLeft',
   'SidePanelRight',
@@ -45,9 +30,7 @@ export enum RelativeToTypes {
 export interface PresetItemData {
   label: string;
   fillContainer?: boolean;
-  presetAreas?: Record<string, (ReservedPresetAreas | string)[]>;
-  presets: (PresetNames | string)[];
-  container: PredefinedContainers;
+  presetAreas: Record<string, string>;
   shareAdvancedPlayerAPI?: boolean;
   renderChild: () => ComponentChild;
   relativeTo?: {

@@ -2,14 +2,28 @@ import {ComponentChild, h} from 'preact';
 import {OverlayItem} from './overlay-item';
 import {OverlayItemData, OverlayPositions} from './overlay-item-data';
 import {PresetManager} from './preset-manager';
-import {PlayerContribRegistry} from '@playkit-js-contrib/common';
-import {PresetNames} from './preset-item-data';
+import {ObjectUtils, PlayerContribRegistry} from '@playkit-js-contrib/common';
 import {ManagedComponent} from './components/managed-component';
 import {OverlayItemContainer} from './components/overlay-item-container';
+import PlayerConfig = KalturaPlayerTypes.PlayerConfig;
+import {PresetsUtils} from './presets-utils';
+import ContribPresetAreasMapping = KalturaPlayerTypes.PlayerConfig.ContribPresetAreasMapping;
 
 export interface OverlayManagerOptions {
   presetManager: PresetManager;
+  config: PlayerConfig;
 }
+
+const ReservedPresets = {
+  Playback: {
+    PlayerArea: 'PlayerArea',
+  },
+  Live: {
+    PlayerArea: 'PlayerArea',
+  },
+};
+
+const acceptableTypes = ['PlayerArea'];
 
 const ResourceToken = 'OverlayManager-v1';
 
@@ -33,11 +47,18 @@ export class OverlayManager {
 
   constructor(private options: OverlayManagerOptions) {
     this._options = options;
+
+    const groupedPresets = PresetsUtils.groupPresetAreasByType({
+      managerName: 'overlay',
+      config: this._options.config,
+      defaults: ReservedPresets,
+      acceptableTypes,
+    });
+
     this.options.presetManager.add({
       label: 'overlay-manager',
       fillContainer: true,
-      presets: [PresetNames.Playback, PresetNames.Live],
-      container: {name: 'PlayerArea'},
+      presetAreas: groupedPresets['PlayerArea'],
       renderChild: () => this._renderChild(OverlayPositions.PlayerArea),
     });
   }
