@@ -12,7 +12,7 @@ import {
   KitchenSinkEvents,
 } from './kitchen-sink-manager';
 import {KitchenSink} from './components/kitchen-sink';
-import KitchenSinkConfig = KalturaPlayerTypes.PlayerConfig.KitchenSinkConfig;
+import KitchenSinkConfig = KalturaPlayerContribTypes.KitchenSinkConfig;
 
 export interface KitchenSinkItemOptions {
   data: KitchenSinkItemData;

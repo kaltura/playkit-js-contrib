@@ -16,7 +16,7 @@ import {PresetNames} from './preset-item-data';
 import {KitchenSinkContainer} from './components/kitchen-sink-container/kitchen-sink-container';
 import {KitchenSinkAdapter} from './components/kitchen-sink-adapter';
 import {ManagedComponent} from './components/managed-component';
-import KitchenSinkConfig = KalturaPlayerTypes.PlayerConfig.KitchenSinkConfig;
+import KitchenSinkConfig = KalturaPlayerContribTypes.KitchenSinkConfig;
 
 export interface KitchenSinkManagerOptions {
   corePlayer: KalturaPlayerTypes.Player;

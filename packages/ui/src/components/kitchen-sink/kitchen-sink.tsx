@@ -1,7 +1,7 @@
 import {Component, h} from 'preact';
 import {ContribLogger, getContribLogger} from '@playkit-js-contrib/common';
 import * as styles from './_kitchen-sink.scss';
-import KitchenSinkConfig = KalturaPlayerTypes.PlayerConfig.KitchenSinkConfig;
+import KitchenSinkConfig = KalturaPlayerContribTypes.KitchenSinkConfig;
 
 export interface KitchenSinkProps {
   isActive: boolean;
