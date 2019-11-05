@@ -236,7 +236,7 @@ async function cloneRepositories() {
 async function promptWelcome() {
   console.log(chalk`{bgCyan {bold Welcome!}}
 This script will create a contrib version of core player.
-It is going to take around ~10 minutes
+It is going to take around 10 minutes
 `);
   const {ready} = await inquirer.prompt(
     [{
