@@ -13,7 +13,7 @@ const args = process.argv.splice(2);
 
 // environment variables
 const workspacePath = path.resolve(__dirname, '../.tmp-prod-workspace');
-const contribDistPath = path.resolve(__dirname, '../vamb-player');
+const contribDistPath = path.resolve(__dirname, '../production-player');
 
 
 // static variables
@@ -111,14 +111,17 @@ function symlinkDependencies() {
   );
 }
 
-function alterPlayerVersion() {
+async function alterPlayerVersion() {
   const playerPackageJson = fs.readJsonSync(playerRepoPackageJsonPath);
 
-  if (playerPackageJson['version'].indexOf('vamb') !== -1) {
-    return;
+  const originalVersion = playerPackageJson['version'];
+  let defaultVersion = originalVersion;
+
+  if (defaultVersion.indexOf('vamb') === -1) {
+    defaultVersion = `${playerPackageJson['version']}-vamb.1`;
   }
 
-  const contribVersion = promptContribVersion(`${playerPackageJson['version']}-vamb.${vambVersion}`);
+  const contribVersion = await promptContribVersion(defaultVersion);
 
   playerPackageJson['version'] = contribVersion;
   fs.writeJsonSync(playerRepoPackageJsonPath, playerPackageJson, {spaces: 2});
@@ -127,6 +130,14 @@ function alterPlayerVersion() {
 function buildPlayer() {
   console.log(chalk.blue('delete player dist'));
   fs.emptyDirSync(playerRepoDistPath);
+
+  console.log(chalk.blue('build player ui library'));
+  runSpawn(
+    'yarn',
+    [
+      'build'
+    ],
+    {cwd: playerUIRepoPath });
 
   console.log(chalk.blue('build player'));
   runSpawn(
@@ -140,8 +151,8 @@ function buildPlayer() {
 
 function prepareLocalVersion() {
   fs.emptyDirSync(contribDistPath);
-
-  const distFolder = path.resolve(contribDistPath, getPlayerVersion());
+  const playerVersion = getPlayerVersion();
+  const distFolder = path.resolve(contribDistPath, playerVersion);
 
   fs.copySync(
     `${playerRepoDistPath}/kaltura-ovp-player.js`,
@@ -159,7 +170,7 @@ function prepareLocalVersion() {
   const {stdout: playerUIHash} = runSpawn('git', ['rev-parse', 'HEAD'], {cwd: playerUIRepoPath,
     stdio: 'pipe'});
 
-  const contribGitHashesPath = path.resolve(contribDistPath, 'version-sha1.json');
+  const contribGitHashesPath = path.resolve(contribDistPath, `${playerVersion}-sha1.json`);
   const contribGitHashes = {
     github: {
       [playerRepoName]: playerHash.toString().trim('\\n'),
@@ -169,6 +180,7 @@ function prepareLocalVersion() {
 
   fs.writeJsonSync(contribGitHashesPath, contribGitHashes, {spaces: 2});
 
+  runSpawn('git', ['add', `${contribDistPath}/*`]);
 }
 
 function deleteWorkspaceFolder() {
@@ -180,8 +192,7 @@ function getPlayerVersion() {
   const playerPackageJson = fs.readJsonSync(playerRepoPackageJsonPath);
   return playerPackageJson['version'];
 }
-function showSummary() {
-  const playerContribVersion = getPlayerVersion();
+function showSummary(playerContribVersion) {
   const tagName = `v${playerContribVersion}`;
 
   console.log(chalk`
@@ -191,7 +202,7 @@ function showSummary() {
     Destination folder: vamb-player}
     
     Before committing please test version.
-    Also, make sure temp folder '${workspacePath}' was deleted, if not delete it manually. 
+    Also, make sure temp folder '${workspacePath}' was deleted. if not, delete it manually. 
       
     To abort changes run:
     {bold git reset --hard}
@@ -223,11 +234,15 @@ async function cloneRepositories() {
 }
 
 async function promptWelcome() {
+  console.log(chalk`{bgCyan {bold Welcome!}}
+This script will create a contrib version of core player.
+It is going to take around ~10 minutes
+`);
   const {ready} = await inquirer.prompt(
     [{
       name: 'ready',
       type: 'confirm',
-      message: 'Welcome!\nThis script will create a contrib version of core player.\nIt is going to take a while so go and grab a cup of coffee. Are you ready to begin?'
+      message: 'Are you ready to begin?'
     }]
   );
 
@@ -271,7 +286,7 @@ async function promptContribVersion(defaultValue) {
 (async function() {
   try {
 
-    if (!promptWelcome()) {
+    if (!await promptWelcome()) {
       return;
     }
 
@@ -280,11 +295,12 @@ async function promptContribVersion(defaultValue) {
     verifyRepositoriesVersions();
     installDependencies();
     symlinkDependencies();
-    alterPlayerVersion();
+    await alterPlayerVersion();
     buildPlayer();
     prepareLocalVersion();
+    const playerContribVersion = getPlayerVersion();
     deleteWorkspaceFolder();
-    showSummary();
+    showSummary(playerContribVersion);
   } catch (err) {
     console.error(err);
   }

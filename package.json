@@ -19,6 +19,7 @@
     "lerna:lint:fix": "lerna run lint:js:fix",
     "lerna:lint": "lerna run lint:js",
     "lint:fix": "eslint --fix",
+    "prepare:contrib-player": "node ./scripts/prepare-production-player.js",
     "husky:pre-commit": "lint-staged",
     "husky:commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
   },
