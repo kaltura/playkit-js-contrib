@@ -1,18 +1,11 @@
-import {ComponentChild, h, render} from 'preact';
+import {ComponentChild, h} from 'preact';
 import {UpperBarItem} from './upper-bar-item';
 import {UpperBarItemData} from './upper-bar-item-data';
 import {UpperBar} from './components/upper-bar';
 import {PresetManager} from './preset-manager';
-import {
-  ArrayUtils,
-  ObjectUtils,
-  PlayerContribRegistry,
-} from '@playkit-js-contrib/common';
-import {PresetItem} from './preset-item';
+import {ArrayUtils, PlayerContribRegistry} from '@playkit-js-contrib/common';
 import {ManagedComponent} from './components/managed-component';
 import {PresetsUtils} from './presets-utils';
-import PlayerConfig = KalturaPlayerTypes.PlayerConfig;
-import ContribPresetAreasMapping = KalturaPlayerTypes.PlayerConfig.ContribPresetAreasMapping;
 
 export interface UpperBarManagerOptions {
   corePlayer: KalturaPlayerTypes.Player;

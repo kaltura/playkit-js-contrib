@@ -2,12 +2,11 @@ import {ComponentChild, h} from 'preact';
 import {OverlayItem} from './overlay-item';
 import {OverlayItemData, OverlayPositions} from './overlay-item-data';
 import {PresetManager} from './preset-manager';
-import {ObjectUtils, PlayerContribRegistry} from '@playkit-js-contrib/common';
+import {PlayerContribRegistry} from '@playkit-js-contrib/common';
 import {ManagedComponent} from './components/managed-component';
 import {OverlayItemContainer} from './components/overlay-item-container';
 import PlayerConfig = KalturaPlayerTypes.PlayerConfig;
 import {PresetsUtils} from './presets-utils';
-import ContribPresetAreasMapping = KalturaPlayerTypes.PlayerConfig.ContribPresetAreasMapping;
 
 export interface OverlayManagerOptions {
   presetManager: PresetManager;

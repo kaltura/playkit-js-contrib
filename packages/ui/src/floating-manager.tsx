@@ -5,13 +5,11 @@ import {
   FloatingPositions,
 } from './floating-item-data';
 import {PresetManager} from './preset-manager';
-import {ObjectUtils, PlayerContribRegistry} from '@playkit-js-contrib/common';
+import {PlayerContribRegistry} from '@playkit-js-contrib/common';
 import {ComponentChild, h} from 'preact';
 import {PlayerSize, VideoSize} from './common.types';
 import {getPlayerSize, getVideoSize} from './player-utils';
 import {ManagedComponent} from './components/managed-component';
-import PlayerConfig = KalturaPlayerTypes.PlayerConfig;
-import ContribPresetAreasMapping = KalturaPlayerTypes.PlayerConfig.ContribPresetAreasMapping;
 import {PresetsUtils} from './presets-utils';
 
 export interface FloatingManagerOptions {

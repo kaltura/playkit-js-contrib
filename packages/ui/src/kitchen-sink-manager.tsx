@@ -10,7 +10,6 @@ import {PresetManager} from './preset-manager';
 import {
   ArrayUtils,
   EventsManager,
-  ObjectUtils,
   PlayerContribRegistry,
 } from '@playkit-js-contrib/common';
 import {KitchenSinkContainer} from './components/kitchen-sink-container/kitchen-sink-container';
@@ -18,9 +17,6 @@ import {KitchenSinkAdapter} from './components/kitchen-sink-adapter';
 import {ManagedComponent} from './components/managed-component';
 import {UpperBarItem} from './upper-bar-item';
 import {PresetsUtils} from './presets-utils';
-import ContribPresetAreasMapping = KalturaPlayerTypes.PlayerConfig.ContribPresetAreasMapping;
-import {FloatingPositions} from './floating-item-data';
-import PlayerConfig = KalturaPlayerTypes.PlayerConfig;
 
 export interface KitchenSinkManagerOptions {
   corePlayer: KalturaPlayerTypes.Player;
