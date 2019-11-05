@@ -193,7 +193,7 @@ function getPlayerVersion() {
   return playerPackageJson['version'];
 }
 function showSummary(playerContribVersion) {
-  const tagName = `v${playerContribVersion}`;
+  const tagName = `kaltura-ovp-player@${playerContribVersion}`;
 
   console.log(chalk`
     {green Successfully created contrib VAMB artifacts.
@@ -209,7 +209,7 @@ function showSummary(playerContribVersion) {
     
     To commit changes to github run:
     {bold git commit -am "chore(release): prepare player contrib production version ${playerContribVersion}"}
-    {bold git tag -a ${tagName} -m "${tagName}"}
+    {bold git tag -a ${tagName} -m "contrib production player v${playerContribVersion}"}
     {bold git push --follow-tags}  
   `);
 }
