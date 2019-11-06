@@ -183,7 +183,9 @@ declare namespace KalturaPlayerTypes {
     export interface Contrib {
       ui: {
         fonts: ContribFonts;
-        managers: ContribManagers;
+        [key: string]: {
+          presetAreasMapping: ContribPresetAreasMapping;
+        };
       };
     }
 
@@ -196,22 +198,16 @@ declare namespace KalturaPlayerTypes {
       };
     }
 
-    export interface ContribManagers {
-      [key: string]: {
-        presetAreasMapping: ContribPresetAreasMapping;
-      };
+    export interface TestingFontOptions {
+      text: string;
+      size: number;
+      fontName: string;
     }
 
     export interface ContribPresetAreasMapping {
       [key: string]: {
         [key: string]: string;
       };
-    }
-
-    export interface TestingFontOptions {
-      text: string;
-      size: number;
-      fontName: string;
     }
   }
 }

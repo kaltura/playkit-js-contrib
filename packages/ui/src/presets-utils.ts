@@ -43,10 +43,9 @@ export class PresetsUtils {
       config &&
       config.contrib &&
       config.contrib.ui &&
-      config.contrib.ui.managers &&
-      config.contrib.ui.managers[managerName] &&
-      config.contrib.ui.managers[managerName].presetAreasMapping
-        ? config.contrib.ui.managers[managerName].presetAreasMapping
+      config.contrib.ui[managerName] &&
+      config.contrib.ui[managerName].presetAreasMapping
+        ? config.contrib.ui[managerName].presetAreasMapping
         : {};
     return ObjectUtils.explicitFlatMerge<ContribPresetAreasMapping>(
       defaults,
