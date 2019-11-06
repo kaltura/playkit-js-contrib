@@ -48,9 +48,7 @@ export class PresetsUtils {
       config.contrib.ui.managers[managerName].presetAreasMapping
         ? config.contrib.ui.managers[managerName].presetAreasMapping
         : {};
-    // todo [sa] explicit merge
-    return ObjectUtils.mergeDefaults<ContribPresetAreasMapping>(
-      {},
+    return ObjectUtils.explicitFlatMerge<ContribPresetAreasMapping>(
       defaults,
       configMappings
     );

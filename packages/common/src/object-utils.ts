@@ -72,4 +72,26 @@ export class ObjectUtils {
   ): T {
     return ObjectUtils.mergeDeep(target, defaults, ...additional) as T;
   }
+
+  /**
+   * source properties will override all equivalent properties in target. null or empty objects properties in source
+   * will cause the removal of these properties in target.
+   * all other data will be merged
+   * @param target
+   * @param source
+   */
+  public static explicitFlatMerge<T extends Record<string, any>>(
+    target: Partial<T>,
+    source: Partial<T>
+  ): Partial<T> {
+    const result = {...target};
+    Object.keys(source).forEach(key => {
+      if (source[key] === null || Object.keys(source[key]).length === 0) {
+        delete result[key];
+      } else {
+        result[key] = source[key];
+      }
+    });
+    return result;
+  }
 }
