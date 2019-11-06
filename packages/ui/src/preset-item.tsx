@@ -53,9 +53,12 @@ export class PresetItem {
       const {relativeTo} = this._options.data;
 
       if (!presetContainer) {
-        this._logger.warn(`unknown container requested`, {
-          method: 'playerConfig',
-        });
+        this._logger.warn(
+          `Cannot register component to core player using the preset manager for preset ${presetType}. preset area name is missing. Ignoring this request.`,
+          {
+            method: 'playerConfig',
+          }
+        );
         continue;
       }
 
