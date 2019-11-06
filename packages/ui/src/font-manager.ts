@@ -4,12 +4,12 @@ import {
   ObjectUtils,
   PlayerContribRegistry,
 } from '@playkit-js-contrib/common';
-import ContribFonts = KalturaPlayerTypes.PlayerConfig.ContribFonts;
-import TestingFontOptions = KalturaPlayerTypes.PlayerConfig.TestingFontOptions;
 import PlayerConfig = KalturaPlayerTypes.PlayerConfig;
+import ContribFonts = KalturaPlayerContribTypes.ContribFonts;
+import TestingFontOptions = KalturaPlayerContribTypes.TestingFontOptions;
 
 export interface FontManagerOptions {
-  playerConfig: PlayerConfig;
+  playerConfig: PlayerConfig & KalturaPlayerContribTypes.ContribConfig;
 }
 
 const ResourceToken = 'FontManager-v1';
@@ -30,7 +30,7 @@ const DefaultFontOptions: ContribFonts = {
   },
 };
 
-// shared property for indicating current loaded fontFamily to support multiple contrib managers in a single page
+//shared property for indicating current loaded fontFamily to support multiple contrib managers in a single page
 // ( multiple players instances )
 let currentFontFamily = '';
 

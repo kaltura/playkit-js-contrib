@@ -1,6 +1,6 @@
 import {FloatingItem} from './floating-item';
 import {FloatingManager} from './floating-manager';
-import {PlayerContribRegistry} from '@playkit-js-contrib/common';
+import {ObjectUtils, PlayerContribRegistry} from '@playkit-js-contrib/common';
 import {
   FloatingItemProps,
   FloatingPositions,
@@ -11,6 +11,7 @@ import {Banner} from './components/banner';
 import {BannerContainer} from './components/banner-container';
 import {BannerContainerProps} from './components/banner-container/banner-container';
 import {getPlayerSize} from './player-utils';
+import BannerConfig = KalturaPlayerContribTypes.BannerConfig;
 
 export interface BannerContent {
   text: string;
@@ -47,6 +48,13 @@ const MinPlayerWidth = 480;
 const DefaultDuration: number = 60 * 1000;
 const MinDuration: number = 5 * 1000;
 
+const DefaultBannerConfig: BannerConfig = {
+  theme: {
+    backgroundColor: 'rgba(0, 0, 0, .8)',
+    blur: '16px',
+  },
+};
+
 /**
  * banner manager manages the display (add / remove) of a single banner in the player.
  */
@@ -61,9 +69,24 @@ export class BannerManager {
   private _options: BannerManagerOptions;
   private _floatingItem: FloatingItem | null = null;
   private _timerSubscription: any | undefined = undefined;
+  private _bannerConfig: BannerConfig;
 
   constructor(private options: BannerManagerOptions) {
     this._options = options;
+
+    const playerConfig =
+      options.corePlayer &&
+      options.corePlayer.config &&
+      options.corePlayer.config.contrib &&
+      options.corePlayer.config.contrib.ui &&
+      options.corePlayer.config.contrib.ui.kitchenSink
+        ? options.corePlayer.config.contrib.ui.kitchenSink
+        : {};
+    this._bannerConfig = ObjectUtils.mergeDefaults<BannerConfig>(
+      {},
+      DefaultBannerConfig,
+      playerConfig
+    );
   }
 
   add(props: BannerOptions): BannerState {
@@ -76,6 +99,7 @@ export class BannerManager {
       position: FloatingPositions.InteractiveArea,
       renderContent: this._createRenderBanner(props, {
         onClose: this._handleCloseEvent.bind(this),
+        theme: this._bannerConfig.theme,
       }),
     });
     if (props.autoClose) {
@@ -98,11 +122,11 @@ export class BannerManager {
 
   private _createRenderBanner(
     {content, renderContent}: BannerOptions,
-    {onClose}: BannerContainerProps
+    {onClose, theme}: BannerContainerProps
   ) {
     function _renderContent(floatingItemProps: FloatingItemProps) {
       return (
-        <BannerContainer onClose={onClose}>
+        <BannerContainer onClose={onClose} theme={theme}>
           {renderContent ? (
             renderContent(content, floatingItemProps)
           ) : (

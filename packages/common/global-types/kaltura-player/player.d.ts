@@ -13,6 +13,7 @@ declare namespace KalturaPlayerTypes {
     Event: Record<string, string>;
     currentTime: number;
     duration: number;
-    config: KalturaPlayerTypes.PlayerConfig;
+    config: KalturaPlayerTypes.PlayerConfig &
+      KalturaPlayerContribTypes.ContribConfig;
   }
 }

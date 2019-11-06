@@ -19,6 +19,7 @@ export interface KitchenSinkItemOptions {
   activate: (item: KitchenSinkItem) => void;
   deactivate: (item: KitchenSinkItem) => void;
   eventManager: EventsManager<KitchenSinkEvents>;
+  kitchenSinkConfig: KalturaPlayerContribTypes.KitchenSinkConfig;
 }
 
 export interface KitchenSinkItemRenderProps {
@@ -135,6 +136,7 @@ export class KitchenSinkItem {
     }
 
     const {renderContent, label} = this._options.data;
+    const {kitchenSinkConfig} = this._options;
 
     return (
       <ManagedComponent
@@ -144,6 +146,7 @@ export class KitchenSinkItem {
           <KitchenSink
             children={renderContent(props)}
             isActive={this.isActive()}
+            kitchenSinkConfig={kitchenSinkConfig}
           />
         )}
         isShown={() => !this._destroyed}
