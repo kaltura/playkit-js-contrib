@@ -4,7 +4,7 @@ import {UpperBarItemData} from './upper-bar-item-data';
 import {UpperBar} from './components/upper-bar';
 import {PresetManager} from './preset-manager';
 import {PresetNames} from './preset-item-data';
-import {PlayerContribRegistry} from '@playkit-js-contrib/common';
+import {ArrayUtils, PlayerContribRegistry} from '@playkit-js-contrib/common';
 import {PresetItem} from './preset-item';
 import {ManagedComponent} from './components/managed-component';
 
@@ -69,6 +69,18 @@ export class UpperBarManager {
       this._rootElement.update();
     }
     return item;
+  }
+
+  remove(itemToRemove: UpperBarItem): void {
+    const itemIndex = ArrayUtils.findIndex(this._items, item => {
+      return item === itemToRemove;
+    });
+    if (itemIndex === -1) return;
+
+    this._items.splice(itemIndex, 1);
+    if (this._rootElement) {
+      this._rootElement.update();
+    }
   }
 
   /**

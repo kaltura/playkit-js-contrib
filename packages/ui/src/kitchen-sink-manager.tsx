@@ -8,6 +8,7 @@ import {KitchenSinkItem, KitchenSinkItemRenderProps} from './kitchen-sink-item';
 import {UpperBarManager} from './upper-bar-manager';
 import {PresetManager} from './preset-manager';
 import {
+  ArrayUtils,
   EventsManager,
   ObjectUtils,
   PlayerContribRegistry,
@@ -16,6 +17,7 @@ import {PresetNames} from './preset-item-data';
 import {KitchenSinkContainer} from './components/kitchen-sink-container/kitchen-sink-container';
 import {KitchenSinkAdapter} from './components/kitchen-sink-adapter';
 import {ManagedComponent} from './components/managed-component';
+import {UpperBarItem} from './upper-bar-item';
 import KitchenSinkConfig = KalturaPlayerContribTypes.KitchenSinkConfig;
 
 export interface KitchenSinkManagerOptions {
@@ -45,13 +47,16 @@ const ResourceToken = 'KitchenSinkManager-v1';
 
 interface KitchenSinkPanel {
   ref: ManagedComponent | null;
-  items: KitchenSinkItem[];
+  items: {
+    kitchenSinkItem: KitchenSinkItem;
+    upperBarItem: UpperBarItem;
+  }[];
   activeItem: KitchenSinkItem | null;
 }
 
 const DefaultKitchenSinkConfig: KitchenSinkConfig = {
   theme: {
-    backgroundColor: 'rgba(0, 0, 0, .7)',
+    backgroundColor: 'rgba(0, 0, 0, .8)',
     blur: '16px',
   },
 };
@@ -143,28 +148,43 @@ export class KitchenSinkManager {
     };
 
     const relevantPanel = this._panels[data.position];
-    const item = new KitchenSinkItem(itemOptions);
-    relevantPanel.items.push(item);
+    const kitchenSinkItem = new KitchenSinkItem(itemOptions);
+    const upperBarItem = this.options.upperBarManager.add({
+      label: data.label,
+      renderItem: data.renderIcon,
+      onClick: () => this._toggle(kitchenSinkItem),
+    });
+    relevantPanel.items.push({
+      kitchenSinkItem,
+      upperBarItem,
+    });
     if (relevantPanel.ref) {
       relevantPanel.ref.update();
     }
 
-    this.options.upperBarManager.add({
-      label: data.label,
-      renderItem: data.renderIcon,
-      onClick: () => this._toggle(item),
-    });
-
-    return item;
+    return kitchenSinkItem;
   }
 
-  //todo [sa] implement
   remove(item: KitchenSinkItem): void {
-    //deactivate item if needed
-    //remove upper bar icon
-    //remove from _items
-    //call item.destroy
-    //refresh UI ???
+    const relevantPanel = this._panels[item.data.position];
+    const itemsIndex = ArrayUtils.findIndex(
+      relevantPanel.items,
+      ({kitchenSinkItem}) => {
+        return item === kitchenSinkItem;
+      }
+    );
+
+    if (itemsIndex === -1) return;
+
+    this._deactivateItem(item);
+    const {upperBarItem} = relevantPanel.items[itemsIndex];
+    item._destroy();
+    this.options.upperBarManager.remove(upperBarItem);
+    relevantPanel.items.splice(itemsIndex, 1);
+
+    if (relevantPanel.ref) {
+      relevantPanel.ref.update();
+    }
   }
 
   private _toggle = (item: KitchenSinkItem): void => {
@@ -244,11 +264,11 @@ export class KitchenSinkManager {
   }
 
   private _renderKitchenSink(position: KitchenSinkPositions) {
-    const items = this._panels[position].items.map(item => {
+    const items = this._panels[position].items.map(({kitchenSinkItem}) => {
       const itemProps: KitchenSinkItemRenderProps = {
-        onClose: this._deactivateItem.bind(this, item),
+        onClose: this._deactivateItem.bind(this, kitchenSinkItem),
       };
-      return item.renderContentChild(itemProps);
+      return kitchenSinkItem.renderContentChild(itemProps);
     });
     return <KitchenSinkContainer>{items}</KitchenSinkContainer>;
   }

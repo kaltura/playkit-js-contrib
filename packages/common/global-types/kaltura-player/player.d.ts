@@ -6,6 +6,7 @@ declare namespace KalturaPlayerTypes {
   export interface Player {
     pause(): void;
     play(): void;
+    isLive: () => boolean;
     dispatchEvent(event: FakeEvent): boolean;
     addEventListener(type: string, listener: CoreEventListener): void;
     removeEventListener: (type: string, listener: CoreEventListener) => void;

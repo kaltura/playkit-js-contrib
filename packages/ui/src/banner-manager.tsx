@@ -11,6 +11,7 @@ import {Banner} from './components/banner';
 import {BannerContainer} from './components/banner-container';
 import {BannerContainerProps} from './components/banner-container/banner-container';
 import {getPlayerSize} from './player-utils';
+import DefaultBannerConfig = KalturaPlayerContribTypes.DefaultBannerConfig;
 
 export interface BannerContent {
   text: string;
