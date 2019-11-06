@@ -56,7 +56,7 @@ interface KitchenSinkPanel {
 
 const DefaultKitchenSinkConfig: KitchenSinkConfig = {
   theme: {
-    backgroundColor: 'rgba(0, 0, 0, .8)',
+    backgroundColor: 'rgba(0, 0, 0, .7)',
     blur: '16px',
   },
 };

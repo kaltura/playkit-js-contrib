@@ -1,9 +1,11 @@
 import {Component, h} from 'preact';
 import {ContribLogger, getContribLogger} from '@playkit-js-contrib/common';
 import * as styles from './_banner-container.scss';
+import BannerConfig = KalturaPlayerContribTypes.BannerConfig;
 
 export interface BannerContainerProps {
   onClose: () => void;
+  bannerConfig: BannerConfig;
 }
 
 export class BannerContainer extends Component<BannerContainerProps> {
@@ -28,9 +30,17 @@ export class BannerContainer extends Component<BannerContainerProps> {
     this._logger.trace(`render component`, {
       method: 'render',
     });
+
+    const {backgroundColor, blur} = this.props.bannerConfig.theme;
+
     return (
       <div className={styles.bannerContainerRoot}>
-        <div className={styles.bannerContainer}>
+        <div
+          style={`
+                background-color:${backgroundColor}; 
+                backdrop-filter: blur(${blur});
+             `}
+          className={styles.bannerContainer}>
           <button className={styles.closeButton} onClick={props.onClose} />
           {this.props.children}
         </div>

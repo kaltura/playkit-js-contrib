@@ -21,6 +21,10 @@ declare namespace KalturaPlayerContribTypes {
     theme: ContribTheme;
   }
 
+  export interface BannerConfig {
+    theme: ContribTheme;
+  }
+
   export interface ContribTheme {
     backgroundColor: string;
     blur: string;
