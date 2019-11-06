@@ -11,203 +11,170 @@
 
 declare namespace KalturaPlayerTypes {
   export interface PlayerConfig {
-    log?: PlayerConfig.Log;
-    sources: PlayerConfig.Sources;
+    log?: Log;
+    sources: Sources;
     plugins: Record<string, Record<string, any>>;
-    playback: PlayerConfig.Playback;
-    abr?: PlayerConfig.ABR;
-    drm?: PlayerConfig.DRM;
-    network?: PlayerConfig.Network;
-    advertising?: PlayerConfig.Advertising;
+    playback: Playback;
+    abr?: ABR;
+    drm?: DRM;
+    network?: Network;
+    advertising?: Advertising;
     disableUserCache?: boolean;
-    provider: PlayerConfig.Provider;
+    provider: Provider;
     targetId?: string;
-    ui?: PlayerConfig.UI;
-    session: PlayerConfig.Session;
-    contrib: PlayerConfig.Contrib;
+    ui?: UI;
+    session: Session;
   }
 
-  namespace PlayerConfig {
-    export enum EntryTypes {
-      Vod = 'Vod',
-      Live = 'Live',
-    }
+  export enum EntryTypes {
+    Vod = 'Vod',
+    Live = 'Live',
+  }
 
-    export interface ABR {
-      enabled?: boolean;
-      fpsDroppedFramesInterval?: number;
-      fpsDroppedMonitoringThreshold?: number;
-      capLevelOnFPSDrop?: boolean;
-      capLevelToPlayerSize?: boolean;
-      defaultBandwidthEstimate?: number;
-      restrictions?: Restrictions;
-    }
+  export interface ABR {
+    enabled?: boolean;
+    fpsDroppedFramesInterval?: number;
+    fpsDroppedMonitoringThreshold?: number;
+    capLevelOnFPSDrop?: boolean;
+    capLevelToPlayerSize?: boolean;
+    defaultBandwidthEstimate?: number;
+    restrictions?: Restrictions;
+  }
 
-    export interface Restrictions {
-      minBitrate?: number;
-      maxBitrate?: null;
-    }
+  export interface Restrictions {
+    minBitrate?: number;
+    maxBitrate?: null;
+  }
 
-    export interface Advertising {
-      adBreaks?: any[];
-    }
+  export interface Advertising {
+    adBreaks?: any[];
+  }
 
-    export interface DRM {
-      keySystem?: string;
-    }
+  export interface DRM {
+    keySystem?: string;
+  }
 
-    export interface Log {
-      level?: string;
-    }
+  export interface Log {
+    level?: string;
+  }
 
-    export interface Network {}
+  export interface Network {}
 
-    export interface Playback {
-      audioLanguage?: string;
-      textLanguage?: string;
-      useNativeTextTrack?: boolean;
-      enableCEA708Captions?: boolean;
-      captionsTextTrack1Label?: string;
-      captionsTextTrack1LanguageCode?: string;
-      captionsTextTrack2Label?: string;
-      captionsTextTrack2LanguageCode?: string;
-      volume?: number;
-      startTime?: number;
-      playsinline?: boolean;
-      preload?: string;
-      autoplay?: boolean;
-      loop?: boolean;
-      allowMutedAutoPlay?: boolean;
-      muted?: boolean;
-      pictureInPicture?: boolean;
-      options?: Options;
-      preferNative?: PreferNative;
-      inBrowserFullscreen?: boolean;
-      playAdsWithMSE?: boolean;
-      streamPriority?: StreamPriority[];
-    }
+  export interface Playback {
+    audioLanguage?: string;
+    textLanguage?: string;
+    useNativeTextTrack?: boolean;
+    enableCEA708Captions?: boolean;
+    captionsTextTrack1Label?: string;
+    captionsTextTrack1LanguageCode?: string;
+    captionsTextTrack2Label?: string;
+    captionsTextTrack2LanguageCode?: string;
+    volume?: number;
+    startTime?: number;
+    playsinline?: boolean;
+    preload?: string;
+    autoplay?: boolean;
+    loop?: boolean;
+    allowMutedAutoPlay?: boolean;
+    muted?: boolean;
+    pictureInPicture?: boolean;
+    options?: Options;
+    preferNative?: PreferNative;
+    inBrowserFullscreen?: boolean;
+    playAdsWithMSE?: boolean;
+    streamPriority?: StreamPriority[];
+  }
 
-    export interface Options {
-      html5?: Html5;
-    }
+  export interface Options {
+    html5?: Html5;
+  }
 
-    export interface Html5 {
-      hls?: Network;
-      dash?: Network;
-      native?: Network;
-    }
+  export interface Html5 {
+    hls?: Network;
+    dash?: Network;
+    native?: Network;
+  }
 
-    export interface PreferNative {
-      hls?: boolean;
-      dash?: boolean;
-    }
+  export interface PreferNative {
+    hls?: boolean;
+    dash?: boolean;
+  }
 
-    export interface StreamPriority {
-      engine?: string;
-      format?: string;
-    }
+  export interface StreamPriority {
+    engine?: string;
+    format?: string;
+  }
 
-    export interface Provider {
-      env: Env;
-      partnerId?: string;
-      uiConfId?: string;
-      ks: string;
-      log?: Log;
-    }
+  export interface Provider {
+    env: Env;
+    partnerId?: string;
+    uiConfId?: string;
+    ks: string;
+    log?: Log;
+  }
 
-    export interface Env {
-      serviceUrl: string;
-      cdnUrl?: string;
-      statsServiceUrl?: string;
-      liveStatsServiceUrl?: string;
-      analyticsServiceUrl?: string;
-      apiFeatures?: APIFeatures;
-    }
+  export interface Env {
+    serviceUrl: string;
+    cdnUrl?: string;
+    statsServiceUrl?: string;
+    liveStatsServiceUrl?: string;
+    analyticsServiceUrl?: string;
+    apiFeatures?: APIFeatures;
+  }
 
-    export interface APIFeatures {
-      entryRedirect?: string;
-    }
+  export interface APIFeatures {
+    entryRedirect?: string;
+  }
 
-    export interface Session {
-      userId?: string;
-      isAnonymous?: boolean;
-      partnerId?: string;
-      uiConfId?: string;
-      ks?: string;
-      id?: string;
-    }
+  export interface Session {
+    userId?: string;
+    isAnonymous?: boolean;
+    partnerId?: string;
+    uiConfId?: string;
+    ks?: string;
+    id?: string;
+  }
 
-    export interface Sources {
-      options?: Network;
-      hls?: Dash[];
-      dash?: Dash[];
-      progressive?: Progressive[];
-      id: string;
-      duration?: number;
-      type: EntryTypes;
-      poster?: string;
-      dvr?: boolean;
-      vr?: null;
-      metadata?: Metadata;
-      captions?: any[];
-    }
+  export interface Sources {
+    options?: Network;
+    hls?: Dash[];
+    dash?: Dash[];
+    progressive?: Progressive[];
+    id: string;
+    duration?: number;
+    type: EntryTypes;
+    poster?: string;
+    dvr?: boolean;
+    vr?: null;
+    metadata?: Metadata;
+    captions?: any[];
+  }
 
-    export interface Dash {
-      id?: string;
-      url?: string;
-      mimetype?: string;
-    }
+  export interface Dash {
+    id?: string;
+    url?: string;
+    mimetype?: string;
+  }
 
-    export interface Metadata {
-      name?: string;
-      description?: string;
-      tags?: string;
-    }
+  export interface Metadata {
+    name?: string;
+    description?: string;
+    tags?: string;
+  }
 
-    export interface Progressive {
-      id?: string;
-      url?: string;
-      mimetype?: string;
-      bandwidth?: number;
-      width?: number;
-      height?: number;
-      label?: string;
-    }
+  export interface Progressive {
+    id?: string;
+    url?: string;
+    mimetype?: string;
+    bandwidth?: number;
+    width?: number;
+    height?: number;
+    label?: string;
+  }
 
-    export interface UI {
-      stargetId?: string;
-      debug?: boolean;
-      log?: Log;
-    }
-
-    export interface Contrib {
-      ui: {
-        fonts: ContribFonts;
-        [key: string]: {
-          presetAreasMapping: ContribPresetAreasMapping;
-        };
-      };
-    }
-
-    export interface ContribFonts {
-      fontFamily: string;
-      testingFont?: TestingFontOptions;
-      downloadData?: {
-        name: string;
-        url: string;
-      };
-    }
-
-    export interface TestingFontOptions {
-      text: string;
-      size: number;
-      fontName: string;
-    }
-
-    export interface ContribPresetAreasMapping {
-      [key: string]: {
-        [key: string]: string;
-      };
-    }
+  export interface UI {
+    stargetId?: string;
+    debug?: boolean;
+    log?: Log;
   }
 }

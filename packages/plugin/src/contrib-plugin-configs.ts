@@ -6,7 +6,8 @@ export class ContribPluginConfigs<TPluginConfig extends Record<string, any>> {
     private _corePlugin: CorePlugin
   ) {}
 
-  get playerConfig(): KalturaPlayerTypes.PlayerConfig {
+  get playerConfig(): KalturaPlayerTypes.PlayerConfig &
+    KalturaPlayerContribTypes.ContribConfig {
     return this._player.config;
   }
 

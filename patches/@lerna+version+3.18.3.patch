@@ -1,0 +1,14 @@
+diff --git a/node_modules/@lerna/version/index.js b/node_modules/@lerna/version/index.js
+index 80bd8db..765a263 100644
+--- a/node_modules/@lerna/version/index.js
++++ b/node_modules/@lerna/version/index.js
+@@ -103,6 +103,9 @@ class VersionCommand extends Command {
+       this.logger.info("current version", this.project.version);
+     }
+ 
++    this.logger.warn("Lerna was altered locally. Version command will check for tags with pattern v*.*.*", this.project.version);
++    this.execOpts.match = "v*.*.*";
++
+     if (this.requiresGit) {
+       // git validation, if enabled, should happen before updates are calculated and versions picked
+       if (!isAnythingCommitted(this.execOpts)) {

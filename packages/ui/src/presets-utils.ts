@@ -1,6 +1,6 @@
-import ContribPresetAreasMapping = KalturaPlayerTypes.PlayerConfig.ContribPresetAreasMapping;
 import PlayerConfig = KalturaPlayerTypes.PlayerConfig;
 import {ObjectUtils} from '@playkit-js-contrib/common';
+import ContribPresetAreasMapping = KalturaPlayerContribTypes.ContribPresetAreasMapping;
 
 export interface GroupPresetAreasOptions {
   managerName: string;
@@ -36,17 +36,15 @@ export class PresetsUtils {
 
   private static getPresetAreasMapping(
     managerName: string,
-    config: PlayerConfig,
-    defaults: ContribPresetAreasMapping
+    config: KalturaPlayerTypes.PlayerConfig &
+      KalturaPlayerContribTypes.ContribConfig,
+    defaults: KalturaPlayerContribTypes.ContribPresetAreasMapping
   ): ContribPresetAreasMapping {
-    const configMappings =
-      config &&
-      config.contrib &&
-      config.contrib.ui &&
-      config.contrib.ui[managerName] &&
-      config.contrib.ui[managerName].presetAreasMapping
-        ? config.contrib.ui[managerName].presetAreasMapping
-        : {};
+    const configMappings = ObjectUtils.get(
+      config,
+      `contrib.ui.${managerName}.presetAreasMapping`,
+      defaults
+    );
     return ObjectUtils.explicitFlatMerge<ContribPresetAreasMapping>(
       defaults,
       configMappings

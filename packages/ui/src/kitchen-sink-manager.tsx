@@ -10,6 +10,7 @@ import {PresetManager} from './preset-manager';
 import {
   ArrayUtils,
   EventsManager,
+  ObjectUtils,
   PlayerContribRegistry,
 } from '@playkit-js-contrib/common';
 import {KitchenSinkContainer} from './components/kitchen-sink-container/kitchen-sink-container';
@@ -67,6 +68,13 @@ interface KitchenSinkPanel {
   activeItem: KitchenSinkItem | null;
 }
 
+const DefaultKitchenSinkConfig: KalturaPlayerContribTypes.KitchenSinkConfig = {
+  theme: {
+    backgroundColor: 'rgba(0, 0, 0, .8)',
+    blur: '16px',
+  },
+};
+
 export class KitchenSinkManager {
   static fromPlayer(
     playerContribRegistry: PlayerContribRegistry,
@@ -88,6 +96,7 @@ export class KitchenSinkManager {
 
   private _options: KitchenSinkManagerOptions;
   private _kitchenSinkAdapterRef: KitchenSinkAdapter | null = null;
+  private _kitchenSinkConfig: KalturaPlayerContribTypes.KitchenSinkConfig;
 
   on: EventsManager<KitchenSinkEvents>['on'] = this._events.on.bind(
     this._events
@@ -98,6 +107,16 @@ export class KitchenSinkManager {
 
   constructor(private options: KitchenSinkManagerOptions) {
     this._options = options;
+
+    const managerConfig = ObjectUtils.get(
+      this._options.corePlayer,
+      'config.contrib.ui.kitchenSink',
+      DefaultKitchenSinkConfig
+    );
+
+    this._kitchenSinkConfig = ObjectUtils.mergeDefaults<
+      KalturaPlayerContribTypes.KitchenSinkConfig
+    >({}, DefaultKitchenSinkConfig, managerConfig);
 
     const groupedPresets = PresetsUtils.groupPresetAreasByType({
       managerName: 'kitchenSink',
@@ -139,6 +158,7 @@ export class KitchenSinkManager {
       activate: this._activateItem,
       deactivate: this._deactivateItem,
       eventManager: this._events,
+      kitchenSinkConfig: this._kitchenSinkConfig,
     };
 
     const relevantPanel = this._panels[data.position];
