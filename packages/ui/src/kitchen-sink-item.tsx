@@ -12,7 +12,6 @@ import {
   KitchenSinkEvents,
 } from './kitchen-sink-manager';
 import {KitchenSink} from './components/kitchen-sink';
-import KitchenSinkConfig = KalturaPlayerContribTypes.KitchenSinkConfig;
 
 export interface KitchenSinkItemOptions {
   data: KitchenSinkItemData;
@@ -20,7 +19,7 @@ export interface KitchenSinkItemOptions {
   activate: (item: KitchenSinkItem) => void;
   deactivate: (item: KitchenSinkItem) => void;
   eventManager: EventsManager<KitchenSinkEvents>;
-  kitchenSinkConfig: KitchenSinkConfig;
+  kitchenSinkConfig: KalturaPlayerContribTypes.KitchenSinkConfig;
 }
 
 export interface KitchenSinkItemRenderProps {

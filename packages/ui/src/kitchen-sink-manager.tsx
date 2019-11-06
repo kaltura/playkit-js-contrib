@@ -18,7 +18,6 @@ import {KitchenSinkContainer} from './components/kitchen-sink-container/kitchen-
 import {KitchenSinkAdapter} from './components/kitchen-sink-adapter';
 import {ManagedComponent} from './components/managed-component';
 import {UpperBarItem} from './upper-bar-item';
-import KitchenSinkConfig = KalturaPlayerContribTypes.KitchenSinkConfig;
 
 export interface KitchenSinkManagerOptions {
   corePlayer: KalturaPlayerTypes.Player;
@@ -54,9 +53,9 @@ interface KitchenSinkPanel {
   activeItem: KitchenSinkItem | null;
 }
 
-const DefaultKitchenSinkConfig: KitchenSinkConfig = {
+const DefaultKitchenSinkConfig: KalturaPlayerContribTypes.KitchenSinkConfig = {
   theme: {
-    backgroundColor: 'rgba(0, 0, 0, .7)',
+    backgroundColor: 'rgba(0, 0, 0, .8)',
     blur: '16px',
   },
 };
@@ -82,7 +81,7 @@ export class KitchenSinkManager {
 
   private _options: KitchenSinkManagerOptions;
   private _kitchenSinkAdapterRef: KitchenSinkAdapter | null = null;
-  private _kitchenSinkConfig: KitchenSinkConfig;
+  private _kitchenSinkConfig: KalturaPlayerContribTypes.KitchenSinkConfig;
 
   on: EventsManager<KitchenSinkEvents>['on'] = this._events.on.bind(
     this._events
@@ -102,11 +101,9 @@ export class KitchenSinkManager {
       options.corePlayer.config.contrib.ui.kitchenSink
         ? options.corePlayer.config.contrib.ui.kitchenSink
         : {};
-    this._kitchenSinkConfig = ObjectUtils.mergeDefaults<KitchenSinkConfig>(
-      {},
-      DefaultKitchenSinkConfig,
-      playerConfig
-    );
+    this._kitchenSinkConfig = ObjectUtils.mergeDefaults<
+      KalturaPlayerContribTypes.KitchenSinkConfig
+    >({}, DefaultKitchenSinkConfig, playerConfig);
 
     this.options.presetManager.add({
       label: 'kitchen-sink-right',

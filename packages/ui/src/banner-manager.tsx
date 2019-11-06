@@ -50,7 +50,7 @@ const MinDuration: number = 5 * 1000;
 
 const DefaultBannerConfig: BannerConfig = {
   theme: {
-    backgroundColor: 'rgba(0, 0, 0, .7)',
+    backgroundColor: 'rgba(0, 0, 0, .8)',
     blur: '16px',
   },
 };
@@ -99,7 +99,7 @@ export class BannerManager {
       position: FloatingPositions.InteractiveArea,
       renderContent: this._createRenderBanner(props, {
         onClose: this._handleCloseEvent.bind(this),
-        bannerConfig: this._bannerConfig,
+        theme: this._bannerConfig.theme,
       }),
     });
     if (props.autoClose) {
@@ -122,11 +122,11 @@ export class BannerManager {
 
   private _createRenderBanner(
     {content, renderContent}: BannerOptions,
-    {onClose, bannerConfig}: BannerContainerProps
+    {onClose, theme}: BannerContainerProps
   ) {
     function _renderContent(floatingItemProps: FloatingItemProps) {
       return (
-        <BannerContainer onClose={onClose} bannerConfig={bannerConfig}>
+        <BannerContainer onClose={onClose} theme={theme}>
           {renderContent ? (
             renderContent(content, floatingItemProps)
           ) : (
