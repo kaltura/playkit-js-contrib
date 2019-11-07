@@ -23,6 +23,11 @@ const playerRepoDistPath = path.resolve(playerRepoPath, 'dist');
 const playerRepoPackageJsonPath = path.resolve(playerRepoPath, 'package.json');
 const playerRepoNodeModules = path.resolve(workspacePath, playerRepoName, 'node_modules');
 
+const playerProviderRepoName = 'playkit-js-providers';
+const playerProviderRepoLibraryName = playerProviderRepoName;
+const playerProviderRepoPath = path.resolve(workspacePath, playerProviderRepoName);
+const playerProviderRepoPackageJsonPath = path.resolve(playerProviderRepoPath, 'package.json');
+
 const playerUIRepoName = 'playkit-js-ui';
 const playerUIRepoLibraryName = `@playkit-js/${playerUIRepoName}`;
 const playerUIRepoPath = path.resolve(workspacePath, playerUIRepoName);
@@ -66,14 +71,23 @@ function gitClone(name, branch) {
 
 function verifyRepositoriesVersions() {
   const playerPackageJson = fs.readJsonSync(playerRepoPackageJsonPath);
-  const playerVersion = playerPackageJson['dependencies'][playerUIRepoLibraryName];
+  const expectedUIVersion = playerPackageJson['dependencies'][playerUIRepoLibraryName];
+  const expectedProviderVersion = playerPackageJson['dependencies'][playerProviderRepoLibraryName];
 
   const playerUIPackageJson = fs.readJsonSync(playerUIRepoPackageJsonPath);
   const playerUIVersion = playerUIPackageJson.version;
 
+  const playerProviderPackageJson = fs.readJsonSync(playerProviderRepoPackageJsonPath);
+  const playerProviderVersion = playerProviderPackageJson.version;
+
   console.log(chalk.blue(`verify player ui library version`));
-  if (!semver.satisfies(playerUIVersion, playerVersion)) {
-    throw new Error(`player ui library version '${playerUIVersion}' doesn't satisfy the required player dependency '${playerVersion}'`);
+  if (!semver.satisfies(playerUIVersion, expectedUIVersion)) {
+    throw new Error(`player ui library version '${playerUIVersion}' doesn't satisfy the required player dependency '${expectedUIVersion}'`);
+  }
+
+  console.log(chalk.blue(`verify player provider library version`));
+  if (expectedProviderVersion.indexOf(playerProviderVersion) === -1) {
+    throw new Error(`player ui library version '${playerProviderVersion}' doesn't satisfy the required player dependency '${expectedProviderVersion}'`);
   }
 }
 
@@ -87,6 +101,14 @@ function installDependencies() {
     {cwd: playerUIRepoPath }
   );
 
+  console.log(chalk.blue('install player provider dependencies'));
+  runSpawn(
+    'yarn',
+    [
+    ],
+    {cwd: playerProviderRepoPath }
+  );
+
   console.log(chalk.blue('install player dependencies'));
   runSpawn(
     'yarn',
@@ -97,16 +119,29 @@ function installDependencies() {
 }
 
 function symlinkDependencies() {
-  const destination = path.resolve(playerRepoNodeModules, playerUIRepoLibraryName);
+  const uiDestination = path.resolve(playerRepoNodeModules, playerUIRepoLibraryName);
 
   console.log(chalk.blue('symlink player ui into player'));
-  fs.removeSync(destination);
+  fs.removeSync(uiDestination);
   runSpawn(
     'ln',
     [
       '-s',
       playerUIRepoPath,
-      destination,
+      uiDestination,
+    ]
+  );
+
+  const providerDestination = path.resolve(playerRepoNodeModules, playerProviderRepoLibraryName);
+
+  console.log(chalk.blue('symlink player provider into player'));
+  fs.removeSync(providerDestination);
+  runSpawn(
+    'ln',
+    [
+      '-s',
+      playerProviderRepoPath,
+      providerDestination,
     ]
   );
 }
@@ -139,6 +174,14 @@ function buildPlayer() {
     ],
     {cwd: playerUIRepoPath });
 
+  console.log(chalk.blue('build player provider library'));
+  runSpawn(
+    'yarn',
+    [
+      'build'
+    ],
+    {cwd: playerProviderRepoPath });
+
   console.log(chalk.blue('build player'));
   runSpawn(
     'yarn',
@@ -170,11 +213,15 @@ function prepareLocalVersion() {
   const {stdout: playerUIHash} = runSpawn('git', ['rev-parse', 'HEAD'], {cwd: playerUIRepoPath,
     stdio: 'pipe'});
 
+  const {stdout: playerProviderHash} = runSpawn('git', ['rev-parse', 'HEAD'], {cwd: playerProviderRepoPath,
+    stdio: 'pipe'});
+
   const contribGitHashesPath = path.resolve(contribDistPath, `${playerVersion}-sha1.json`);
   const contribGitHashes = {
     github: {
       [playerRepoName]: playerHash.toString().trim('\\n'),
-      [playerUIRepoName]: playerUIHash.toString().trim('\\n')
+      [playerUIRepoName]: playerUIHash.toString().trim('\\n'),
+      [playerProviderRepoName]: playerProviderHash.toString().trim('\\n')
     }
   };
 
@@ -226,11 +273,12 @@ function verifyEnvironment() {
 
 async function cloneRepositories() {
 
-  const {playerUIRepoBranch, playerRepoTag} = await promptParameters();
+  const {playerUIRepoBranch, playerRepoTag, playerProviderRepoBranch} = await promptParameters();
   console.log(chalk.blue('create production workspace'));
   fs.emptyDirSync(workspacePath);
   gitClone(playerRepoName, playerRepoTag);
   gitClone(playerUIRepoName, playerUIRepoBranch);
+  gitClone(playerProviderRepoName, playerProviderRepoBranch);
 }
 
 async function promptWelcome() {
@@ -265,9 +313,29 @@ async function promptParameters() {
         type: 'input',
         message: 'what is the branch name of requested repository kaltura/playkit-js-ui?',
         default: 'FEC-9282-contrib'
+      }, {
+        name: 'playerProviderRepoBranch',
+        type: 'input',
+        message: 'what is the branch name of requested repository kaltura/playkit-js-ui?',
+        default: ''
       }]
   );
   return parameters;
+}
+
+function fixEsLintIssueInProvider() {
+  const filename = path.resolve(playerProviderRepoPath, 'webpack.config.js');
+  console.log(chalk.blue(`disable eslint in provider ('${filename}')`));
+
+  const data = fs.readFileSync(filename, 'utf8');
+  let newData = data.split('\n');
+  const spliced = newData.splice(45, 8).join('').trim().replace(/[ \t]/g, '');
+
+  if (spliced !== '{loader:\'eslint-loader\',options:{rules:{semi:0}}}') {
+    throw new Error('cannot alter provider library webpack, it was modified since last reviewed');
+  }
+
+  fs.writeFileSync(filename, newData.join('\n'));
 }
 
 async function promptContribVersion(defaultValue) {
@@ -296,6 +364,7 @@ async function promptContribVersion(defaultValue) {
     installDependencies();
     symlinkDependencies();
     await alterPlayerVersion();
+    fixEsLintIssueInProvider();
     buildPlayer();
     prepareLocalVersion();
     const playerContribVersion = getPlayerVersion();
