@@ -27,7 +27,7 @@ const args = process.argv.splice(2);
     
     To commit changes to github run:
     {bold git commit -am "chore(release): publish ${packageVersion}}"
-    {bold git tag -a v${packageVersion} -m "v${packageVersion}}"}
+    {bold git tag -a v${packageVersion} -m "v${packageVersion}"}
     {bold git push --follow-tags}  
   `);
 })();
