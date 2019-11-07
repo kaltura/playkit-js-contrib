@@ -77,25 +77,31 @@ export class ObjectUtils {
    * source properties will override all equivalent properties in target. null or empty objects properties in source
    * will cause the removal of these properties in target.
    * all other data will be merged
-   * @param target
+   * @param initialObject
    * @param source
    */
   public static explicitFlatMerge<T extends Record<string, any>>(
-    target: Partial<T>,
+    initialObject: Partial<T>,
     source: Partial<T>
   ): Partial<T> {
-    const result = {...target};
+    const result = {...initialObject};
     Object.keys(source).forEach(key => {
       if (source[key] === null || Object.keys(source[key]).length === 0) {
         delete result[key];
       } else {
+        // @ts-ignore
+        // https://github.com/microsoft/TypeScript/issues/31661
         result[key] = source[key];
       }
     });
     return result;
   }
 
-  public static get(obj: any, path: string, defaults: any): any {
+  public static get(
+    obj: Record<string, any>,
+    path: string,
+    defaultValue: any
+  ): unknown {
     function stringToPath(path: string) {
       const output = [];
       // Split to an array with dot notation
@@ -119,7 +125,7 @@ export class ObjectUtils {
     // For each item in the path, dig into the object
     for (let i = 0; i < pathArray.length; i++) {
       // If the item isn't found, return the default (or null)
-      if (!current[pathArray[i]]) return defaults;
+      if (!current[pathArray[i]]) return defaultValue;
 
       // Otherwise, update the current value
       current = current[pathArray[i]];

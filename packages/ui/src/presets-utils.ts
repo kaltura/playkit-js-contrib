@@ -44,7 +44,7 @@ export class PresetsUtils {
       config,
       `contrib.ui.${managerName}.presetAreasMapping`,
       defaults
-    );
+    ) as Partial<KalturaPlayerContribTypes.ContribPresetAreasMapping>;
     return ObjectUtils.explicitFlatMerge<ContribPresetAreasMapping>(
       defaults,
       configMappings
