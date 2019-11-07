@@ -25,19 +25,6 @@ export interface KitchenSinkManagerOptions {
   upperBarManager: UpperBarManager;
 }
 
-const ReservedPresets = {
-  Playback: {
-    PlayerArea: 'PlayerArea',
-    SidePanelRight: 'SidePanelRight',
-    SidePanelBottom: 'SidePanelBottom',
-  },
-  Live: {
-    PlayerArea: 'PlayerArea',
-    SidePanelRight: 'SidePanelRight',
-    SidePanelBottom: 'SidePanelBottom',
-  },
-};
-
 const acceptableTypes = ['PlayerArea', 'SidePanelRight', 'SidePanelBottom'];
 
 export enum ItemActiveStates {
@@ -72,6 +59,18 @@ const DefaultKitchenSinkConfig: KalturaPlayerContribTypes.KitchenSinkConfig = {
   theme: {
     backgroundColor: 'rgba(0, 0, 0, .8)',
     blur: '16px',
+  },
+  presetAreasMapping: {
+    Playback: {
+      PlayerArea: 'PlayerArea',
+      SidePanelRight: 'SidePanelRight',
+      SidePanelBottom: 'SidePanelBottom',
+    },
+    Live: {
+      PlayerArea: 'PlayerArea',
+      SidePanelRight: 'SidePanelRight',
+      SidePanelBottom: 'SidePanelBottom',
+    },
   },
 };
 
@@ -112,16 +111,16 @@ export class KitchenSinkManager {
       this._options.corePlayer,
       'config.contrib.ui.kitchenSink',
       DefaultKitchenSinkConfig
-    );
+    ) as Partial<KalturaPlayerContribTypes.KitchenSinkConfig>;
 
     this._kitchenSinkConfig = ObjectUtils.mergeDefaults<
       KalturaPlayerContribTypes.KitchenSinkConfig
-    >({}, DefaultKitchenSinkConfig, managerConfig);
+    >({}, DefaultKitchenSinkConfig, managerConfig, {
+      explicitMerge: ['presetAreasMapping'],
+    });
 
     const groupedPresets = PresetsUtils.groupPresetAreasByType({
-      managerName: 'kitchenSink',
-      config: this._options.corePlayer.config,
-      defaults: ReservedPresets,
+      presetAreasMapping: this._kitchenSinkConfig.presetAreasMapping,
       acceptableTypes,
     });
 

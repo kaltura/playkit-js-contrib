@@ -5,28 +5,31 @@ import {
   FloatingPositions,
 } from './floating-item-data';
 import {PresetManager} from './preset-manager';
-import {PlayerContribRegistry} from '@playkit-js-contrib/common';
+import {ObjectUtils, PlayerContribRegistry} from '@playkit-js-contrib/common';
 import {ComponentChild, h} from 'preact';
 import {PlayerSize, VideoSize} from './common.types';
 import {getPlayerSize, getVideoSize} from './player-utils';
 import {ManagedComponent} from './components/managed-component';
 import {PresetsUtils} from './presets-utils';
+import PresetAreasConfig = KalturaPlayerContribTypes.PresetAreasConfig;
 
 export interface FloatingManagerOptions {
   corePlayer: KalturaPlayerTypes.Player;
   presetManager: PresetManager;
 }
 
-const ReservedPresets = {
-  Playback: {
-    VideoArea: 'VideoArea',
-    PresetArea: 'PresetArea',
-    InteractiveArea: 'InteractiveArea',
-  },
-  Live: {
-    VideoArea: 'VideoArea',
-    PresetArea: 'PresetArea',
-    InteractiveArea: 'InteractiveArea',
+const DefaultFloatingConfig = {
+  presetAreasMapping: {
+    Playback: {
+      VideoArea: 'VideoArea',
+      PresetArea: 'PresetArea',
+      InteractiveArea: 'InteractiveArea',
+    },
+    Live: {
+      VideoArea: 'VideoArea',
+      PresetArea: 'PresetArea',
+      InteractiveArea: 'InteractiveArea',
+    },
   },
 };
 
@@ -65,13 +68,26 @@ export class FloatingManager {
     },
   };
 
+  private _floatingConfig: PresetAreasConfig;
+
   constructor(private options: FloatingManagerOptions) {
     this._options = options;
 
+    const managerConfig = ObjectUtils.get(
+      this._options.corePlayer,
+      'config.contrib.ui.floating',
+      DefaultFloatingConfig
+    ) as Partial<PresetAreasConfig>;
+
+    this._floatingConfig = ObjectUtils.mergeDefaults<PresetAreasConfig>(
+      {},
+      DefaultFloatingConfig,
+      managerConfig,
+      {explicitMerge: ['presetAreasMapping']}
+    );
+
     const groupedPresets = PresetsUtils.groupPresetAreasByType({
-      managerName: 'floating',
-      config: this._options.corePlayer.config,
-      defaults: ReservedPresets,
+      presetAreasMapping: this._floatingConfig.presetAreasMapping,
       acceptableTypes,
     });
 

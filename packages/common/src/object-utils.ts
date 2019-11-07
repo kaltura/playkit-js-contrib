@@ -46,31 +46,43 @@ export class ObjectUtils {
    */
   public static mergeDeep<T extends Record<string, any>>(
     target: Partial<T>,
-    ...sources: Partial<T>[]
+    sources: Partial<T>[],
+    extra?: {explicitMerge?: string[]}
   ): Partial<T> {
     if (!sources.length) {
       return target;
     }
+
+    const explicitMerge: string[] = (extra ? extra.explicitMerge : null) || [];
     const source = sources.shift();
     if (ObjectUtils.isObject(target) && ObjectUtils.isObject(source)) {
       for (const key in source) {
         if (ObjectUtils.isObject(source[key])) {
           if (!target[key]) Object.assign(target, {[key]: {}});
-          ObjectUtils.mergeDeep(target[key], source[key]);
+
+          if (explicitMerge.indexOf(key) !== -1) {
+            target[key] = ObjectUtils.explicitFlatMerge<any>(
+              target[key],
+              source[key]
+            );
+          } else {
+            ObjectUtils.mergeDeep(target[key], [source[key]], extra);
+          }
         } else {
           Object.assign(target, {[key]: source[key]});
         }
       }
     }
-    return ObjectUtils.mergeDeep(target, ...sources);
+    return ObjectUtils.mergeDeep(target, sources, extra);
   }
 
   public static mergeDefaults<T extends Record<string, any>>(
     target: Partial<T>,
     defaults: T,
-    ...additional: Partial<T>[]
+    source: Partial<T>,
+    extra?: {explicitMerge?: string[]}
   ): T {
-    return ObjectUtils.mergeDeep(target, defaults, ...additional) as T;
+    return ObjectUtils.mergeDeep(target, [defaults, source], extra) as T;
   }
 
   /**
@@ -83,7 +95,7 @@ export class ObjectUtils {
   public static explicitFlatMerge<T extends Record<string, any>>(
     initialObject: Partial<T>,
     source: Partial<T>
-  ): Partial<T> {
+  ): any {
     const result = {...initialObject};
     Object.keys(source).forEach(key => {
       if (source[key] === null || Object.keys(source[key]).length === 0) {

@@ -4,9 +4,7 @@ declare namespace KalturaPlayerContribTypes {
       ui?: {
         kitchenSink: Partial<KitchenSinkConfig>;
         fonts: Partial<ContribFonts>;
-        [key: string]: {
-          presetAreasMapping: ContribPresetAreasMapping;
-        };
+        [key: string]: PresetAreasConfig;
       };
     };
   }
@@ -23,6 +21,10 @@ declare namespace KalturaPlayerContribTypes {
   export interface KitchenSinkConfig {
     theme: ContribTheme;
     presetAreasMapping?: ContribPresetAreasMapping;
+  }
+
+  export interface PresetAreasConfig {
+    presetAreasMapping: ContribPresetAreasMapping;
   }
 
   export interface BannerConfig {

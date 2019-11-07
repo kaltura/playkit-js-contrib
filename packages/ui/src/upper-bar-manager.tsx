@@ -3,21 +3,28 @@ import {UpperBarItem} from './upper-bar-item';
 import {UpperBarItemData} from './upper-bar-item-data';
 import {UpperBar} from './components/upper-bar';
 import {PresetManager} from './preset-manager';
-import {ArrayUtils, PlayerContribRegistry} from '@playkit-js-contrib/common';
+import {
+  ArrayUtils,
+  ObjectUtils,
+  PlayerContribRegistry,
+} from '@playkit-js-contrib/common';
 import {ManagedComponent} from './components/managed-component';
 import {PresetsUtils} from './presets-utils';
+import PresetAreasConfig = KalturaPlayerContribTypes.PresetAreasConfig;
 
 export interface UpperBarManagerOptions {
   corePlayer: KalturaPlayerTypes.Player;
   presetManager: PresetManager;
 }
 
-const ReservedPresets = {
-  Playback: {
-    TopBarRightControls: 'TopBarRightControls',
-  },
-  Live: {
-    TopBarRightControls: 'TopBarRightControls',
+const DefaultUpperBarConfig = {
+  presetAreasMapping: {
+    Playback: {
+      TopBarRightControls: 'TopBarRightControls',
+    },
+    Live: {
+      TopBarRightControls: 'TopBarRightControls',
+    },
   },
 };
 
@@ -36,14 +43,26 @@ export class UpperBarManager {
   private _rootElement: ManagedComponent | null;
   private _items: UpperBarItem[] = [];
   private _options: UpperBarManagerOptions;
+  private _upperBarConfig: PresetAreasConfig;
 
   constructor(options: UpperBarManagerOptions) {
     this._options = options;
 
+    const managerConfig = ObjectUtils.get(
+      this._options.corePlayer,
+      'config.contrib.ui.upperBar',
+      DefaultUpperBarConfig
+    ) as Partial<PresetAreasConfig>;
+
+    this._upperBarConfig = ObjectUtils.mergeDefaults<PresetAreasConfig>(
+      {},
+      DefaultUpperBarConfig,
+      managerConfig,
+      {explicitMerge: ['presetAreasMapping']}
+    );
+
     const groupedPresets = PresetsUtils.groupPresetAreasByType({
-      managerName: 'upperBar',
-      config: this._options.corePlayer.config,
-      defaults: ReservedPresets,
+      presetAreasMapping: this._upperBarConfig.presetAreasMapping,
       acceptableTypes,
     });
 
