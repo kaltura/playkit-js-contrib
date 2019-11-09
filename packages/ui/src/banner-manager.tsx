@@ -48,7 +48,7 @@ const MinPlayerWidth = 480;
 const DefaultDuration: number = 60 * 1000;
 const MinDuration: number = 5 * 1000;
 
-const DefaultBannerConfig: BannerConfig = {
+const defaultBannerConfig: BannerConfig = {
   theme: {
     backgroundColor: 'rgba(0, 0, 0, .8)',
     blur: '16px',
@@ -77,12 +77,12 @@ export class BannerManager {
     const managerConfig = ObjectUtils.get(
       this._options.corePlayer,
       'config.contrib.ui.banner',
-      DefaultBannerConfig
+      defaultBannerConfig
     ) as Partial<BannerConfig>;
 
     this._bannerConfig = ObjectUtils.mergeDefaults<BannerConfig>(
       {},
-      DefaultBannerConfig,
+      defaultBannerConfig,
       managerConfig
     );
   }

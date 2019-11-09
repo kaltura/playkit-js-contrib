@@ -14,6 +14,6 @@ declare namespace KalturaPlayerTypes {
     currentTime: number;
     duration: number;
     config: KalturaPlayerTypes.PlayerConfig &
-      KalturaPlayerContribTypes.ContribConfig;
+      DeepPartial<KalturaPlayerContribTypes.ContribConfig>;
   }
 }

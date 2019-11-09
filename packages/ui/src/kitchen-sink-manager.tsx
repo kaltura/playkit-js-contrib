@@ -55,7 +55,7 @@ interface KitchenSinkPanel {
   activeItem: KitchenSinkItem | null;
 }
 
-const DefaultKitchenSinkConfig: KalturaPlayerContribTypes.KitchenSinkConfig = {
+const defaultKitchenSinkConfig: KalturaPlayerContribTypes.KitchenSinkConfig = {
   theme: {
     backgroundColor: 'rgba(0, 0, 0, .8)',
     blur: '16px',
@@ -110,12 +110,12 @@ export class KitchenSinkManager {
     const managerConfig = ObjectUtils.get(
       this._options.corePlayer,
       'config.contrib.ui.kitchenSink',
-      DefaultKitchenSinkConfig
+      defaultKitchenSinkConfig
     ) as Partial<KalturaPlayerContribTypes.KitchenSinkConfig>;
 
     this._kitchenSinkConfig = ObjectUtils.mergeDefaults<
       KalturaPlayerContribTypes.KitchenSinkConfig
-    >({}, DefaultKitchenSinkConfig, managerConfig, {
+    >({}, defaultKitchenSinkConfig, managerConfig, {
       explicitMerge: ['presetAreasMapping'],
     });
 
