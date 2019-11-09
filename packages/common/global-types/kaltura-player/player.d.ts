@@ -10,6 +10,8 @@ declare namespace KalturaPlayerTypes {
     dispatchEvent(event: FakeEvent): boolean;
     addEventListener(type: string, listener: CoreEventListener): void;
     removeEventListener: (type: string, listener: CoreEventListener) => void;
+    _detachMediaSource(): void;
+    _attachMediaSource(): void;
     Event: Record<string, string>;
     currentTime: number;
     duration: number;
