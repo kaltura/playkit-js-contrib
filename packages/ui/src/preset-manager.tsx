@@ -1,4 +1,3 @@
-import {PlayerContribRegistry} from '@playkit-js-contrib/common';
 import {PresetItemData} from './preset-item-data';
 import {KalturaPlayerPresetComponent, PresetItem} from './preset-item';
 
@@ -6,16 +5,7 @@ export interface PresetManagerOptions {
   corePlayer: KalturaPlayerTypes.Player;
 }
 
-const ResourceToken = 'PresetManager-v1';
-
 export class PresetManager {
-  static fromPlayer(
-    playerContribRegistry: PlayerContribRegistry,
-    creator: () => PresetManager
-  ) {
-    return playerContribRegistry.register(ResourceToken, 1, creator);
-  }
-
   private _isLocked = false;
   private _options: PresetManagerOptions;
   private _components: PresetItem[] = [];

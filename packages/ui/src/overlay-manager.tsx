@@ -2,7 +2,6 @@ import {ComponentChild, h} from 'preact';
 import {OverlayItem} from './overlay-item';
 import {OverlayItemData, OverlayPositions} from './overlay-item-data';
 import {PresetManager} from './preset-manager';
-import {PlayerContribRegistry} from '@playkit-js-contrib/common';
 import {PresetNames} from './preset-item-data';
 import {ManagedComponent} from './components/managed-component';
 import {OverlayItemContainer} from './components/overlay-item-container';
@@ -11,16 +10,7 @@ export interface OverlayManagerOptions {
   presetManager: PresetManager;
 }
 
-const ResourceToken = 'OverlayManager-v1';
-
 export class OverlayManager {
-  static fromPlayer(
-    playerContribRegistry: PlayerContribRegistry,
-    creator: () => OverlayManager
-  ) {
-    return playerContribRegistry.register(ResourceToken, 1, creator);
-  }
-
   private _items: Record<OverlayPositions, OverlayItem[]> = {
     [OverlayPositions.PlayerArea]: [],
   };

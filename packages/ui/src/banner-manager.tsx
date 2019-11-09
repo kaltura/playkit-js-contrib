@@ -1,6 +1,6 @@
 import {FloatingItem} from './floating-item';
 import {FloatingManager} from './floating-manager';
-import {ObjectUtils, PlayerContribRegistry} from '@playkit-js-contrib/common';
+import {ObjectUtils} from '@playkit-js-contrib/common';
 import {
   FloatingItemProps,
   FloatingPositions,
@@ -43,7 +43,6 @@ export enum VisibilityMode {
   HIDDEN = 'HIDDEN',
 }
 
-const ResourceToken = 'BannerManager-v1';
 const MinPlayerWidth = 480;
 const DefaultDuration: number = 60 * 1000;
 const MinDuration: number = 5 * 1000;
@@ -59,13 +58,6 @@ const DefaultBannerConfig: BannerConfig = {
  * banner manager manages the display (add / remove) of a single banner in the player.
  */
 export class BannerManager {
-  static fromPlayer(
-    playerContribRegistry: PlayerContribRegistry,
-    creator: () => BannerManager
-  ) {
-    return playerContribRegistry.register(ResourceToken, 1, creator);
-  }
-
   private _options: BannerManagerOptions;
   private _floatingItem: FloatingItem | null = null;
   private _timerSubscription: any | undefined = undefined;

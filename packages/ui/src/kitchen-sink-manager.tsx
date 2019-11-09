@@ -11,7 +11,6 @@ import {
   ArrayUtils,
   EventsManager,
   ObjectUtils,
-  PlayerContribRegistry,
 } from '@playkit-js-contrib/common';
 import {PresetNames} from './preset-item-data';
 import {KitchenSinkContainer} from './components/kitchen-sink-container/kitchen-sink-container';
@@ -42,8 +41,6 @@ export interface ItemActiveStateChangeEvent {
 
 export type KitchenSinkEvents = ItemActiveStateChangeEvent;
 
-const ResourceToken = 'KitchenSinkManager-v1';
-
 interface KitchenSinkPanel {
   ref: ManagedComponent | null;
   items: {
@@ -61,13 +58,6 @@ const DefaultKitchenSinkConfig: KalturaPlayerContribTypes.KitchenSinkConfig = {
 };
 
 export class KitchenSinkManager {
-  static fromPlayer(
-    playerContribRegistry: PlayerContribRegistry,
-    creator: () => KitchenSinkManager
-  ) {
-    return playerContribRegistry.register(ResourceToken, 1, creator);
-  }
-
   private _events: EventsManager<KitchenSinkEvents> = new EventsManager<
     KitchenSinkEvents
   >();

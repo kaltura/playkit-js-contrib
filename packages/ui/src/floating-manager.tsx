@@ -5,7 +5,6 @@ import {
   FloatingPositions,
 } from './floating-item-data';
 import {PresetManager} from './preset-manager';
-import {PlayerContribRegistry} from '@playkit-js-contrib/common';
 import {PresetNames} from './preset-item-data';
 import {ComponentChild, h} from 'preact';
 import {PlayerSize, VideoSize} from './common.types';
@@ -17,16 +16,7 @@ export interface FloatingManagerOptions {
   presetManager: PresetManager;
 }
 
-const ResourceToken = 'FloatingManager-v1';
-
 export class FloatingManager {
-  static fromPlayer(
-    playerContribRegistry: PlayerContribRegistry,
-    creator: () => FloatingManager
-  ) {
-    return playerContribRegistry.register(ResourceToken, 1, creator);
-  }
-
   private _items: Record<FloatingPositions, FloatingItem[]> = {
     [FloatingPositions.VideoArea]: [],
     [FloatingPositions.InteractiveArea]: [],

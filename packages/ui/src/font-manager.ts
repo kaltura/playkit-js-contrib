@@ -1,9 +1,5 @@
 import axios from 'axios';
-import {
-  getContribLogger,
-  ObjectUtils,
-  PlayerContribRegistry,
-} from '@playkit-js-contrib/common';
+import {getContribLogger, ObjectUtils} from '@playkit-js-contrib/common';
 import PlayerConfig = KalturaPlayerTypes.PlayerConfig;
 import ContribFonts = KalturaPlayerContribTypes.ContribFonts;
 import TestingFontOptions = KalturaPlayerContribTypes.TestingFontOptions;
@@ -11,8 +7,6 @@ import TestingFontOptions = KalturaPlayerContribTypes.TestingFontOptions;
 export interface FontManagerOptions {
   playerConfig: PlayerConfig & KalturaPlayerContribTypes.ContribConfig;
 }
-
-const ResourceToken = 'FontManager-v1';
 
 const logger = getContribLogger({
   module: 'ui',
@@ -35,13 +29,6 @@ const DefaultFontOptions: ContribFonts = {
 let currentFontFamily = '';
 
 export class FontManager {
-  static fromPlayer(
-    playerContribRegistry: PlayerContribRegistry,
-    creator: () => FontManager
-  ) {
-    return playerContribRegistry.register(ResourceToken, 1, creator);
-  }
-
   private _fontConfig: ContribFonts;
 
   constructor(options: FontManagerOptions) {
