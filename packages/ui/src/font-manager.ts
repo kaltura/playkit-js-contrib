@@ -5,9 +5,8 @@ import {
   PlayerContribRegistry,
 } from '@playkit-js-contrib/common';
 import PlayerConfig = KalturaPlayerTypes.PlayerConfig;
-import ContribFonts = KalturaPlayerContribTypes.FontsConfig;
+import FontsConfig = KalturaPlayerContribTypes.FontsConfig;
 import TestingFontOptions = KalturaPlayerContribTypes.TestingFontOptions;
-import {KalturaPlayerPresetComponent} from './preset-item';
 
 export interface FontManagerOptions {
   playerConfig: PlayerConfig & KalturaPlayerContribTypes.ContribConfig;
@@ -22,7 +21,7 @@ const logger = getContribLogger({
 
 const fontKeyPrefix = 'contrib-plugins-font-';
 
-const defaultFontOptions: ContribFonts = {
+const defaultFontsConfig: FontsConfig = {
   fontFamily: 'Lato, sans-serif',
   testingFont: {
     text: 'abcdefghiiiiiiiiijklmnopqrstuvwwwwwwwwwwxyz0123456789',
@@ -43,19 +42,18 @@ export class FontManager {
     return playerContribRegistry.register(resourceToken, 1, creator);
   }
 
-  private _fontConfig: ContribFonts;
+  private _fontConfig: FontsConfig;
 
   constructor(options: FontManagerOptions) {
-    const managerConfig = ObjectUtils.get(
+    const playerFontManager = ObjectUtils.get(
       options.playerConfig,
       'contrib.ui.fonts',
       {}
     );
 
-    this._fontConfig = ObjectUtils.mergeDefaults<ContribFonts>(
-      {},
-      defaultFontOptions,
-      managerConfig
+    this._fontConfig = ObjectUtils.mergeDefaults<FontsConfig>(
+      playerFontManager,
+      defaultFontsConfig
     );
   }
 

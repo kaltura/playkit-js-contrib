@@ -77,12 +77,11 @@ export class ObjectUtils {
   }
 
   public static mergeDefaults<T extends Record<string, any>>(
-    target: Partial<T>,
-    defaults: T,
     source: Partial<T>,
+    defaults: T,
     extra?: {explicitMerge?: string[]}
   ): T {
-    return ObjectUtils.mergeDeep(target, [defaults, source], extra) as T;
+    return ObjectUtils.mergeDeep({}, [defaults, source], extra) as T;
   }
 
   /**

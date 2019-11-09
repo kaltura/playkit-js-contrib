@@ -58,9 +58,8 @@ export class OverlayManager {
     ) as DeepPartial<OverlayConfig>;
 
     this._overlayConfig = ObjectUtils.mergeDefaults<OverlayConfig>(
-      {},
-      defaultOverlayConfig,
       playerOverlayConfig,
+      defaultOverlayConfig,
       {explicitMerge: ['presetAreasMapping']}
     );
 

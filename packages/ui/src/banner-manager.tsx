@@ -74,16 +74,15 @@ export class BannerManager {
   constructor(private options: BannerManagerOptions) {
     this._options = options;
 
-    const managerConfig = ObjectUtils.get(
+    const playerBannerConfig = ObjectUtils.get(
       this._options.corePlayer,
       'config.contrib.ui.banner',
       {}
     ) as Partial<BannerConfig>;
 
     this._bannerConfig = ObjectUtils.mergeDefaults<BannerConfig>(
-      {},
-      defaultBannerConfig,
-      managerConfig
+      playerBannerConfig,
+      defaultBannerConfig
     );
   }
 

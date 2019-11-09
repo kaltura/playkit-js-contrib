@@ -18,6 +18,7 @@ import {KitchenSinkAdapter} from './components/kitchen-sink-adapter';
 import {ManagedComponent} from './components/managed-component';
 import {UpperBarItem} from './upper-bar-item';
 import {PresetsUtils} from './presets-utils';
+import KitchenSinkConfig = KalturaPlayerContribTypes.KitchenSinkConfig;
 
 export interface KitchenSinkManagerOptions {
   corePlayer: KalturaPlayerTypes.Player;
@@ -107,15 +108,15 @@ export class KitchenSinkManager {
   constructor(private options: KitchenSinkManagerOptions) {
     this._options = options;
 
-    const managerConfig = ObjectUtils.get(
+    const playerKitchenSinkConfig = ObjectUtils.get(
       this._options.corePlayer,
       'config.contrib.ui.kitchenSink',
       {}
-    ) as Partial<KalturaPlayerContribTypes.KitchenSinkConfig>;
+    ) as Partial<KitchenSinkConfig>;
 
     this._kitchenSinkConfig = ObjectUtils.mergeDefaults<
       KalturaPlayerContribTypes.KitchenSinkConfig
-    >({}, defaultKitchenSinkConfig, managerConfig, {
+    >(playerKitchenSinkConfig, defaultKitchenSinkConfig, {
       explicitMerge: ['presetAreasMapping'],
     });
 

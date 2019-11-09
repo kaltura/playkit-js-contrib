@@ -81,9 +81,8 @@ export class FloatingManager {
     ) as DeepPartial<FloatingConfig>;
 
     this._floatingConfig = ObjectUtils.mergeDefaults<FloatingConfig>(
-      {},
-      defaultFloatingConfig,
       playerFloatingConfig,
+      defaultFloatingConfig,
       {explicitMerge: ['presetAreasMapping']}
     );
 

@@ -48,16 +48,15 @@ export class UpperBarManager {
   constructor(options: UpperBarManagerOptions) {
     this._options = options;
 
-    const managerConfig = ObjectUtils.get(
+    const playerUpperBarConfig = ObjectUtils.get(
       this._options.corePlayer,
       'config.contrib.ui.upperBar',
       {}
     ) as Partial<UpperBarConfig>;
 
     this._upperBarConfig = ObjectUtils.mergeDefaults<UpperBarConfig>(
-      {},
+      playerUpperBarConfig,
       defaultUpperBarConfig,
-      managerConfig,
       {explicitMerge: ['presetAreasMapping']}
     );
 
