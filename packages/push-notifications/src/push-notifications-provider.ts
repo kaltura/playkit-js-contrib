@@ -16,7 +16,7 @@ export class PushNotificationsProvider {
   ): PushNotifications {
     const pushNotificationProviderInstance = PlayerContribRegistry.get(
       player
-    ).register(ResourceToken, 1, () => {
+    ).register(ResourceToken, () => {
       return new PushNotificationsProvider();
     });
 
