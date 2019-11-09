@@ -110,7 +110,7 @@ export class KitchenSinkManager {
     const managerConfig = ObjectUtils.get(
       this._options.corePlayer,
       'config.contrib.ui.kitchenSink',
-      defaultKitchenSinkConfig
+      {}
     ) as Partial<KalturaPlayerContribTypes.KitchenSinkConfig>;
 
     this._kitchenSinkConfig = ObjectUtils.mergeDefaults<

@@ -49,7 +49,7 @@ export class FontManager {
     const managerConfig = ObjectUtils.get(
       options.playerConfig,
       'contrib.ui.fonts',
-      defaultFontOptions
+      {}
     );
 
     this._fontConfig = ObjectUtils.mergeDefaults<ContribFonts>(
