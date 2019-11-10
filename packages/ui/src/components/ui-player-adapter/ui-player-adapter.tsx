@@ -7,8 +7,6 @@ export interface UIPlayerAdapterProps {
   onUnmount: (player: KalturaPlayerTypes.Player) => void;
 }
 
-// TODO sakal - move to core player manager
-
 @KalturaPlayer.ui.components.withPlayer
 export class UIPlayerAdapter extends KalturaPlayer.ui.preact.Component<
   UIPlayerAdapterProps
