@@ -5,23 +5,23 @@ import {
   PlayerContribRegistry,
 } from '@playkit-js-contrib/common';
 import PlayerConfig = KalturaPlayerTypes.PlayerConfig;
-import ContribFonts = KalturaPlayerContribTypes.ContribFonts;
+import FontsConfig = KalturaPlayerContribTypes.FontsConfig;
 import TestingFontOptions = KalturaPlayerContribTypes.TestingFontOptions;
 
 export interface FontManagerOptions {
   playerConfig: PlayerConfig & KalturaPlayerContribTypes.ContribConfig;
 }
 
-const ResourceToken = 'FontManager-v1';
+const resourceToken = 'FontManager-v1';
 
 const logger = getContribLogger({
   module: 'ui',
   class: 'FontManager',
 });
 
-const FontKeyPrefix = 'contrib-plugins-font-';
+const fontKeyPrefix = 'contrib-plugins-font-';
 
-const DefaultFontOptions: ContribFonts = {
+const defaultFontsConfig: FontsConfig = {
   fontFamily: 'Lato, sans-serif',
   testingFont: {
     text: 'abcdefghiiiiiiiiijklmnopqrstuvwwwwwwwwwwxyz0123456789',
@@ -39,22 +39,21 @@ export class FontManager {
     playerContribRegistry: PlayerContribRegistry,
     creator: () => FontManager
   ) {
-    return playerContribRegistry.register(ResourceToken, 1, creator);
+    return playerContribRegistry.register(resourceToken, 1, creator);
   }
 
-  private _fontConfig: ContribFonts;
+  private _fontConfig: FontsConfig;
 
   constructor(options: FontManagerOptions) {
-    const managerConfig = ObjectUtils.get(
+    const playerFontManager = ObjectUtils.get(
       options.playerConfig,
       'contrib.ui.fonts',
-      DefaultFontOptions
+      {}
     );
 
-    this._fontConfig = ObjectUtils.mergeDefaults<ContribFonts>(
-      {},
-      DefaultFontOptions,
-      managerConfig
+    this._fontConfig = ObjectUtils.mergeDefaults<FontsConfig>(
+      playerFontManager,
+      defaultFontsConfig
     );
   }
 
@@ -256,10 +255,10 @@ export class FontManager {
 
   private _loadFontFromLocalStorage(fontName: string): string | null {
     try {
-      return localStorage.getItem(`${FontKeyPrefix}${fontName}`);
+      return localStorage.getItem(`${fontKeyPrefix}${fontName}`);
     } catch (err) {
       logger.warn(
-        `Failed to load font "${fontName}" data, key: ${FontKeyPrefix}${fontName} from localStorage`,
+        `Failed to load font "${fontName}" data, key: ${fontKeyPrefix}${fontName} from localStorage`,
         {
           method: '_loadFontFromLocalStorage',
           data: {
@@ -273,7 +272,7 @@ export class FontManager {
 
   private _saveFontToLocalStorage(fontName: string, fontValue: string): void {
     try {
-      localStorage.setItem(`${FontKeyPrefix}${fontName}`, fontValue);
+      localStorage.setItem(`${fontKeyPrefix}${fontName}`, fontValue);
       logger.info(`font "${fontName}" was cached into localStorage`, {
         method: '_saveFontToLocalStorage',
       });

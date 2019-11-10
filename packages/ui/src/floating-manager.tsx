@@ -11,14 +11,15 @@ import {PlayerSize, VideoSize} from './common.types';
 import {getPlayerSize, getVideoSize} from './player-utils';
 import {ManagedComponent} from './components/managed-component';
 import {PresetsUtils} from './presets-utils';
-import PresetAreasConfig = KalturaPlayerContribTypes.PresetAreasConfig;
+import FloatingConfig = KalturaPlayerContribTypes.FloatingConfig;
+import {DeepPartial} from '@playkit-js-contrib/common/global-types';
 
 export interface FloatingManagerOptions {
   corePlayer: KalturaPlayerTypes.Player;
   presetManager: PresetManager;
 }
 
-const DefaultFloatingConfig = {
+const defaultFloatingConfig: KalturaPlayerContribTypes.FloatingConfig = {
   presetAreasMapping: {
     Playback: {
       VideoArea: 'VideoArea',
@@ -68,21 +69,20 @@ export class FloatingManager {
     },
   };
 
-  private _floatingConfig: PresetAreasConfig;
+  private _floatingConfig: FloatingConfig;
 
   constructor(private options: FloatingManagerOptions) {
     this._options = options;
 
-    const managerConfig = ObjectUtils.get(
+    const playerFloatingConfig = ObjectUtils.get(
       this._options.corePlayer,
       'config.contrib.ui.floating',
-      DefaultFloatingConfig
-    ) as Partial<PresetAreasConfig>;
+      {}
+    ) as DeepPartial<FloatingConfig>;
 
-    this._floatingConfig = ObjectUtils.mergeDefaults<PresetAreasConfig>(
-      {},
-      DefaultFloatingConfig,
-      managerConfig,
+    this._floatingConfig = ObjectUtils.mergeDefaults<FloatingConfig>(
+      playerFloatingConfig,
+      defaultFloatingConfig,
       {explicitMerge: ['presetAreasMapping']}
     );
 

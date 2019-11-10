@@ -1,11 +1,16 @@
 import PlayerConfig = KalturaPlayerTypes.PlayerConfig;
-import {ObjectUtils} from '@playkit-js-contrib/common';
+import {getContribLogger, ObjectUtils} from '@playkit-js-contrib/common';
 import ContribPresetAreasMapping = KalturaPlayerContribTypes.ContribPresetAreasMapping;
 
 export interface GroupPresetAreasOptions {
   presetAreasMapping: KalturaPlayerContribTypes.ContribPresetAreasMapping;
   acceptableTypes: string[];
 }
+
+const logger = getContribLogger({
+  module: 'contrib-ui',
+  class: 'PresetsUtils',
+});
 
 export class PresetsUtils {
   public static groupPresetAreasByType(
@@ -18,7 +23,12 @@ export class PresetsUtils {
     Object.keys(presetAreasMapping).forEach(presetName => {
       Object.keys(presetAreasMapping[presetName]).forEach(presetType => {
         if (acceptableTypes.indexOf(presetType) === -1) {
-          // todo [sa] add warning
+          logger.warn(
+            `Unknown preset area type '${presetType}' provided, ignoring specific type mapping. Acceptable values are '${acceptableTypes.join(
+              ', '
+            )}`,
+            {}
+          );
         } else {
           result[presetType][presetName] =
             presetAreasMapping[presetName][presetType];

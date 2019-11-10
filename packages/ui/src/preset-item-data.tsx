@@ -1,24 +1,24 @@
 import {ComponentChild} from 'preact';
 
-export enum PresetNames {
+export enum ReservedPresetNames {
   Playback = 'Playback',
   Live = 'Live',
 }
 
 export enum ReservedPresetAreas {
-  'PresetFloating',
-  'BottomBarLeftControls',
-  'BottomBarRightControls',
-  'TopBarLeftControls',
-  'TopBarRightControls',
-  'SidePanelTop',
-  'SidePanelLeft',
-  'SidePanelRight',
-  'SidePanelBottom',
-  'PresetArea',
-  'InteractiveArea',
-  'PlayerArea',
-  'VideoArea',
+  'PresetFloating' = 'PresetFloating',
+  'BottomBarLeftControls' = 'BottomBarLeftControls',
+  'BottomBarRightControls' = 'BottomBarRightControls',
+  'TopBarLeftControls' = 'TopBarLeftControls',
+  'TopBarRightControls' = 'TopBarRightControls',
+  'SidePanelTop' = 'SidePanelTop',
+  'SidePanelLeft' = 'SidePanelLeft',
+  'SidePanelRight' = 'SidePanelRight',
+  'SidePanelBottom' = 'SidePanelBottom',
+  'PresetArea' = 'PresetArea',
+  'InteractiveArea' = 'InteractiveArea',
+  'PlayerArea' = 'PlayerArea',
+  'VideoArea' = 'VideoArea',
 }
 
 export enum RelativeToTypes {
@@ -30,7 +30,10 @@ export enum RelativeToTypes {
 export interface PresetItemData {
   label: string;
   fillContainer?: boolean;
-  presetAreas: Record<string, string>;
+  presetAreas: Record<
+    ReservedPresetNames | string,
+    ReservedPresetAreas | string
+  >;
   shareAdvancedPlayerAPI?: boolean;
   renderChild: () => ComponentChild;
   relativeTo?: {

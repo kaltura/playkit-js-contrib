@@ -10,14 +10,14 @@ import {
 } from '@playkit-js-contrib/common';
 import {ManagedComponent} from './components/managed-component';
 import {PresetsUtils} from './presets-utils';
-import PresetAreasConfig = KalturaPlayerContribTypes.PresetAreasConfig;
+import UpperBarConfig = KalturaPlayerContribTypes.UpperBarConfig;
 
 export interface UpperBarManagerOptions {
   corePlayer: KalturaPlayerTypes.Player;
   presetManager: PresetManager;
 }
 
-const DefaultUpperBarConfig = {
+const defaultUpperBarConfig: UpperBarConfig = {
   presetAreasMapping: {
     Playback: {
       TopBarRightControls: 'TopBarRightControls',
@@ -43,21 +43,20 @@ export class UpperBarManager {
   private _rootElement: ManagedComponent | null;
   private _items: UpperBarItem[] = [];
   private _options: UpperBarManagerOptions;
-  private _upperBarConfig: PresetAreasConfig;
+  private _upperBarConfig: UpperBarConfig;
 
   constructor(options: UpperBarManagerOptions) {
     this._options = options;
 
-    const managerConfig = ObjectUtils.get(
+    const playerUpperBarConfig = ObjectUtils.get(
       this._options.corePlayer,
       'config.contrib.ui.upperBar',
-      DefaultUpperBarConfig
-    ) as Partial<PresetAreasConfig>;
+      {}
+    ) as Partial<UpperBarConfig>;
 
-    this._upperBarConfig = ObjectUtils.mergeDefaults<PresetAreasConfig>(
-      {},
-      DefaultUpperBarConfig,
-      managerConfig,
+    this._upperBarConfig = ObjectUtils.mergeDefaults<UpperBarConfig>(
+      playerUpperBarConfig,
+      defaultUpperBarConfig,
       {explicitMerge: ['presetAreasMapping']}
     );
 

@@ -5,16 +5,16 @@ import {PresetManager} from './preset-manager';
 import {ObjectUtils, PlayerContribRegistry} from '@playkit-js-contrib/common';
 import {ManagedComponent} from './components/managed-component';
 import {OverlayItemContainer} from './components/overlay-item-container';
-import PlayerConfig = KalturaPlayerTypes.PlayerConfig;
 import {PresetsUtils} from './presets-utils';
-import PresetAreasConfig = KalturaPlayerContribTypes.PresetAreasConfig;
+import OverlayConfig = KalturaPlayerContribTypes.OverlayConfig;
+import {DeepPartial} from '@playkit-js-contrib/common/global-types';
 
 export interface OverlayManagerOptions {
   presetManager: PresetManager;
   corePlayer: KalturaPlayerTypes.Player;
 }
 
-const DefaultOverlayConfig = {
+const defaultOverlayConfig: OverlayConfig = {
   presetAreasMapping: {
     Playback: {
       PlayerArea: 'PlayerArea',
@@ -46,21 +46,20 @@ export class OverlayManager {
   };
 
   private _options: OverlayManagerOptions;
-  private _overlayConfig: PresetAreasConfig;
+  private _overlayConfig: OverlayConfig;
 
   constructor(private options: OverlayManagerOptions) {
     this._options = options;
 
-    const managerConfig = ObjectUtils.get(
+    const playerOverlayConfig = ObjectUtils.get(
       this._options.corePlayer,
       'config.contrib.ui.overlay',
-      DefaultOverlayConfig
-    ) as Partial<PresetAreasConfig>;
+      {}
+    ) as DeepPartial<OverlayConfig>;
 
-    this._overlayConfig = ObjectUtils.mergeDefaults<PresetAreasConfig>(
-      {},
-      DefaultOverlayConfig,
-      managerConfig,
+    this._overlayConfig = ObjectUtils.mergeDefaults<OverlayConfig>(
+      playerOverlayConfig,
+      defaultOverlayConfig,
       {explicitMerge: ['presetAreasMapping']}
     );
 
