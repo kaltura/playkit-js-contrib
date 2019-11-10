@@ -19,4 +19,7 @@ export * from './scale-video';
 export * from './cuepoint-floating-engine';
 export * from './common.types';
 export * from './components/managed-component';
-export * from './/local-content-utils';
+export * from './local-content-utils';
+export * from './overlay-manager';
+export * from './overlay-item';
+export * from './overlay-item-data';

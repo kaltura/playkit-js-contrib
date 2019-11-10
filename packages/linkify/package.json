@@ -1,7 +1,7 @@
 {
     "name": "@playkit-js-contrib/linkify",
     "private": false,
-    "version": "2.1.0",
+    "version": "2.3.0",
     "license": "AGPL-3.0",
     "author": "Kaltura",
     "repository": {

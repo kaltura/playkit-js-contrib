@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.3.0](https://github.com/kaltura/playkit-js-contrib/compare/v2.2.0...v2.3.0) (2019-11-07)
+
+
+### Features
+
+* **ui:** add configurable background layout to the kitchenSink ([#78](https://github.com/kaltura/playkit-js-contrib/issues/78)) ([ca7ed06](https://github.com/kaltura/playkit-js-contrib/commit/ca7ed067b2684055be554eff6d4ce1659388515c))
+
+
+
+
+
+# [2.2.0](https://github.com/kaltura/playkit-js-contrib/compare/v2.1.0...v2.2.0) (2019-11-05)
+
+
+### Features
+
+* **ui:** add overlay manager ([#77](https://github.com/kaltura/playkit-js-contrib/issues/77)) ([12e629b](https://github.com/kaltura/playkit-js-contrib/commit/12e629b80d5a0e45ea3fde8fb70846b4a20f8121))
+* **ui:** allow dynamic add/remove for kitchensink and upperbar items([#80](https://github.com/kaltura/playkit-js-contrib/issues/80)) ([648b394](https://github.com/kaltura/playkit-js-contrib/commit/648b39465fa11fdefa4e173d95edeb625fe5124d))
+
+
+
+
+
 # [2.1.0](https://github.com/kaltura/playkit-js-contrib/compare/v2.0.1-next.0...v2.1.0) (2019-10-31)
 
 
