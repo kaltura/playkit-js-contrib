@@ -1,13 +1,15 @@
-import {UIManager} from '@playkit-js-contrib/ui';
+import {PresetManager} from '@playkit-js-contrib/ui';
 
 export interface ContribPlugin {}
 
-export interface OnRegisterUI {
-  onRegisterUI(uiManager: UIManager): void;
+export interface OnRegisterPresetsComponents {
+  onRegisterPresetsComponents(presetManager: PresetManager): void;
 }
 
-export function hasOnRegisterUI(plugin: any): plugin is OnRegisterUI {
-  return 'onRegisterUI' in plugin;
+export function hasOnRegisterPresetsComponents(
+  plugin: any
+): plugin is OnRegisterPresetsComponents {
+  return 'onRegisterPresetsComponents' in plugin;
 }
 
 export interface OnPluginSetup {

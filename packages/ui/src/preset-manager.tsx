@@ -1,15 +1,14 @@
 import {h} from 'preact';
-import {PlayerContribRegistry} from '@playkit-js-contrib/common';
-import {PresetItemData, PresetNames} from './preset-item-data';
+import {PresetItemData, ReservedPresetNames} from './preset-item-data';
 import {KalturaPlayerPresetComponent, PresetItem} from './preset-item';
-import {EventsManager} from '@playkit-js-contrib/common';
+import {EventsManager, ObjectUtils} from '@playkit-js-contrib/common';
 import {UIPlayerAdapter} from './components/ui-player-adapter';
+import PresetConfig = KalturaPlayerContribTypes.PresetConfig;
+import {PresetsUtils} from './presets-utils';
 
 export interface PresetManagerOptions {
   corePlayer: KalturaPlayerTypes.Player;
 }
-
-const ResourceToken = 'PresetManager-v1';
 
 export enum PresetManagerEventTypes {
   PresetResizeEvent = 'PresetResizeEvent',
@@ -21,30 +20,53 @@ export interface PresetResizeEvent {
 
 export type PresetManagerEvents = PresetResizeEvent;
 
-export class PresetManager {
-  static fromPlayer(
-    playerContribRegistry: PlayerContribRegistry,
-    creator: () => PresetManager
-  ) {
-    return playerContribRegistry.register(ResourceToken, 1, creator);
-  }
+const acceptableTypes = ['PlayerArea'];
 
+const defaultPresetConfig: PresetConfig = {
+  presetAreasMapping: {
+    Playback: {
+      PlayerArea: 'PlayerArea',
+    },
+    Live: {
+      PlayerArea: 'PlayerArea',
+    },
+  },
+};
+
+export class PresetManager {
   private _events: EventsManager<PresetManagerEvents> = new EventsManager<
     PresetManagerEvents
   >();
   private _isLocked = false;
   private _options: PresetManagerOptions;
-  private _components: PresetItem[] = [];
-  private _pendingComponents: PresetItem[] = [];
+  private _items: PresetItem[] = [];
+  private _pendingItems: PresetItem[] = [];
+  private _presetConfig: PresetConfig;
 
   constructor(options: PresetManagerOptions) {
     this._options = options;
 
+    const playerUpperBarConfig = ObjectUtils.get(
+      this._options.corePlayer,
+      'config.contrib.ui.preset',
+      {}
+    ) as Partial<PresetConfig>;
+
+    this._presetConfig = ObjectUtils.mergeDefaults<PresetConfig>(
+      playerUpperBarConfig,
+      defaultPresetConfig,
+      {explicitMerge: ['presetAreasMapping']}
+    );
+
+    const groupedPresets = PresetsUtils.groupPresetAreasByType({
+      presetAreasMapping: this._presetConfig.presetAreasMapping,
+      acceptableTypes,
+    });
+
     this.add({
-      label: 'preset-manager-adapter',
+      label: 'preset-manager',
+      presetAreas: groupedPresets['PlayerArea'],
       shareAdvancedPlayerAPI: true,
-      presets: [PresetNames.Playback, PresetNames.Live],
-      container: {name: 'PlayerArea'},
       renderChild: () => (
         <UIPlayerAdapter
           onMount={this._registerToPlayer}
@@ -123,7 +145,7 @@ export class PresetManager {
       data,
     });
 
-    this._pendingComponents.push(component);
+    this._pendingItems.push(component);
   }
 
   lockManager(): void {
@@ -131,11 +153,12 @@ export class PresetManager {
   }
 
   registerComponents(): KalturaPlayerPresetComponent[] {
-    const configs: (KalturaPlayerPresetComponent | null)[] = this._pendingComponents.map(
-      component => component.playerConfig
-    );
-    this._components = [...this._components, ...this._pendingComponents];
-    this._pendingComponents = [];
+    let configs: (KalturaPlayerPresetComponent)[] = [];
+    this._pendingItems.forEach(item => {
+      configs = [...configs, ...item.playerConfig];
+    });
+    this._items = [...this._items, ...this._pendingItems];
+    this._pendingItems = [];
     return configs.filter(Boolean) as KalturaPlayerPresetComponent[];
   }
 }

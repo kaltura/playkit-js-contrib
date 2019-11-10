@@ -1,38 +1,60 @@
-import {ComponentChild, h, render} from 'preact';
+import {ComponentChild, h} from 'preact';
 import {UpperBarItem} from './upper-bar-item';
 import {UpperBarItemData} from './upper-bar-item-data';
 import {UpperBar} from './components/upper-bar';
 import {PresetManager} from './preset-manager';
-import {PresetNames} from './preset-item-data';
-import {ArrayUtils, PlayerContribRegistry} from '@playkit-js-contrib/common';
-import {PresetItem} from './preset-item';
+import {ArrayUtils, ObjectUtils} from '@playkit-js-contrib/common';
 import {ManagedComponent} from './components/managed-component';
+import {PresetsUtils} from './presets-utils';
+import UpperBarConfig = KalturaPlayerContribTypes.UpperBarConfig;
 
 export interface UpperBarManagerOptions {
   corePlayer: KalturaPlayerTypes.Player;
   presetManager: PresetManager;
 }
 
-const ResourceToken = 'UpperBarManager-v1';
+const defaultUpperBarConfig: UpperBarConfig = {
+  presetAreasMapping: {
+    Playback: {
+      TopBarRightControls: 'TopBarRightControls',
+    },
+    Live: {
+      TopBarRightControls: 'TopBarRightControls',
+    },
+  },
+};
+
+const acceptableTypes = ['TopBarRightControls'];
 
 export class UpperBarManager {
-  static fromPlayer(
-    playerContribRegistry: PlayerContribRegistry,
-    creator: () => UpperBarManager
-  ) {
-    return playerContribRegistry.register(ResourceToken, 1, creator);
-  }
-
   private _rootElement: ManagedComponent | null;
   private _items: UpperBarItem[] = [];
   private _options: UpperBarManagerOptions;
+  private _upperBarConfig: UpperBarConfig;
 
   constructor(options: UpperBarManagerOptions) {
     this._options = options;
+
+    const playerUpperBarConfig = ObjectUtils.get(
+      this._options.corePlayer,
+      'config.contrib.ui.upperBar',
+      {}
+    ) as Partial<UpperBarConfig>;
+
+    this._upperBarConfig = ObjectUtils.mergeDefaults<UpperBarConfig>(
+      playerUpperBarConfig,
+      defaultUpperBarConfig,
+      {explicitMerge: ['presetAreasMapping']}
+    );
+
+    const groupedPresets = PresetsUtils.groupPresetAreasByType({
+      presetAreasMapping: this._upperBarConfig.presetAreasMapping,
+      acceptableTypes,
+    });
+
     this._options.presetManager.add({
       label: 'upper-bar-manager',
-      presets: [PresetNames.Playback, PresetNames.Live],
-      container: {name: 'TopBar', position: 'Right'},
+      presetAreas: groupedPresets['TopBarRightControls'],
       renderChild: this._renderChild,
     });
   }

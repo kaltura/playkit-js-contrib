@@ -46,30 +46,102 @@ export class ObjectUtils {
    */
   public static mergeDeep<T extends Record<string, any>>(
     target: Partial<T>,
-    ...sources: Partial<T>[]
+    sources: Partial<T>[],
+    extra?: {explicitMerge?: string[]}
   ): Partial<T> {
     if (!sources.length) {
       return target;
     }
+
+    const explicitMerge: string[] = (extra ? extra.explicitMerge : null) || [];
     const source = sources.shift();
     if (ObjectUtils.isObject(target) && ObjectUtils.isObject(source)) {
       for (const key in source) {
         if (ObjectUtils.isObject(source[key])) {
           if (!target[key]) Object.assign(target, {[key]: {}});
-          ObjectUtils.mergeDeep(target[key], source[key]);
+
+          if (explicitMerge.indexOf(key) !== -1) {
+            target[key] = ObjectUtils.explicitFlatMerge<any>(
+              target[key],
+              source[key]
+            );
+          } else {
+            ObjectUtils.mergeDeep(target[key], [source[key]], extra);
+          }
         } else {
           Object.assign(target, {[key]: source[key]});
         }
       }
     }
-    return ObjectUtils.mergeDeep(target, ...sources);
+    return ObjectUtils.mergeDeep(target, sources, extra);
   }
 
   public static mergeDefaults<T extends Record<string, any>>(
-    target: Partial<T>,
+    source: Partial<T>,
     defaults: T,
-    ...additional: Partial<T>[]
+    extra?: {explicitMerge?: string[]}
   ): T {
-    return ObjectUtils.mergeDeep(target, defaults, ...additional) as T;
+    return ObjectUtils.mergeDeep({}, [defaults, source], extra) as T;
+  }
+
+  /**
+   * source properties will override all equivalent properties in target. null or empty objects properties in source
+   * will cause the removal of these properties in target.
+   * all other data will be merged
+   * @param initialObject
+   * @param source
+   */
+  public static explicitFlatMerge<T extends Record<string, any>>(
+    initialObject: Partial<T>,
+    source: Partial<T>
+  ): any {
+    const result = {...initialObject};
+    Object.keys(source).forEach(key => {
+      if (source[key] === null || Object.keys(source[key]).length === 0) {
+        delete result[key];
+      } else {
+        // @ts-ignore
+        // https://github.com/microsoft/TypeScript/issues/31661
+        result[key] = source[key];
+      }
+    });
+    return result;
+  }
+
+  public static get(
+    obj: Record<string, any>,
+    path: string,
+    defaultValue: any
+  ): unknown {
+    function stringToPath(path: string) {
+      const output = [];
+      // Split to an array with dot notation
+      path.split('.').forEach(item => {
+        // Split to an array with bracket notation
+        item.split(/\[([^}]+)\]/g).forEach(key => {
+          // Push to the new array
+          if (key.length > 0) {
+            output.push(key);
+          }
+        });
+      });
+      return output;
+    }
+
+    // Get the path as an array
+    const pathArray = stringToPath(path);
+
+    let current = obj;
+
+    // For each item in the path, dig into the object
+    for (let i = 0; i < pathArray.length; i++) {
+      // If the item isn't found, return the default (or null)
+      if (!current[pathArray[i]]) return defaultValue;
+
+      // Otherwise, update the current value
+      current = current[pathArray[i]];
+    }
+
+    return current;
   }
 }

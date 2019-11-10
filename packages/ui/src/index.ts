@@ -1,6 +1,5 @@
 /// <reference path="./global.d.ts" />
 
-export * from './ui-manager';
 export * from './banner-manager';
 export * from './toast-manager';
 export * from './floating-item';
@@ -15,6 +14,7 @@ export * from './kitchen-sink-manager';
 export * from './preset-manager';
 export * from './font-manager';
 export * from './preset-item-data';
+export * from './presets-utils';
 export * from './scale-video';
 export * from './cuepoint-floating-engine';
 export * from './common.types';

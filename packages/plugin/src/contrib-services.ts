@@ -1,7 +1,6 @@
 import {PlayerContribRegistry} from '@playkit-js-contrib/common';
 import {
   FloatingManager,
-  UIManager,
   UpperBarManager,
   KitchenSinkManager,
   PresetManager,
@@ -29,124 +28,113 @@ enableLogIfNeeded();
 export class ContribServices {
   static get(options: ContribServicesOptions): ContribServices {
     const playerContribRegistry = getPlayerContribRegistry(options.corePlayer);
-    return playerContribRegistry.register('ContribServices-v1', 1, () => {
+    return playerContribRegistry.register('ContribServices', () => {
       return new ContribServices(playerContribRegistry, options);
     });
   }
 
+  private _toastManager: ToastManager;
+  private _overlayManager: OverlayManager;
+  private _bannerManager: BannerManager;
+  private _floatingManager: FloatingManager;
+  private _kitchenSinkManager: KitchenSinkManager;
+  private _upperBarManager: UpperBarManager;
+  private _presetManager: PresetManager;
+  private _fontManager: FontManager;
+
   constructor(
     private _playerContribRegistry: PlayerContribRegistry,
     private _options: ContribServicesOptions
-  ) {}
-
-  private registerResources() {}
-
-  public get playerContribRegistry(): PlayerContribRegistry {
-    return PlayerContribRegistry.get(this._options.corePlayer);
+  ) {
+    this._initialize();
   }
 
-  public get uiManager(): UIManager {
-    return UIManager.fromPlayer(
-      this.playerContribRegistry,
-      (): UIManager => {
-        const options = {
-          corePlayer: this._options.corePlayer,
-          presetManager: this.presetManager,
-          upperBarManager: this.upperBarManager,
-          kitchenSinkManager: this.kitchenSinkManager,
-          floatingManager: this.floatingManager,
-          bannerManager: this.bannerManager,
-          toastManager: this.toastManager,
-          fontManager: this.fontManager,
-        };
+  private _initialize() {
+    // TODO sakal use DI instead
+    const corePlayer = this._options.corePlayer;
+    const kalturaPlayerConfig = corePlayer.config;
 
-        return new UIManager(options);
-      }
-    );
+    const presetManager = new PresetManager({
+      corePlayer,
+    });
+
+    const fontManager = new FontManager({
+      playerConfig: kalturaPlayerConfig,
+    });
+
+    const upperBarManager = new UpperBarManager({
+      corePlayer,
+      presetManager: presetManager,
+    });
+
+    const floatingManager = new FloatingManager({
+      corePlayer,
+      presetManager,
+    });
+
+    const overlayManager = new OverlayManager({
+      presetManager,
+      corePlayer,
+    });
+
+    const bannerManager = new BannerManager({
+      corePlayer,
+      floatingManager,
+    });
+
+    const toastManager = new ToastManager({
+      floatingManager,
+    });
+
+    const kitchenSinkManager = new KitchenSinkManager({
+      corePlayer,
+      presetManager,
+      upperBarManager,
+    });
+
+    this._toastManager = toastManager;
+    this._overlayManager = overlayManager;
+    this._bannerManager = bannerManager;
+    this._floatingManager = floatingManager;
+    this._kitchenSinkManager = kitchenSinkManager;
+    this._upperBarManager = upperBarManager;
+    this._presetManager = presetManager;
+    this._fontManager = fontManager;
   }
 
   public get presetManager(): PresetManager {
-    return PresetManager.fromPlayer(this.playerContribRegistry, () => {
-      const options = {
-        corePlayer: this._options.corePlayer,
-      };
-
-      return new PresetManager(options);
-    });
+    return this._presetManager;
   }
 
   public get upperBarManager(): UpperBarManager {
-    return UpperBarManager.fromPlayer(this.playerContribRegistry, () => {
-      const options = {
-        corePlayer: this._options.corePlayer,
-        presetManager: this.presetManager,
-      };
-
-      return new UpperBarManager(options);
-    });
+    return this._upperBarManager;
   }
 
   public get kitchenSinkManager(): KitchenSinkManager {
-    return KitchenSinkManager.fromPlayer(this.playerContribRegistry, () => {
-      const options = {
-        corePlayer: this._options.corePlayer,
-        presetManager: this.presetManager,
-        upperBarManager: this.upperBarManager,
-      };
-
-      return new KitchenSinkManager(options);
-    });
+    return this._kitchenSinkManager;
   }
 
   public get floatingManager(): FloatingManager {
-    return FloatingManager.fromPlayer(this.playerContribRegistry, () => {
-      const options = {
-        corePlayer: this._options.corePlayer,
-        presetManager: this.presetManager,
-      };
-
-      return new FloatingManager(options);
-    });
+    return this._floatingManager;
   }
 
   public get overlayManager(): OverlayManager {
-    return OverlayManager.fromPlayer(this.playerContribRegistry, () => {
-      const options = {
-        presetManager: this.presetManager,
-      };
-
-      return new OverlayManager(options);
-    });
+    return this._overlayManager;
   }
 
   public get bannerManager(): BannerManager {
-    return BannerManager.fromPlayer(this.playerContribRegistry, () => {
-      const options: BannerManagerOptions = {
-        corePlayer: this._options.corePlayer,
-        floatingManager: this.floatingManager,
-      };
-
-      return new BannerManager(options);
-    });
+    return this._bannerManager;
   }
 
   public get toastManager(): ToastManager {
-    return ToastManager.fromPlayer(this.playerContribRegistry, () => {
-      const options: ToastManagerOptions = {
-        floatingManager: this.floatingManager,
-      };
-
-      return new ToastManager(options);
-    });
+    return this._toastManager;
   }
 
   public get fontManager(): FontManager {
-    return FontManager.fromPlayer(this.playerContribRegistry, () => {
-      const options: FontManagerOptions = {
-        playerConfig: this._options.corePlayer.config,
-      };
+    return this._fontManager;
+  }
 
-      return new FontManager(options);
-    });
+  reset(): void {
+    // TODO sakal
   }
 }
