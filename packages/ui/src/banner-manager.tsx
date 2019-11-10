@@ -48,7 +48,7 @@ const MinPlayerWidth = 480;
 const DefaultDuration: number = 60 * 1000;
 const MinDuration: number = 5 * 1000;
 
-const DefaultBannerConfig: BannerConfig = {
+const defaultBannerConfig: BannerConfig = {
   theme: {
     backgroundColor: 'rgba(0, 0, 0, .8)',
     blur: '16px',
@@ -74,18 +74,15 @@ export class BannerManager {
   constructor(private options: BannerManagerOptions) {
     this._options = options;
 
-    const playerConfig =
-      options.corePlayer &&
-      options.corePlayer.config &&
-      options.corePlayer.config.contrib &&
-      options.corePlayer.config.contrib.ui &&
-      options.corePlayer.config.contrib.ui.kitchenSink
-        ? options.corePlayer.config.contrib.ui.kitchenSink
-        : {};
+    const playerBannerConfig = ObjectUtils.get(
+      this._options.corePlayer,
+      'config.contrib.ui.banner',
+      {}
+    ) as Partial<BannerConfig>;
+
     this._bannerConfig = ObjectUtils.mergeDefaults<BannerConfig>(
-      {},
-      DefaultBannerConfig,
-      playerConfig
+      playerBannerConfig,
+      defaultBannerConfig
     );
   }
 

@@ -8,3 +8,7 @@
 /// <reference path="./kaltura-player/logger.d.ts" />
 /// <reference path="./kaltura-player/player.d.ts" />
 /// <reference path="./kaltura-player/kaltura-player.d.ts" />
+
+export type DeepPartial<T> = T extends object
+  ? {[K in keyof T]?: DeepPartial<T[K]>}
+  : T;
