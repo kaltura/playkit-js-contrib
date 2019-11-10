@@ -1,39 +1,24 @@
 import {ComponentChild} from 'preact';
 
-export type VerticalPositions = 'Top' | 'Bottom';
-export type HorizontalPositions = 'Left' | 'Right';
-
-// TODO sakal consider changing to enum
-export type PredefinedContainers =
-  | {name: 'PresetFloating'}
-  | {name: 'BottomBar'; position: HorizontalPositions}
-  | {name: 'TopBar'; position: HorizontalPositions}
-  | {name: 'SidePanel'; position: HorizontalPositions | VerticalPositions}
-  | {name: 'PresetArea'}
-  | {name: 'VideoArea'}
-  | {name: 'InteractiveArea'}
-  | {name: 'PlayerArea'}
-  | string;
-
-export enum PresetNames {
+export enum ReservedPresetNames {
   Playback = 'Playback',
   Live = 'Live',
 }
 
 export enum ReservedPresetAreas {
-  'PresetFloating',
-  'BottomBarLeftSide',
-  'BottomBarRightSide',
-  'TopBarLeftSide',
-  'TopBarRightSide',
-  'SidePanelTop',
-  'SidePanelLeft',
-  'SidePanelRight',
-  'SidePanelBottom',
-  'PresetArea',
-  'InteractiveArea',
-  'PlayerArea',
-  'VideoArea',
+  'PresetFloating' = 'PresetFloating',
+  'BottomBarLeftControls' = 'BottomBarLeftControls',
+  'BottomBarRightControls' = 'BottomBarRightControls',
+  'TopBarLeftControls' = 'TopBarLeftControls',
+  'TopBarRightControls' = 'TopBarRightControls',
+  'SidePanelTop' = 'SidePanelTop',
+  'SidePanelLeft' = 'SidePanelLeft',
+  'SidePanelRight' = 'SidePanelRight',
+  'SidePanelBottom' = 'SidePanelBottom',
+  'PresetArea' = 'PresetArea',
+  'InteractiveArea' = 'InteractiveArea',
+  'PlayerArea' = 'PlayerArea',
+  'VideoArea' = 'VideoArea',
 }
 
 export enum RelativeToTypes {
@@ -45,9 +30,10 @@ export enum RelativeToTypes {
 export interface PresetItemData {
   label: string;
   fillContainer?: boolean;
-  presetAreas?: Record<string, (ReservedPresetAreas | string)[]>;
-  presets: (PresetNames | string)[];
-  container: PredefinedContainers;
+  presetAreas: Record<
+    ReservedPresetNames | string,
+    ReservedPresetAreas | string
+  >;
   shareAdvancedPlayerAPI?: boolean;
   renderChild: () => ComponentChild;
   relativeTo?: {

@@ -8,8 +8,8 @@ export interface PresetManagerOptions {
 export class PresetManager {
   private _isLocked = false;
   private _options: PresetManagerOptions;
-  private _components: PresetItem[] = [];
-  private _pendingComponents: PresetItem[] = [];
+  private _items: PresetItem[] = [];
+  private _pendingItems: PresetItem[] = [];
 
   constructor(options: PresetManagerOptions) {
     this._options = options;
@@ -27,7 +27,7 @@ export class PresetManager {
       data,
     });
 
-    this._pendingComponents.push(component);
+    this._pendingItems.push(component);
   }
 
   lockManager(): void {
@@ -35,11 +35,12 @@ export class PresetManager {
   }
 
   registerComponents(): KalturaPlayerPresetComponent[] {
-    const configs: (KalturaPlayerPresetComponent | null)[] = this._pendingComponents.map(
-      component => component.playerConfig
-    );
-    this._components = [...this._components, ...this._pendingComponents];
-    this._pendingComponents = [];
+    let configs: (KalturaPlayerPresetComponent)[] = [];
+    this._pendingItems.forEach(item => {
+      configs = [...configs, ...item.playerConfig];
+    });
+    this._items = [...this._items, ...this._pendingItems];
+    this._pendingItems = [];
     return configs.filter(Boolean) as KalturaPlayerPresetComponent[];
   }
 }

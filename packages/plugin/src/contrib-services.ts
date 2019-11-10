@@ -74,6 +74,7 @@ export class ContribServices {
 
     const overlayManager = new OverlayManager({
       presetManager,
+      corePlayer,
     });
 
     const bannerManager = new BannerManager({

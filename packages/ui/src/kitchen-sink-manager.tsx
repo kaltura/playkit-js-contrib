@@ -12,17 +12,20 @@ import {
   EventsManager,
   ObjectUtils,
 } from '@playkit-js-contrib/common';
-import {PresetNames} from './preset-item-data';
 import {KitchenSinkContainer} from './components/kitchen-sink-container/kitchen-sink-container';
 import {KitchenSinkAdapter} from './components/kitchen-sink-adapter';
 import {ManagedComponent} from './components/managed-component';
 import {UpperBarItem} from './upper-bar-item';
+import {PresetsUtils} from './presets-utils';
+import KitchenSinkConfig = KalturaPlayerContribTypes.KitchenSinkConfig;
 
 export interface KitchenSinkManagerOptions {
   corePlayer: KalturaPlayerTypes.Player;
   presetManager: PresetManager;
   upperBarManager: UpperBarManager;
 }
+
+const acceptableTypes = ['PlayerArea', 'SidePanelRight', 'SidePanelBottom'];
 
 export enum ItemActiveStates {
   Active = 'Active',
@@ -50,10 +53,22 @@ interface KitchenSinkPanel {
   activeItem: KitchenSinkItem | null;
 }
 
-const DefaultKitchenSinkConfig: KalturaPlayerContribTypes.KitchenSinkConfig = {
+const defaultKitchenSinkConfig: KalturaPlayerContribTypes.KitchenSinkConfig = {
   theme: {
     backgroundColor: 'rgba(0, 0, 0, .8)',
     blur: '16px',
+  },
+  presetAreasMapping: {
+    Playback: {
+      PlayerArea: 'PlayerArea',
+      SidePanelRight: 'SidePanelRight',
+      SidePanelBottom: 'SidePanelBottom',
+    },
+    Live: {
+      PlayerArea: 'PlayerArea',
+      SidePanelRight: 'SidePanelRight',
+      SidePanelBottom: 'SidePanelBottom',
+    },
   },
 };
 
@@ -83,39 +98,41 @@ export class KitchenSinkManager {
   constructor(private options: KitchenSinkManagerOptions) {
     this._options = options;
 
-    const playerConfig =
-      options.corePlayer &&
-      options.corePlayer.config &&
-      options.corePlayer.config.contrib &&
-      options.corePlayer.config.contrib.ui &&
-      options.corePlayer.config.contrib.ui.kitchenSink
-        ? options.corePlayer.config.contrib.ui.kitchenSink
-        : {};
+    const playerKitchenSinkConfig = ObjectUtils.get(
+      this._options.corePlayer,
+      'config.contrib.ui.kitchenSink',
+      {}
+    ) as Partial<KitchenSinkConfig>;
+
     this._kitchenSinkConfig = ObjectUtils.mergeDefaults<
       KalturaPlayerContribTypes.KitchenSinkConfig
-    >({}, DefaultKitchenSinkConfig, playerConfig);
+    >(playerKitchenSinkConfig, defaultKitchenSinkConfig, {
+      explicitMerge: ['presetAreasMapping'],
+    });
+
+    const groupedPresets = PresetsUtils.groupPresetAreasByType({
+      presetAreasMapping: this._kitchenSinkConfig.presetAreasMapping,
+      acceptableTypes,
+    });
 
     this.options.presetManager.add({
       label: 'kitchen-sink-right',
       fillContainer: true,
-      presets: [PresetNames.Playback, PresetNames.Live],
-      container: {name: 'SidePanel', position: 'Right'},
+      presetAreas: groupedPresets['SidePanelRight'],
       renderChild: this._renderChild.bind(this, KitchenSinkPositions.Right),
     });
 
     this.options.presetManager.add({
       label: 'kitchen-sink-bottom',
       fillContainer: true,
-      presets: [PresetNames.Playback, PresetNames.Live],
-      container: {name: 'SidePanel', position: 'Bottom'},
+      presetAreas: groupedPresets['SidePanelBottom'],
       renderChild: this._renderChild.bind(this, KitchenSinkPositions.Bottom),
     });
 
     this.options.presetManager.add({
       label: 'kitchen-sink-adapter',
       shareAdvancedPlayerAPI: true,
-      presets: [PresetNames.Playback, PresetNames.Live],
-      container: {name: 'PlayerArea'},
+      presetAreas: groupedPresets['PlayerArea'],
       renderChild: () => <KitchenSinkAdapter ref={this._setRef} />,
     });
   }
