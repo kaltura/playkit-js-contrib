@@ -33,7 +33,7 @@ export class CorePluginProxy extends KalturaPlayer.core.BasePlugin {
         pluginFactories.defaultConfig || {},
         config
       );
-      const contribServices = ContribServices.get({corePlayer: player});
+      const contribServices = ContribServices.get({kalturaPlayer: player});
 
       const corePlugin = pluginFactories.corePluginFactory(
         name,

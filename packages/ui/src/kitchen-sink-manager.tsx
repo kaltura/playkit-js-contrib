@@ -20,7 +20,7 @@ import {PresetsUtils} from './presets-utils';
 import {getContribConfig} from './contrib-utils';
 
 export interface KitchenSinkManagerOptions {
-  corePlayer: KalturaPlayerTypes.Player;
+  kalturaPlayer: KalturaPlayerTypes.Player;
   presetManager: PresetManager;
   upperBarManager: UpperBarManager;
 }
@@ -99,7 +99,7 @@ export class KitchenSinkManager {
     this._options = options;
 
     this._kitchenSinkConfig = getContribConfig(
-      this._options.corePlayer,
+      this._options.kalturaPlayer,
       'ui.kitchenSink',
       defaultKitchenSinkConfig,
       {

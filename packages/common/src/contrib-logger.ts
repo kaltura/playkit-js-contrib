@@ -12,13 +12,13 @@ export interface ContribLogger {
 }
 
 function getPlayerLogger(options: {
-  corePlayer?: any;
+  kalturaPlayer?: any;
   loggerName?: string;
 }): JSLogger | null {
-  const {corePlayer, loggerName} = options;
+  const {kalturaPlayer, loggerName} = options;
 
-  const getLoggerFn = corePlayer
-    ? corePlayer.getLogger
+  const getLoggerFn = kalturaPlayer
+    ? kalturaPlayer.getLogger
     : KalturaPlayer.ui.utils.getLogger;
 
   if (!getLoggerFn) {
@@ -127,12 +127,14 @@ export interface MessageOptions {
 }
 
 export function getContribLogger(
-  options: {corePlayer?: any} & LoggerOptions = {}
+  options: {kalturaPlayer?: any} & LoggerOptions = {}
 ): ContribLogger {
-  const {corePlayer} = options;
+  const {kalturaPlayer} = options;
 
-  const loggerName = `${corePlayer ? corePlayer._playerId : 'global'}_contrib`;
-  const logger = getPlayerLogger({corePlayer, loggerName});
+  const loggerName = `${
+    kalturaPlayer ? kalturaPlayer._playerId : 'global'
+  }_contrib`;
+  const logger = getPlayerLogger({kalturaPlayer, loggerName});
 
   if (!logger) {
     return defaultNoopLogger;

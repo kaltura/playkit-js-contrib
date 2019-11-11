@@ -11,7 +11,7 @@ import {getContribConfig} from './contrib-utils';
 
 export interface OverlayManagerOptions {
   presetManager: PresetManager;
-  corePlayer: KalturaPlayerTypes.Player;
+  kalturaPlayer: KalturaPlayerTypes.Player;
 }
 
 const defaultOverlayConfig: OverlayConfig = {
@@ -43,7 +43,7 @@ export class OverlayManager {
     this._options = options;
 
     this._overlayConfig = getContribConfig(
-      this._options.corePlayer,
+      this._options.kalturaPlayer,
       'ui.overlay',
       defaultOverlayConfig,
       {

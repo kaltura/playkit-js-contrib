@@ -15,11 +15,13 @@ import {
 import {enableLogIfNeeded} from '@playkit-js-contrib/common';
 
 export interface ContribServicesOptions {
-  corePlayer: KalturaPlayerTypes.Player;
+  kalturaPlayer: KalturaPlayerTypes.Player;
 }
 
-function getPlayerContribRegistry(corePlayer: any): PlayerContribRegistry {
-  return PlayerContribRegistry.get(corePlayer);
+function getPlayerContribRegistry(
+  kalturaPlayer: KalturaPlayerTypes.Player
+): PlayerContribRegistry {
+  return PlayerContribRegistry.get(kalturaPlayer);
 }
 
 // TODO SAKAL find more suitable location
@@ -27,7 +29,9 @@ enableLogIfNeeded();
 
 export class ContribServices {
   static get(options: ContribServicesOptions): ContribServices {
-    const playerContribRegistry = getPlayerContribRegistry(options.corePlayer);
+    const playerContribRegistry = getPlayerContribRegistry(
+      options.kalturaPlayer
+    );
     return playerContribRegistry.register('ContribServices', () => {
       return new ContribServices(playerContribRegistry, options);
     });
@@ -51,33 +55,33 @@ export class ContribServices {
 
   private _initialize() {
     // TODO sakal use DI instead
-    const corePlayer = this._options.corePlayer;
+    const kalturaPlayer = this._options.kalturaPlayer;
 
     const presetManager = new PresetManager({
-      corePlayer,
+      kalturaPlayer,
     });
 
     const fontManager = new FontManager({
-      corePlayer,
+      kalturaPlayer,
     });
 
     const upperBarManager = new UpperBarManager({
-      corePlayer,
+      kalturaPlayer,
       presetManager: presetManager,
     });
 
     const floatingManager = new FloatingManager({
-      corePlayer,
+      kalturaPlayer,
       presetManager,
     });
 
     const overlayManager = new OverlayManager({
       presetManager,
-      corePlayer,
+      kalturaPlayer,
     });
 
     const bannerManager = new BannerManager({
-      corePlayer,
+      kalturaPlayer,
       floatingManager,
     });
 
@@ -86,7 +90,7 @@ export class ContribServices {
     });
 
     const kitchenSinkManager = new KitchenSinkManager({
-      corePlayer,
+      kalturaPlayer,
       presetManager,
       upperBarManager,
     });
@@ -138,7 +142,7 @@ export class ContribServices {
   }
 
   public getPlayerKS(): string | null {
-    const {session} = this._options.corePlayer.config;
+    const {session} = this._options.kalturaPlayer.config;
     return session && session.ks ? session.ks : null;
   }
 }

@@ -1,15 +1,19 @@
 import {PlayerSize, VideoSize} from './common.types';
 
-export function getPlayerSize(corePlayer: any): PlayerSize {
-  return corePlayer ? corePlayer.dimensions : {width: 0, height: 0};
+export function getPlayerSize(
+  kalturaPlayer: KalturaPlayerTypes.Player
+): PlayerSize {
+  return kalturaPlayer ? kalturaPlayer.dimensions : {width: 0, height: 0};
 }
 
-export function getVideoSize(corePlayer: any): VideoSize {
-  if (!corePlayer) {
+export function getVideoSize(
+  kalturaPlayer: KalturaPlayerTypes.Player
+): VideoSize {
+  if (!kalturaPlayer) {
     return {width: 0, height: 0};
   }
 
-  const videoTrack = corePlayer.getActiveTracks().video;
+  const videoTrack = kalturaPlayer.getActiveTracks().video;
 
   if (!videoTrack) {
     return {width: 0, height: 0};

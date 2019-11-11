@@ -15,7 +15,7 @@ import FloatingConfig = KalturaPlayerContribTypes.FloatingConfig;
 import {getContribConfig} from './contrib-utils';
 
 export interface FloatingManagerOptions {
-  corePlayer: KalturaPlayerTypes.Player;
+  kalturaPlayer: KalturaPlayerTypes.Player;
   presetManager: PresetManager;
 }
 
@@ -63,7 +63,7 @@ export class FloatingManager {
 
   constructor(private _options: FloatingManagerOptions) {
     this._floatingConfig = getContribConfig(
-      this._options.corePlayer,
+      this._options.kalturaPlayer,
       'ui.floating',
       defaultFloatingConfig,
       {
@@ -147,21 +147,21 @@ export class FloatingManager {
   private _getRendererProps(
     props: Partial<FloatingItemProps>
   ): FloatingItemProps {
-    const {corePlayer} = this._options;
+    const {kalturaPlayer} = this._options;
 
     return {
       currentTime:
         typeof props.currentTime !== 'undefined'
           ? props.currentTime
-          : corePlayer.currentTime * 1000,
+          : kalturaPlayer.currentTime * 1000,
       canvas: this._cache.canvas,
     };
   }
 
   private _updateCachedCanvas() {
     this._cache.canvas = {
-      playerSize: getPlayerSize(this._options.corePlayer),
-      videoSize: getVideoSize(this._options.corePlayer),
+      playerSize: getPlayerSize(this._options.kalturaPlayer),
+      videoSize: getVideoSize(this._options.kalturaPlayer),
     };
   }
 
@@ -196,13 +196,13 @@ export class FloatingManager {
   }
 
   private _addPlayerBindings() {
-    const {corePlayer} = this._options;
+    const {kalturaPlayer} = this._options;
 
-    corePlayer.addEventListener(corePlayer.Event.TIME_UPDATE, () => {
+    kalturaPlayer.addEventListener(kalturaPlayer.Event.TIME_UPDATE, () => {
       this._updateComponents();
     });
 
-    corePlayer.addEventListener(corePlayer.Event.MEDIA_LOADED, () => {
+    kalturaPlayer.addEventListener(kalturaPlayer.Event.MEDIA_LOADED, () => {
       this._updateCachedCanvas();
       this._updateComponents();
     });

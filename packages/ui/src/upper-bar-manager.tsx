@@ -10,7 +10,7 @@ import UpperBarConfig = KalturaPlayerContribTypes.UpperBarConfig;
 import {getContribConfig} from './contrib-utils';
 
 export interface UpperBarManagerOptions {
-  corePlayer: KalturaPlayerTypes.Player;
+  kalturaPlayer: KalturaPlayerTypes.Player;
   presetManager: PresetManager;
 }
 
@@ -37,7 +37,7 @@ export class UpperBarManager {
     this._options = options;
 
     this._upperBarConfig = getContribConfig(
-      this._options.corePlayer,
+      this._options.kalturaPlayer,
       'ui.upperBar',
       defaultUpperBarConfig,
       {
@@ -80,7 +80,7 @@ export class UpperBarManager {
    */
   add(data: UpperBarItemData): UpperBarItem {
     const itemOptions = {
-      corePlayer: this._options.corePlayer,
+      kalturaPlayer: this._options.kalturaPlayer,
       data,
     };
     const item = new UpperBarItem(itemOptions);

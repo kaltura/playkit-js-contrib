@@ -6,7 +6,7 @@ import TestingFontOptions = KalturaPlayerContribTypes.TestingFontOptions;
 import {getContribConfig} from './contrib-utils';
 
 export interface FontManagerOptions {
-  corePlayer: KalturaPlayerTypes.Player;
+  kalturaPlayer: KalturaPlayerTypes.Player;
 }
 
 const logger = getContribLogger({
@@ -34,7 +34,7 @@ export class FontManager {
 
   constructor(options: FontManagerOptions) {
     this._fontConfig = getContribConfig(
-      options.corePlayer,
+      options.kalturaPlayer,
       'ui.fonts',
       defaultFontsConfig
     );

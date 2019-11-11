@@ -8,7 +8,7 @@ import {PresetsUtils} from './presets-utils';
 import {getContribConfig} from './contrib-utils';
 
 export interface PresetManagerOptions {
-  corePlayer: KalturaPlayerTypes.Player;
+  kalturaPlayer: KalturaPlayerTypes.Player;
 }
 
 export enum PresetManagerEventTypes {
@@ -48,7 +48,7 @@ export class PresetManager {
     this._options = options;
 
     this._presetConfig = getContribConfig(
-      this._options.corePlayer,
+      this._options.kalturaPlayer,
       'ui.preset',
       defaultPresetConfig,
       {
@@ -139,7 +139,7 @@ export class PresetManager {
       return null;
     }
     const component = new PresetItem({
-      corePlayer: this._options.corePlayer,
+      kalturaPlayer: this._options.kalturaPlayer,
       data,
     });
 

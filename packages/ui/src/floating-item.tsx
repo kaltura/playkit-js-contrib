@@ -8,7 +8,7 @@ import {
 import {ManagedComponent} from './components/managed-component';
 
 export interface FloatingItemOptions {
-  corePlayer: KalturaPlayerTypes.Player;
+  kalturaPlayer: KalturaPlayerTypes.Player;
   data: FloatingItemData;
 }
 
@@ -100,36 +100,36 @@ export class FloatingItem {
   }
 
   private _handleMediaLoaded = () => {
-    const {corePlayer} = this._options;
-    corePlayer.removeEventListener(
-      corePlayer.Event.MEDIA_LOADED,
+    const {kalturaPlayer} = this._options;
+    kalturaPlayer.removeEventListener(
+      kalturaPlayer.Event.MEDIA_LOADED,
       this._handleMediaLoaded
     );
     this.add();
   };
 
   private _handleFirstPlay = () => {
-    const {corePlayer} = this._options;
-    corePlayer.removeEventListener(
-      corePlayer.Event.FIRST_PLAY,
+    const {kalturaPlayer} = this._options;
+    kalturaPlayer.removeEventListener(
+      kalturaPlayer.Event.FIRST_PLAY,
       this._handleFirstPlay
     );
     this.add();
   };
 
   private _addPlayerBindings() {
-    const {corePlayer, data} = this._options;
+    const {kalturaPlayer, data} = this._options;
 
     if (data.mode === FloatingUIModes.MediaLoaded) {
-      corePlayer.addEventListener(
-        corePlayer.Event.MEDIA_LOADED,
+      kalturaPlayer.addEventListener(
+        kalturaPlayer.Event.MEDIA_LOADED,
         this._handleMediaLoaded
       );
     }
 
     if (data.mode === FloatingUIModes.FirstPlay) {
-      corePlayer.addEventListener(
-        corePlayer.Event.FIRST_PLAY,
+      kalturaPlayer.addEventListener(
+        kalturaPlayer.Event.FIRST_PLAY,
         this._handleFirstPlay
       );
     }
