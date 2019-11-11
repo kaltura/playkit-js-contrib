@@ -5,7 +5,7 @@ import {
 } from './push-notifications';
 import {getDomainFromUrl} from './utils';
 
-const ResourceToken = 'PushNotifications-v1';
+const ResourceToken = 'PushNotifications';
 
 export class PushNotificationsProvider {
   private instancePool: any = {};

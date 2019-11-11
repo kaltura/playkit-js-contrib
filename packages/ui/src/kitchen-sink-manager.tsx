@@ -32,12 +32,12 @@ export enum ItemActiveStates {
   InActive = 'InActive',
 }
 
-export enum EventTypes {
+export enum KitchenSinkEventTypes {
   ItemActiveStateChangeEvent = 'ItemActiveStateChangeEvent',
 }
 
 export interface ItemActiveStateChangeEvent {
-  type: EventTypes.ItemActiveStateChangeEvent;
+  type: KitchenSinkEventTypes.ItemActiveStateChangeEvent;
   state: ItemActiveStates;
   item: KitchenSinkItem;
 }
@@ -209,7 +209,7 @@ export class KitchenSinkManager {
     if (relevantPanel.activeItem) {
       //trigger item de-activation event
       this._events.emit({
-        type: EventTypes.ItemActiveStateChangeEvent,
+        type: KitchenSinkEventTypes.ItemActiveStateChangeEvent,
         state: ItemActiveStates.InActive,
         item: relevantPanel.activeItem,
       });
@@ -218,7 +218,7 @@ export class KitchenSinkManager {
     relevantPanel.activeItem = item;
     //trigger new item activation event
     this._events.emit({
-      type: EventTypes.ItemActiveStateChangeEvent,
+      type: KitchenSinkEventTypes.ItemActiveStateChangeEvent,
       state: ItemActiveStates.Active,
       item: item,
     });
@@ -236,7 +236,7 @@ export class KitchenSinkManager {
     this._collapse(position);
     //trigger item de-activation event
     this._events.emit({
-      type: EventTypes.ItemActiveStateChangeEvent,
+      type: KitchenSinkEventTypes.ItemActiveStateChangeEvent,
       state: ItemActiveStates.InActive,
       item: relevantPanel.activeItem,
     });

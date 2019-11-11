@@ -28,16 +28,6 @@ export function hasOnPluginDestroy(plugin: any): plugin is OnPluginDestroy {
   return 'OnPluginDestroy' in plugin;
 }
 
-export interface OnActivePresetChanged {
-  onActivePresetChanged(presetName: string): void;
-}
-
-export function hasOnActivePresetChanged(
-  plugin: any
-): plugin is OnActivePresetChanged {
-  return 'onActivePresetChanged' in plugin;
-}
-
 export interface OnMediaLoad {
   onMediaLoad(): void;
 }

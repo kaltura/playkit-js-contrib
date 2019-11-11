@@ -26,8 +26,6 @@ const defaultUpperBarConfig: UpperBarConfig = {
 
 const acceptableTypes = ['TopBarRightControls'];
 
-const ResourceToken = 'UpperBarManager-v1';
-
 export class UpperBarManager {
   private _rootElement: ManagedComponent | null;
   private _items: UpperBarItem[] = [];
