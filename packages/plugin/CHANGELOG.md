@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0](https://github.com/kaltura/playkit-js-contrib/compare/v2.3.0...v3.0.0) (2019-11-11)
+
+
+### Features
+
+* **plugin:** replace onRegisterUI with OnRegisterPresetsComponents ([602ee89](https://github.com/kaltura/playkit-js-contrib/commit/602ee89bc589db0140f4a2c0acc9788399a00dbc))
+
+### BREAKING CHANGES
+ 
+* previously
+```
+class AnyPlugin() {
+   onRegisterUI(uiManager: UIManager) {
+      // register any ui component needed by plugin
+   }
+}
+```
+
+now
+```
+class AnyPlugin() {
+   onRegisterPresetsComponents(presetManager: PresetManager) {
+      // register only plugin components that are directly managed by the presetManager
+      // move other registrations into onMediaLoad or onPluginSetup
+   }
+}
+```
+
+
+
 # [2.3.0](https://github.com/kaltura/playkit-js-contrib/compare/v2.2.0...v2.3.0) (2019-11-07)
 
 

@@ -3,6 +3,35 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0](https://github.com/kaltura/playkit-js-contrib/compare/v2.3.0...v3.0.0) (2019-11-11)
+
+
+### Bug Fixes
+
+* **ui:** remove ui manager and expose ui manager thru the contrib services ([49d3f1e](https://github.com/kaltura/playkit-js-contrib/commit/49d3f1e2e085836a3fcde3568679e4fdef8923b6))
+
+
+### Features
+
+* get list of preset areas from player configuration ([#84](https://github.com/kaltura/playkit-js-contrib/issues/84)) Webc-1688 ([47de969](https://github.com/kaltura/playkit-js-contrib/commit/47de969f8f3459f60259646fc7728ec67b2664ae))
+* add api to ui player events ([c746f93](https://github.com/kaltura/playkit-js-contrib/commit/c746f93200e86c4c12ca355b81130e0b760de2a8))
+
+
+### BREAKING CHANGES
+
+* **ui:** previously
+```
+contribServices.uiManagers.floating.add(...)
+```
+
+now
+```
+contribServices.floatingManager.add(...)
+```
+
+
+
+
 # [2.3.0](https://github.com/kaltura/playkit-js-contrib/compare/v2.2.0...v2.3.0) (2019-11-07)
 
 
