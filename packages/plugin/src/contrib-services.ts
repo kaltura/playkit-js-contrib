@@ -150,4 +150,16 @@ export class ContribServices {
       return new FontManager(options);
     });
   }
+
+  public get userKs(): string | null {
+    const {
+      playerConfig: {provider, session},
+    } = this._options.corePlayer.config;
+    // if KS was provided in configuration
+    if (provider && provider.ks) return provider.ks;
+    // if only widgetKs was provided, take ks from session
+    if (session && session.ks) return session.ks;
+
+    return null;
+  }
 }
