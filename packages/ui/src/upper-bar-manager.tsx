@@ -7,6 +7,7 @@ import {ArrayUtils, ObjectUtils} from '@playkit-js-contrib/common';
 import {ManagedComponent} from './components/managed-component';
 import {PresetsUtils} from './presets-utils';
 import UpperBarConfig = KalturaPlayerContribTypes.UpperBarConfig;
+import {getContribConfig} from './contrib-utils';
 
 export interface UpperBarManagerOptions {
   corePlayer: KalturaPlayerTypes.Player;
@@ -35,16 +36,13 @@ export class UpperBarManager {
   constructor(options: UpperBarManagerOptions) {
     this._options = options;
 
-    const playerUpperBarConfig = ObjectUtils.get(
+    this._upperBarConfig = getContribConfig(
       this._options.corePlayer,
-      'config.contrib.ui.upperBar',
-      {}
-    ) as Partial<UpperBarConfig>;
-
-    this._upperBarConfig = ObjectUtils.mergeDefaults<UpperBarConfig>(
-      playerUpperBarConfig,
+      'ui.upperBar',
       defaultUpperBarConfig,
-      {explicitMerge: ['presetAreasMapping']}
+      {
+        explicitMerge: ['presetAreasMapping'],
+      }
     );
 
     const groupedPresets = PresetsUtils.groupPresetAreasByType({

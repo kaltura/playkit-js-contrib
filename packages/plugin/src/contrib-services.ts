@@ -52,14 +52,13 @@ export class ContribServices {
   private _initialize() {
     // TODO sakal use DI instead
     const corePlayer = this._options.corePlayer;
-    const kalturaPlayerConfig = corePlayer.config;
 
     const presetManager = new PresetManager({
       corePlayer,
     });
 
     const fontManager = new FontManager({
-      playerConfig: kalturaPlayerConfig,
+      corePlayer,
     });
 
     const upperBarManager = new UpperBarManager({

@@ -7,7 +7,7 @@ export class ContribPluginConfigs<TPluginConfig extends Record<string, any>> {
   ) {}
 
   get playerConfig(): KalturaPlayerTypes.PlayerConfig &
-    KalturaPlayerContribTypes.ContribConfig {
+    DeepPartial<KalturaPlayerContribTypes.ContribConfig> {
     return this._player.config;
   }
 

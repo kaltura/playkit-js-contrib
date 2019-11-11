@@ -3,9 +3,10 @@ import {getContribLogger, ObjectUtils} from '@playkit-js-contrib/common';
 import PlayerConfig = KalturaPlayerTypes.PlayerConfig;
 import FontsConfig = KalturaPlayerContribTypes.FontsConfig;
 import TestingFontOptions = KalturaPlayerContribTypes.TestingFontOptions;
+import {getContribConfig} from './contrib-utils';
 
 export interface FontManagerOptions {
-  playerConfig: PlayerConfig & KalturaPlayerContribTypes.ContribConfig;
+  corePlayer: KalturaPlayerTypes.Player;
 }
 
 const logger = getContribLogger({
@@ -32,14 +33,9 @@ export class FontManager {
   private _fontConfig: FontsConfig;
 
   constructor(options: FontManagerOptions) {
-    const playerFontManager = ObjectUtils.get(
-      options.playerConfig,
-      'contrib.ui.fonts',
-      {}
-    );
-
-    this._fontConfig = ObjectUtils.mergeDefaults<FontsConfig>(
-      playerFontManager,
+    this._fontConfig = getContribConfig(
+      options.corePlayer,
+      'ui.fonts',
       defaultFontsConfig
     );
   }
