@@ -11,7 +11,6 @@ import {
   ArrayUtils,
   EventsManager,
   ObjectUtils,
-  PlayerContribRegistry,
 } from '@playkit-js-contrib/common';
 import {KitchenSinkContainer} from './components/kitchen-sink-container/kitchen-sink-container';
 import {KitchenSinkAdapter} from './components/kitchen-sink-adapter';
@@ -33,19 +32,17 @@ export enum ItemActiveStates {
   InActive = 'InActive',
 }
 
-export enum EventTypes {
+export enum KitchenSinkEventTypes {
   ItemActiveStateChangeEvent = 'ItemActiveStateChangeEvent',
 }
 
 export interface ItemActiveStateChangeEvent {
-  type: EventTypes.ItemActiveStateChangeEvent;
+  type: KitchenSinkEventTypes.ItemActiveStateChangeEvent;
   state: ItemActiveStates;
   item: KitchenSinkItem;
 }
 
 export type KitchenSinkEvents = ItemActiveStateChangeEvent;
-
-const ResourceToken = 'KitchenSinkManager-v1';
 
 interface KitchenSinkPanel {
   ref: ManagedComponent | null;
@@ -76,13 +73,6 @@ const defaultKitchenSinkConfig: KalturaPlayerContribTypes.KitchenSinkConfig = {
 };
 
 export class KitchenSinkManager {
-  static fromPlayer(
-    playerContribRegistry: PlayerContribRegistry,
-    creator: () => KitchenSinkManager
-  ) {
-    return playerContribRegistry.register(ResourceToken, 1, creator);
-  }
-
   private _events: EventsManager<KitchenSinkEvents> = new EventsManager<
     KitchenSinkEvents
   >();
@@ -219,7 +209,7 @@ export class KitchenSinkManager {
     if (relevantPanel.activeItem) {
       //trigger item de-activation event
       this._events.emit({
-        type: EventTypes.ItemActiveStateChangeEvent,
+        type: KitchenSinkEventTypes.ItemActiveStateChangeEvent,
         state: ItemActiveStates.InActive,
         item: relevantPanel.activeItem,
       });
@@ -228,7 +218,7 @@ export class KitchenSinkManager {
     relevantPanel.activeItem = item;
     //trigger new item activation event
     this._events.emit({
-      type: EventTypes.ItemActiveStateChangeEvent,
+      type: KitchenSinkEventTypes.ItemActiveStateChangeEvent,
       state: ItemActiveStates.Active,
       item: item,
     });
@@ -246,7 +236,7 @@ export class KitchenSinkManager {
     this._collapse(position);
     //trigger item de-activation event
     this._events.emit({
-      type: EventTypes.ItemActiveStateChangeEvent,
+      type: KitchenSinkEventTypes.ItemActiveStateChangeEvent,
       state: ItemActiveStates.InActive,
       item: relevantPanel.activeItem,
     });

@@ -1,29 +1,137 @@
-import {PlayerContribRegistry} from '@playkit-js-contrib/common';
-import {PresetItemData} from './preset-item-data';
+import {h} from 'preact';
+import {PresetItemData, ReservedPresetNames} from './preset-item-data';
 import {KalturaPlayerPresetComponent, PresetItem} from './preset-item';
+import {EventsManager, ObjectUtils} from '@playkit-js-contrib/common';
+import {UIPlayerAdapter} from './components/ui-player-adapter';
+import PresetConfig = KalturaPlayerContribTypes.PresetConfig;
+import {PresetsUtils} from './presets-utils';
 
 export interface PresetManagerOptions {
   corePlayer: KalturaPlayerTypes.Player;
 }
 
-const ResourceToken = 'PresetManager-v1';
+export enum PresetManagerEventTypes {
+  PresetResizeEvent = 'PresetResizeEvent',
+}
+
+export interface PresetResizeEvent {
+  type: PresetManagerEventTypes.PresetResizeEvent;
+}
+
+export type PresetManagerEvents = PresetResizeEvent;
+
+const acceptableTypes = ['PlayerArea'];
+
+const defaultPresetConfig: PresetConfig = {
+  presetAreasMapping: {
+    Playback: {
+      PlayerArea: 'PlayerArea',
+    },
+    Live: {
+      PlayerArea: 'PlayerArea',
+    },
+  },
+};
 
 export class PresetManager {
-  static fromPlayer(
-    playerContribRegistry: PlayerContribRegistry,
-    creator: () => PresetManager
-  ) {
-    return playerContribRegistry.register(ResourceToken, 1, creator);
-  }
-
+  private _events: EventsManager<PresetManagerEvents> = new EventsManager<
+    PresetManagerEvents
+  >();
   private _isLocked = false;
   private _options: PresetManagerOptions;
   private _items: PresetItem[] = [];
   private _pendingItems: PresetItem[] = [];
+  private _presetConfig: PresetConfig;
 
   constructor(options: PresetManagerOptions) {
     this._options = options;
+
+    const playerUpperBarConfig = ObjectUtils.get(
+      this._options.corePlayer,
+      'config.contrib.ui.preset',
+      {}
+    ) as Partial<PresetConfig>;
+
+    this._presetConfig = ObjectUtils.mergeDefaults<PresetConfig>(
+      playerUpperBarConfig,
+      defaultPresetConfig,
+      {explicitMerge: ['presetAreasMapping']}
+    );
+
+    const groupedPresets = PresetsUtils.groupPresetAreasByType({
+      presetAreasMapping: this._presetConfig.presetAreasMapping,
+      acceptableTypes,
+    });
+
+    this.add({
+      label: 'preset-manager',
+      presetAreas: groupedPresets['PlayerArea'],
+      shareAdvancedPlayerAPI: true,
+      renderChild: () => (
+        <UIPlayerAdapter
+          onMount={this._registerToPlayer}
+          onUnmount={this._unregisterToPlayer}
+        />
+      ),
+    });
   }
+
+  private _registerToPlayer = (player: KalturaPlayerTypes.Player) => {
+    // player.addEventListener(
+    //   KalturaPlayer.ui.EventType.UI_PRESET_CHANGE,
+    //   this._notifyPresetChanged
+    // );
+
+    player.addEventListener(
+      KalturaPlayer.ui.EventType.UI_PRESET_RESIZE,
+      this._notifyUIPresetResize
+    );
+
+    // player.addEventListener(
+    //   KalturaPlayer.ui.EventType.VIDEO_RESIZE,
+    //   this._notifyVideoResize
+    // );
+  };
+
+  // private _notifyPresetChanged = () => {
+  //   // TODO implement
+  //   console.log(`sakal preset-manager: _notifyPresetChanged`);
+  // };
+  //
+  // private _notifyVideoResize = () => {
+  //   // TODO implement
+  //   console.log(`sakal preset-manager: _notifyVideoResize`);
+  // };
+
+  private _notifyUIPresetResize = () => {
+    this._events.emit({
+      type: PresetManagerEventTypes.PresetResizeEvent,
+    });
+  };
+
+  private _unregisterToPlayer = (player: KalturaPlayerTypes.Player) => {
+    // player.removeEventListener(
+    //   KalturaPlayer.ui.EventType.UI_PRESET_CHANGE,
+    //   this._notifyPresetChanged
+    // );
+
+    player.removeEventListener(
+      KalturaPlayer.ui.EventType.UI_PRESET_RESIZE,
+      this._notifyUIPresetResize
+    );
+
+    // player.removeEventListener(
+    //   KalturaPlayer.ui.EventType.VIDEO_RESIZE,
+    //   this._notifyVideoResize
+    // );
+  };
+
+  on: EventsManager<PresetManagerEvents>['on'] = this._events.on.bind(
+    this._events
+  );
+  off: EventsManager<PresetManagerEvents>['off'] = this._events.off.bind(
+    this._events
+  );
 
   add<TProps>(data: PresetItemData): void {
     if (this._isLocked) {

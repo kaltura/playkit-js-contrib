@@ -3,11 +3,7 @@ import {UpperBarItem} from './upper-bar-item';
 import {UpperBarItemData} from './upper-bar-item-data';
 import {UpperBar} from './components/upper-bar';
 import {PresetManager} from './preset-manager';
-import {
-  ArrayUtils,
-  ObjectUtils,
-  PlayerContribRegistry,
-} from '@playkit-js-contrib/common';
+import {ArrayUtils, ObjectUtils} from '@playkit-js-contrib/common';
 import {ManagedComponent} from './components/managed-component';
 import {PresetsUtils} from './presets-utils';
 import UpperBarConfig = KalturaPlayerContribTypes.UpperBarConfig;
@@ -30,16 +26,7 @@ const defaultUpperBarConfig: UpperBarConfig = {
 
 const acceptableTypes = ['TopBarRightControls'];
 
-const ResourceToken = 'UpperBarManager-v1';
-
 export class UpperBarManager {
-  static fromPlayer(
-    playerContribRegistry: PlayerContribRegistry,
-    creator: () => UpperBarManager
-  ) {
-    return playerContribRegistry.register(ResourceToken, 1, creator);
-  }
-
   private _rootElement: ManagedComponent | null;
   private _items: UpperBarItem[] = [];
   private _options: UpperBarManagerOptions;

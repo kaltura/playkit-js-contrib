@@ -24,6 +24,7 @@ declare namespace KalturaPlayerContribTypes {
         overlay: OverlayConfig;
         upperBar: UpperBarConfig;
         banner: BannerConfig;
+        preset: PresetConfig;
       };
     };
   }
@@ -39,6 +40,10 @@ declare namespace KalturaPlayerContribTypes {
   }
 
   export interface UpperBarConfig {
+    presetAreasMapping: ContribPresetAreasMapping;
+  }
+
+  export interface PresetConfig {
     presetAreasMapping: ContribPresetAreasMapping;
   }
 

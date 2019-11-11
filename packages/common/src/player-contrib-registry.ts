@@ -1,5 +1,5 @@
 export class PlayerContribRegistry {
-  private _cache: Record<string, {apiVersion: number; instance: any}> = {};
+  private _cache: Record<string, {instance: any}> = {};
 
   static get(player: any): PlayerContribRegistry {
     player.__contrib__ = player.__contrib__ || {};
@@ -7,6 +7,8 @@ export class PlayerContribRegistry {
       player.__contrib__.services || new PlayerContribRegistry();
     return player.__contrib__.services;
   }
+
+  private constructor() {}
 
   public get(token: string): any {
     const result = this._cache[token];
@@ -18,12 +20,11 @@ export class PlayerContribRegistry {
     return result;
   }
 
-  public register<T>(token: string, apiVersion: number, creator: () => T): T {
+  public register<T>(token: string, creator: () => T): T {
     let requestedResource = this._cache[token];
 
-    if (!requestedResource || requestedResource.apiVersion < apiVersion) {
+    if (!requestedResource) {
       requestedResource = this._cache[token] = {
-        apiVersion,
         instance: creator(),
       };
     }

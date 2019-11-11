@@ -5,7 +5,7 @@ import {
   hasOnMediaUnload,
   hasOnPluginDestroy,
   hasOnPluginSetup,
-  hasOnRegisterUI,
+  hasOnRegisterPresetsComponents,
 } from './contrib-plugin';
 
 export class CorePlugin<
@@ -35,11 +35,13 @@ export class CorePlugin<
   private _wasSetupFailed = false;
 
   getUIComponents(): any[] {
-    if (hasOnRegisterUI(this._contribPlugin)) {
+    if (hasOnRegisterPresetsComponents(this._contribPlugin)) {
       try {
-        this._contribPlugin.onRegisterUI(this._contribServices.uiManager);
+        this._contribPlugin.onRegisterPresetsComponents(
+          this._contribServices.presetManager
+        );
       } catch (e) {
-        console.error(`failed to register contrib ui items for plugin`, {
+        console.error(`failed to register contrib presets components`, {
           error: e.message,
         });
       }
@@ -96,7 +98,7 @@ export class CorePlugin<
   }
 
   public reset() {
-    this._contribServices.uiManager.reset();
+    this._contribServices.reset();
     if (hasOnMediaUnload(this._contribPlugin)) {
       try {
         this._contribPlugin.onMediaUnload();

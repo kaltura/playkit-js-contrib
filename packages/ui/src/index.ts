@@ -1,6 +1,5 @@
 /// <reference path="./global.d.ts" />
 
-export * from './ui-manager';
 export * from './banner-manager';
 export * from './toast-manager';
 export * from './floating-item';

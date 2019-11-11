@@ -5,7 +5,7 @@ import {
 } from './push-notifications';
 import {getDomainFromUrl} from './utils';
 
-const ResourceToken = 'PushNotifications-v1';
+const ResourceToken = 'PushNotifications';
 
 export class PushNotificationsProvider {
   private instancePool: any = {};
@@ -16,7 +16,7 @@ export class PushNotificationsProvider {
   ): PushNotifications {
     const pushNotificationProviderInstance = PlayerContribRegistry.get(
       player
-    ).register(ResourceToken, 1, () => {
+    ).register(ResourceToken, () => {
       return new PushNotificationsProvider();
     });
 

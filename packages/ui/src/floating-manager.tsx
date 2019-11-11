@@ -4,8 +4,8 @@ import {
   FloatingItemProps,
   FloatingPositions,
 } from './floating-item-data';
-import {PresetManager} from './preset-manager';
-import {ObjectUtils, PlayerContribRegistry} from '@playkit-js-contrib/common';
+import {PresetManager, PresetManagerEventTypes} from './preset-manager';
+import {ObjectUtils} from '@playkit-js-contrib/common';
 import {ComponentChild, h} from 'preact';
 import {PlayerSize, VideoSize} from './common.types';
 import {getPlayerSize, getVideoSize} from './player-utils';
@@ -36,16 +36,7 @@ const defaultFloatingConfig: KalturaPlayerContribTypes.FloatingConfig = {
 
 const acceptableTypes = ['VideoArea', 'PresetArea', 'InteractiveArea'];
 
-const ResourceToken = 'FloatingManager-v1';
-
 export class FloatingManager {
-  static fromPlayer(
-    playerContribRegistry: PlayerContribRegistry,
-    creator: () => FloatingManager
-  ) {
-    return playerContribRegistry.register(ResourceToken, 1, creator);
-  }
-
   private _items: Record<FloatingPositions, FloatingItem[]> = {
     [FloatingPositions.VideoArea]: [],
     [FloatingPositions.InteractiveArea]: [],
@@ -56,7 +47,6 @@ export class FloatingManager {
     [FloatingPositions.VideoArea]: null,
     [FloatingPositions.PresetArea]: null,
   };
-  private _options: FloatingManagerOptions;
   private _cache: {
     canvas: {
       playerSize: PlayerSize;
@@ -71,9 +61,7 @@ export class FloatingManager {
 
   private _floatingConfig: FloatingConfig;
 
-  constructor(private options: FloatingManagerOptions) {
-    this._options = options;
-
+  constructor(private _options: FloatingManagerOptions) {
     const playerFloatingConfig = ObjectUtils.get(
       this._options.corePlayer,
       'config.contrib.ui.floating',
@@ -92,7 +80,7 @@ export class FloatingManager {
     });
 
     Object.keys(groupedPresets).forEach(presetType => {
-      this.options.presetManager.add({
+      this._options.presetManager.add({
         label: 'floating-manager',
         presetAreas: groupedPresets[presetType],
         renderChild: () => this._renderChild(FloatingPositions[presetType]),
@@ -112,7 +100,7 @@ export class FloatingManager {
 
     const itemOptions = {
       presetManager,
-      ...this.options,
+      ...this._options,
       data,
     };
 
@@ -222,9 +210,12 @@ export class FloatingManager {
       this._updateComponents();
     });
 
-    corePlayer.addEventListener(corePlayer.Event.RESIZE, () => {
-      this._updateCachedCanvas();
-      this._updateComponents();
-    });
+    this._options.presetManager.on(
+      PresetManagerEventTypes.PresetResizeEvent,
+      () => {
+        this._updateCachedCanvas();
+        this._updateComponents();
+      }
+    );
   }
 }
