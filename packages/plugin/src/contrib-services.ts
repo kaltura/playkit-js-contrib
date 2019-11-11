@@ -137,4 +137,9 @@ export class ContribServices {
   reset(): void {
     // TODO sakal
   }
+
+  public getPlayerKS(): string | null {
+    const {session} = this._options.corePlayer.config;
+    return session && session.ks ? session.ks : null;
+  }
 }
