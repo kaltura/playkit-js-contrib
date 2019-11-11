@@ -151,7 +151,7 @@ export class ContribServices {
     });
   }
 
-  public get userKs(): string | null {
+  public getPlayerKS(): string | null {
     const {session} = this._options.corePlayer.config;
     return session && session.ks ? session.ks : null;
   }
