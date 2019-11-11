@@ -12,6 +12,7 @@ import {BannerContainer} from './components/banner-container';
 import {BannerContainerProps} from './components/banner-container/banner-container';
 import {getPlayerSize} from './player-utils';
 import BannerConfig = KalturaPlayerContribTypes.BannerConfig;
+import {getContribConfig} from './contrib-utils';
 
 export interface BannerContent {
   text: string;
@@ -66,14 +67,9 @@ export class BannerManager {
   constructor(private options: BannerManagerOptions) {
     this._options = options;
 
-    const playerBannerConfig = ObjectUtils.get(
+    this._bannerConfig = getContribConfig(
       this._options.corePlayer,
-      'config.contrib.ui.banner',
-      {}
-    ) as Partial<BannerConfig>;
-
-    this._bannerConfig = ObjectUtils.mergeDefaults<BannerConfig>(
-      playerBannerConfig,
+      'ui.banner',
       defaultBannerConfig
     );
   }

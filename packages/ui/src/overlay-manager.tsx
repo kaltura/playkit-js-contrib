@@ -7,7 +7,7 @@ import {ManagedComponent} from './components/managed-component';
 import {OverlayItemContainer} from './components/overlay-item-container';
 import {PresetsUtils} from './presets-utils';
 import OverlayConfig = KalturaPlayerContribTypes.OverlayConfig;
-import {DeepPartial} from '@playkit-js-contrib/common/global-types';
+import {getContribConfig} from './contrib-utils';
 
 export interface OverlayManagerOptions {
   presetManager: PresetManager;
@@ -42,16 +42,13 @@ export class OverlayManager {
   constructor(private options: OverlayManagerOptions) {
     this._options = options;
 
-    const playerOverlayConfig = ObjectUtils.get(
+    this._overlayConfig = getContribConfig(
       this._options.corePlayer,
-      'config.contrib.ui.overlay',
-      {}
-    ) as DeepPartial<OverlayConfig>;
-
-    this._overlayConfig = ObjectUtils.mergeDefaults<OverlayConfig>(
-      playerOverlayConfig,
+      'ui.overlay',
       defaultOverlayConfig,
-      {explicitMerge: ['presetAreasMapping']}
+      {
+        explicitMerge: ['presetAreasMapping'],
+      }
     );
 
     const groupedPresets = PresetsUtils.groupPresetAreasByType({

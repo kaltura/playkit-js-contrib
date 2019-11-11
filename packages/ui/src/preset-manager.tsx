@@ -5,6 +5,7 @@ import {EventsManager, ObjectUtils} from '@playkit-js-contrib/common';
 import {UIPlayerAdapter} from './components/ui-player-adapter';
 import PresetConfig = KalturaPlayerContribTypes.PresetConfig;
 import {PresetsUtils} from './presets-utils';
+import {getContribConfig} from './contrib-utils';
 
 export interface PresetManagerOptions {
   corePlayer: KalturaPlayerTypes.Player;
@@ -46,16 +47,13 @@ export class PresetManager {
   constructor(options: PresetManagerOptions) {
     this._options = options;
 
-    const playerUpperBarConfig = ObjectUtils.get(
+    this._presetConfig = getContribConfig(
       this._options.corePlayer,
-      'config.contrib.ui.preset',
-      {}
-    ) as Partial<PresetConfig>;
-
-    this._presetConfig = ObjectUtils.mergeDefaults<PresetConfig>(
-      playerUpperBarConfig,
+      'ui.preset',
       defaultPresetConfig,
-      {explicitMerge: ['presetAreasMapping']}
+      {
+        explicitMerge: ['presetAreasMapping'],
+      }
     );
 
     const groupedPresets = PresetsUtils.groupPresetAreasByType({
