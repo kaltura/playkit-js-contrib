@@ -14,7 +14,7 @@
     "reset": "lerna run reset && rm -rf node_modules",
     "setup": "npm i && lerna exec npm link",
     "lerna": "lerna",
-    "deploy:prepare": "npm run build && npm run lerna:lint && node scripts/bump-version.js",
+    "deploy:prepare": "npm run clean && npm ci && npm run build && npm run lerna:lint && node scripts/bump-version.js",
     "deploy:publish-to-npm": "npm run clean && npm ci && npm run build && lerna publish from-package",
     "deploy:production-player": "node ./scripts/prepare-production-player.js",
     "lerna:lint:fix": "lerna run lint:js:fix",

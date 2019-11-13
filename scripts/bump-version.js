@@ -29,5 +29,8 @@ const args = process.argv.splice(2);
     {bold git commit -am "chore(release): publish ${packageVersion}"}
     {bold git tag -a v${packageVersion} -m "v${packageVersion}"}
     {bold git push --follow-tags}  
+    
+    Then, publish to npm:
+    {bold npm run lerna -- publish from-package}
   `);
 })();
