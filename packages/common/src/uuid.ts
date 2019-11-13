@@ -16,18 +16,16 @@ export class UUID {
     return uuidV5(name, namespace);
   }
 
-  public static NumberUuidV1(): string {
+  /**
+   * generate uuidV1 as numbers only
+   */
+  public static numberedUuidV1(): string {
     const uuid = UUID.uuidV1();
     let numStr = '';
 
     for (let i = 0; i < uuid.length; i++) {
       const char = uuid.charAt(i);
-
-      if (Number.isNaN(+char)) {
-        numStr = numStr + char.charCodeAt(0);
-      } else {
-        numStr = numStr + char;
-      }
+      numStr += Number.isNaN(+char) ? char.charCodeAt(0) : char;
     }
 
     return numStr;

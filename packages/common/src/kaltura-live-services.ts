@@ -22,8 +22,6 @@ export class KalturaLiveServices {
   }
 
   private static _generateAnonymousUserId(userId: string) {
-    const numFromUuid = UUID.NumberUuidV1();
-
-    return `##${userId}${HashSeparatorText}${numFromUuid}##`;
+    return `##${userId}${HashSeparatorText}${UUID.numberedUuidV1()}##`;
   }
 }
