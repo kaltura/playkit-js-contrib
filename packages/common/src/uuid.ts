@@ -15,4 +15,19 @@ export class UUID {
   public static uuidV5(name: string, namespace: string) {
     return uuidV5(name, namespace);
   }
+
+  /**
+   * generate uuidV1 as numbers only
+   */
+  public static numberedUuidV1(): string {
+    const uuid = UUID.uuidV1();
+    let numStr = '';
+
+    for (let i = 0; i < uuid.length; i++) {
+      const char = uuid.charAt(i);
+      numStr += Number.isNaN(+char) ? char.charCodeAt(0) : char;
+    }
+
+    return numStr;
+  }
 }
