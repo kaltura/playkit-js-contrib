@@ -95,6 +95,8 @@ export class ContribServices {
       upperBarManager,
     });
 
+    fontManager.loadFont();
+
     this._toastManager = toastManager;
     this._overlayManager = overlayManager;
     this._bannerManager = bannerManager;
