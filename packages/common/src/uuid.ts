@@ -15,4 +15,21 @@ export class UUID {
   public static uuidV5(name: string, namespace: string) {
     return uuidV5(name, namespace);
   }
+
+  public static NumberUuidV1(): string {
+    const uuid = UUID.uuidV1();
+    let numStr = '';
+
+    for (let i = 0; i < uuid.length; i++) {
+      const char = uuid.charAt(i);
+
+      if (Number.isNaN(+char)) {
+        numStr = numStr + char.charCodeAt(0);
+      } else {
+        numStr = numStr + char;
+      }
+    }
+
+    return numStr;
+  }
 }

@@ -22,29 +22,8 @@ export class KalturaLiveServices {
   }
 
   private static _generateAnonymousUserId(userId: string) {
-    const numFromUuid = KalturaLiveServices._getNumberStringUuid();
+    const numFromUuid = UUID.NumberUuidV1();
 
     return `##${userId}${HashSeparatorText}${numFromUuid}##`;
-  }
-
-  private static _getNumberStringUuid(): string {
-    const uuid = UUID.uuidV1();
-    let numStr = '';
-
-    for (let i = 0; i < uuid.length; i++) {
-      const char = uuid.charAt(i);
-
-      if (KalturaLiveServices.isNan(+char)) {
-        numStr = numStr + char.charCodeAt(0);
-      } else {
-        numStr = numStr + char;
-      }
-    }
-
-    return numStr;
-  }
-
-  private static isNan(value) {
-    return value !== null && (value != value || +value != value);
   }
 }
