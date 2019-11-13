@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.1](https://github.com/kaltura/playkit-js-contrib/compare/v3.0.0...v3.0.1) (2019-11-13)
+
+
+### Bug Fixes
+
+* **common:** create uuid for anonymous user based on player user id (webc-1694) ([5ef7a5a](https://github.com/kaltura/playkit-js-contrib/commit/5ef7a5a16635b09195fbd35264063c27769faa63))
+* **ui:** load font in contrib services ([#98](https://github.com/kaltura/playkit-js-contrib/issues/98)) ([6770f38](https://github.com/kaltura/playkit-js-contrib/commit/6770f380a1c7b6b3ce6dea24278a2879bb017e63))
+
+
+
+
+
 # [3.0.0](https://github.com/kaltura/playkit-js-contrib/compare/v2.3.0...v3.0.0) (2019-11-11)
 
 
