@@ -7,8 +7,10 @@ declare namespace KalturaPlayerTypes {
     dimensions: {width: number; height: number};
     getActiveTracks(): {video: {width: number; height: number}};
     pause(): void;
+    seekToLiveEdge(): void;
     play(): void;
     isLive: () => boolean;
+    isDvr: () => boolean;
     dispatchEvent(event: FakeEvent): boolean;
     addEventListener(type: string, listener: CoreEventListener): void;
     removeEventListener: (type: string, listener: CoreEventListener) => void;
@@ -17,6 +19,7 @@ declare namespace KalturaPlayerTypes {
     Event: Record<string, string>;
     currentTime: number;
     duration: number;
+    ended: boolean;
     config: KalturaPlayerTypes.PlayerConfig &
       DeepPartial<KalturaPlayerContribTypes.ContribConfig>;
   }
