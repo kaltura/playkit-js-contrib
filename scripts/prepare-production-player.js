@@ -278,7 +278,7 @@ async function cloneRepositories() {
   fs.emptyDirSync(workspacePath);
   gitClone(playerRepoName, playerRepoTag);
   gitClone(playerUIRepoName, playerUIRepoBranch);
-  gitClone(playerProviderRepoName, playerProviderRepoBranch);
+  gitClone(playerProviderRepoName, playerProviderRepoBranch || 'master');
 }
 
 async function promptWelcome() {
@@ -316,7 +316,7 @@ async function promptParameters() {
       }, {
         name: 'playerProviderRepoBranch',
         type: 'input',
-        message: 'what is the branch name of requested repository kaltura/playkit-js-ui?',
+        message: 'what is the branch name of requested repository playkit-js-providers?',
         default: ''
       }]
   );
