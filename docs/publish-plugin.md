@@ -1,0 +1,65 @@
+# Publish (any) contrib plugin
+
+### 1. Prepare environment
+run the following commands to prepare you environment:
+
+> Warning! those commands will revert unsaved changes
+```
+git reset --hard
+git checkout master
+git pull
+```
+
+### 2. Deploy new version to Github
+
+#### 2.1 bump version and create changelog files
+1. run the following script
+```javascript
+npm run deploy:prepare
+```
+
+2. answer the questions in the wizard. see explanation if needed:
+  - Are you ready to begin? **Yes**
+  - Did you work with local version of contrib libraries? 
+    - answer **Yes** if: [MISSING]
+    - otherwise, answer **No** 
+  - Did you or someone else published those changes to npm?
+    - answer **Yes** if: [MISSING] 
+    - otherwise, answer **No**
+
+#### 2.2 verify changes during deployment
+
+5. review the `changelog.md` file and make sure it is well written.
+
+#### 2.3 commit and push changes
+7. **copy & execute** the three instuction lines printed in console after step 2.1. It will be similar to the following:
+```
+  _git_ commit -am "chore: publish version ${version}"
+  _git_ tag -a ${tagName} -m "${tagName}"
+  _git_ git push --follow-tags  
+```
+
+6. open the plugin repo > releases 
+7. select the new tag, then select `edit tag`, then select `publish release`
+
+### 3. Publish version to NPM
+
+#### 3.1 Pre-requisites
+
+> You should do this only once. No need to re-login everytime
+
+1. Do you have credentials in NPM to publish this library? if not, asked for such credentials.
+2. make sure you are logged to npm with the relevant credentials. 
+```javascript
+npm login
+```
+
+#### 3.2 Publish
+> NOTICE: the command below should be executed only if you:
+> - just completed step 2
+> - step 2 was done on this machine  
+
+3. run the following command
+```bash
+npm run deploy:publish-to-npm
+```
