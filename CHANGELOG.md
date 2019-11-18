@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.2](https://github.com/kaltura/playkit-js-contrib/compare/v3.0.1...v3.0.2) (2019-11-18)
+
+
+### Bug Fixes
+
+* **ui:** adding a root style for aligning text to the left as default ([#100](https://github.com/kaltura/playkit-js-contrib/issues/100)) WEBC-1721 ([90b4f25](https://github.com/kaltura/playkit-js-contrib/commit/90b4f25e3c5f02907cede5bca5c38bcfb4c09b83))
+
+
+
+
+
 ## [3.0.1](https://github.com/kaltura/playkit-js-contrib/compare/v3.0.0...v3.0.1) (2019-11-13)
 
 
