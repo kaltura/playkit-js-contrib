@@ -30,6 +30,7 @@ npm run deploy:prepare
 #### 2.2 verify changes during deployment
 
 5. review the `changelog.md` file and make sure it is well written.
+  - [ ] 
 
 #### 2.3 commit and push changes
 7. **copy & execute** the three instuction lines printed in console after step 2.1. It will be similar to the following:
@@ -63,3 +64,10 @@ npm login
 ```bash
 npm run deploy:publish-to-npm
 ```
+
+### 4. Deploy version to QA Bundler
+> You will need to be in the office or use the vpn to access the relevant machine.
+
+1. open [https://il-git-qa-ubu.dev.kaltura.com/index.html#Update_Plugins_For_Player_v7](https://il-git-qa-ubu.dev.kaltura.com/index.html#Update_Plugins_For_Player_v7).
+2. fill form and follow the cli output to make sure publish succeeded. 
+
