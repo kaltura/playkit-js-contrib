@@ -40,8 +40,8 @@ npm run deploy:prepare
   _git_ git push --follow-tags  
 ```
 
-6. open the plugin repo > releases 
-7. select the new tag, then select `edit tag`, then select `publish release`
+7. open the plugin repo > releases 
+8. select the new tag, then select `edit tag`, then select `publish release`
 
 ### 3. Publish version to NPM
 
