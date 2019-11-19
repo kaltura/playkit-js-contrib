@@ -27,12 +27,12 @@ npm run deploy:prepare
     - answer **Yes** if: [MISSING] 
     - otherwise, answer **No**
 
-#### 2.2 verify changes during deployment
+#### 2.2 Verify changes during deployment
 
 5. review the `changelog.md` file and make sure it is well written.
   - [ ] 
 
-#### 2.3 commit and push changes
+#### 2.3 Commit and push changes
 7. **copy & execute** the three instuction lines printed in console after step 2.1. It will be similar to the following:
 ```
   _git_ commit -am "chore: publish version ${version}"
@@ -40,8 +40,13 @@ npm run deploy:prepare
   _git_ git push --follow-tags  
 ```
 
-7. open the plugin repo > releases 
-8. select the new tag, then select `edit tag`, then select `publish release`
+7. open the plugin repo > releases
+
+#### 2.4 Create a release based on the new tag 
+8. open github releases page
+9. copy content of previous release
+10. edit new tag and paste the content of the previous release
+11. create the release 
 
 ### 3. Publish version to NPM
 
@@ -68,6 +73,10 @@ npm run deploy:publish-to-npm
 ### 4. Deploy version to QA Bundler
 > You will need to be in the office or use the vpn to access the relevant machine.
 
+#### 4.1 copy version to bundler
 1. open [https://il-git-qa-ubu.dev.kaltura.com/index.html#Update_Plugins_For_Player_v7](https://il-git-qa-ubu.dev.kaltura.com/index.html#Update_Plugins_For_Player_v7).
 2. fill form and follow the cli output to make sure publish succeeded. 
 
+#### 4.2 point latest tag to new version
+1. use admin console to edit ui-conf with id `15221785`
+2. change the value with the new tag.
