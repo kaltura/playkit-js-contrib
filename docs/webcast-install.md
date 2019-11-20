@@ -24,7 +24,8 @@ Save it and copy this its id.
 
 ### 4 MediaSpace installation 
 Go to your MediaSpace instance admin-page, to the kwebcast module. Copy and save the existing value of `PlayerUiconfId` 
-and use it in case you want to revert the use of V7 player. Paste the player-id from #3 into that field and Save.  
+and use it in case you want to revert the use of V7 player. Paste the player-id from #3 into that field and Save. 
+**Make sure** not to add a V7 player id to `BSEPlayerUIConfID` as this will break KAF.   
 
 ### 5 Test
 Follow regular flows to create a new Webcast or utilize an existing one and test. Your player should load V7 with QNA and Kaltura live plugins while using V7 player 
