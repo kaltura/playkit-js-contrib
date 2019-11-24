@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.3](https://github.com/kaltura/playkit-js-contrib/compare/v3.0.2...v3.0.3) (2019-11-21)
+
+
+### Bug Fixes
+
+* **ui:** use Lato for banner and toast components WEBC-1722 ([a90d354](https://github.com/kaltura/playkit-js-contrib/commit/a90d354e75dbc36a9f6c73baaefabcbed8471d0d))
+
+
+
+
+
 ## [3.0.2](https://github.com/kaltura/playkit-js-contrib/compare/v3.0.1...v3.0.2) (2019-11-18)
 
 
