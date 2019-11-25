@@ -8,17 +8,19 @@ With that - any partner will have the ability to manage his own player and use i
 ### One time Installations (onprems)
 If this is an on-prem and not served from Kaltura-SaaS you will need to make sure that: 
 1. Core player version is `0.49.0-vamb.1` [installed](https://github.com/kaltura/playkit-js-contrib/releases/tag/kaltura-ovp-player%400.49.0-vamb.1) in your environment 
-2. Q&A plugin is [installed](https://github.com/kaltura/playkit-js-qna/releases/tag/v0.7.5) in your environment
-3. Kaltura-live plugin is [installed](https://github.com/kaltura/playkit-js-kaltura-live/releases/tag/v1.0.3) in your environment
+2. Q&A plugin is [installed](https://github.com/kaltura/playkit-js-qna/releases/tag/) in your environment
+3. Kaltura-live plugin is [installed](https://github.com/kaltura/playkit-js-kaltura-live/releases/tag/) in your environment
 4. Minimum MediaSpace version - 5.93.13
 5. The uiconf that serves VAMB 'latest' is up to date and holds references to `kaltura-live` and `qna` plugins 
 6. There is an existing generic player on partner 0 on your environment to serve this feature. See #3 below
-> Kaltura SaaS production the generic player id is 44763621. 
+> Kaltura SaaS production the generic player id is 44763621.
+> If you are uncertain of the latest plugins version you may grab them from that uiconf. Just look at the top of this URL:     
+> https://www.kaltura.com/p/2095431/embedPlaykitJs/uiconf_id/44763621
 
 # Installation steps
 
 ### 1 Enable Webcast module in MediaSpace if missing
-Open your MediaSpace admin console, chose the relevant MediaSpace instance and click `manage` next to `Enable Modules`
+Open your MediaSpace admin console, choose the relevant MediaSpace instance and click `manage` next to `Enable Modules`
 In the next screen - enable a module called `kwebcast` and hit `save`
 
 ### 2 Activate the module in the MediaSpace instance
