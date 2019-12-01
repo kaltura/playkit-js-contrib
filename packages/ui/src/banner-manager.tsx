@@ -50,8 +50,8 @@ const MinDuration: number = 5 * 1000;
 
 const defaultBannerConfig: BannerConfig = {
   theme: {
-    backgroundColor: 'rgba(0, 0, 0, .8)',
-    blur: '16px',
+    backgroundColor: 'rgba(0, 0, 0, .7)',
+    blur: '10px',
   },
 };
 
