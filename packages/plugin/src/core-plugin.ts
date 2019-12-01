@@ -16,6 +16,7 @@ export class CorePlugin<
     return true;
   }
 
+  private _loadMediaEntryIdWorkaround = '';
   protected _contribPlugin!: TContribPlugin;
   protected _contribServices!: ContribServices;
 
@@ -55,6 +56,20 @@ export class CorePlugin<
       this.player,
       this.player.Event.MEDIA_LOADED,
       () => {
+        if (this._loadMediaEntryIdWorkaround) {
+          if (
+            this._loadMediaEntryIdWorkaround !== this.player.config.sources.id
+          ) {
+            throw new Error(
+              `Current contrib infrastructure does not allow load media of different entries. Expected entry id ${this._loadMediaEntryIdWorkaround}`
+            );
+          }
+
+          return;
+        }
+
+        this._loadMediaEntryIdWorkaround = this.player.config.sources.id;
+
         if (!this._wasSetupExecuted) {
           if (hasOnPluginSetup(this._contribPlugin)) {
             try {
@@ -84,8 +99,19 @@ export class CorePlugin<
     );
   }
 
+  private _reset() {
+    this._contribServices.reset();
+    if (hasOnMediaUnload(this._contribPlugin)) {
+      try {
+        this._contribPlugin.onMediaUnload();
+      } catch (e) {
+        console.error(`failure during media unload`, {error: e.message});
+      }
+    }
+  }
+
   public destroy() {
-    this.reset();
+    this._reset();
     this.eventManager.destroy();
 
     if (hasOnPluginDestroy(this._contribPlugin)) {
@@ -98,13 +124,10 @@ export class CorePlugin<
   }
 
   public reset() {
-    this._contribServices.reset();
-    if (hasOnMediaUnload(this._contribPlugin)) {
-      try {
-        this._contribPlugin.onMediaUnload();
-      } catch (e) {
-        console.error(`failure during media unload`, {error: e.message});
-      }
+    if (this._loadMediaEntryIdWorkaround) {
+      return;
     }
+
+    this._reset();
   }
 }
