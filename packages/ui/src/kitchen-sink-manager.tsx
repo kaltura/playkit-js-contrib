@@ -55,8 +55,8 @@ interface KitchenSinkPanel {
 
 const defaultKitchenSinkConfig: KalturaPlayerContribTypes.KitchenSinkConfig = {
   theme: {
-    backgroundColor: 'rgba(0, 0, 0, .8)',
-    blur: '16px',
+    backgroundColor: 'rgba(0, 0, 0, .7)',
+    blur: '10px',
   },
   presetAreasMapping: {
     Playback: {
