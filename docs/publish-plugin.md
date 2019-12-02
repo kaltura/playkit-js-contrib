@@ -73,10 +73,5 @@ npm run deploy:publish-to-npm
 ### 4. Deploy version to QA Bundler
 > You will need to be in the office or use the vpn to access the relevant machine.
 
-#### 4.1 copy version to bundler
 1. open [https://il-git-qa-ubu.dev.kaltura.com/index.html#Update_Plugins_For_Player_v7](https://il-git-qa-ubu.dev.kaltura.com/index.html#Update_Plugins_For_Player_v7).
 2. fill form and follow the cli output to make sure publish succeeded. 
-
-#### 4.2 point latest tag to new version
-1. use admin console to edit ui-conf with id `15221785`
-2. change the value with the new tag.
