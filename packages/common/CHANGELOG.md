@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0](https://github.com/kaltura/playkit-js-contrib/compare/v3.0.3...v3.1.0) (2019-12-04)
+
+
+### Features
+
+* **common:** add end type FEV-421  ([#116](https://github.com/kaltura/playkit-js-contrib/issues/116)) ([0ad2d2c](https://github.com/kaltura/playkit-js-contrib/commit/0ad2d2c2635881f09b4a66401fbec65b93875d4b))
+
+
+
+
+
 ## [3.0.1](https://github.com/kaltura/playkit-js-contrib/compare/v3.0.0...v3.0.1) (2019-11-13)
 
 
