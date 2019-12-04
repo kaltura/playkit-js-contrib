@@ -1,5 +1,6 @@
 import {h, Component} from 'preact';
 import * as styles from './popover.scss';
+import {PopoverContent} from './popover-content';
 
 export enum PopoverVerticalPositions {
   Top = 'top',
@@ -49,16 +50,11 @@ export class Popover extends Component<PopoverProps, PopoverState> {
   state = {
     open: false,
   };
-  componentDidMount() {
-    document.addEventListener('click', this._handleClickOutside);
-    document.addEventListener('keydown', this._handleEscButtonPressed);
-  }
 
-  componentWillUnmount() {
-    document.removeEventListener('click', this._handleClickOutside);
-    document.removeEventListener('keydown', this._handleEscButtonPressed);
+  private _clearTimeout = () => {
     clearTimeout(this._closeTimeout);
-  }
+    this._closeTimeout = null;
+  };
 
   private _handleClickOutside = (e: any) => {
     if (
@@ -81,6 +77,7 @@ export class Popover extends Component<PopoverProps, PopoverState> {
 
   private _closePopover = () => {
     const {onClose} = this.props;
+    this._clearTimeout();
     this.setState({open: false}, () => {
       if (onClose) {
         onClose();
@@ -119,8 +116,7 @@ export class Popover extends Component<PopoverProps, PopoverState> {
   private _handleHoverOnPopover = () => {
     if (this.props.triggerMode === PopoverTriggerMode.Hover) {
       if (this.state.open && this._closeTimeout) {
-        clearTimeout(this._closeTimeout);
-        this._closeTimeout = null;
+        this._clearTimeout();
       } else {
         this._closePopover();
       }
@@ -162,7 +158,13 @@ export class Popover extends Component<PopoverProps, PopoverState> {
             styles[verticalAlignment],
             styles[horizontalAlignment],
           ].join(' ')}>
-          {props.content}
+          {this.state.open && (
+            <PopoverContent
+              clickHandler={this._handleClickOutside}
+              keyHandler={this._handleEscButtonPressed}>
+              {props.content}
+            </PopoverContent>
+          )}
         </div>
       </div>
     );
