@@ -121,9 +121,16 @@ declare namespace KalturaPlayerTypes {
     analyticsServiceUrl?: string;
     apiFeatures?: APIFeatures;
     browser: Browser;
+    os: Os;
   }
   export interface Browser {
     name: string;
+    version: string;
+  }
+  export interface Os {
+    name: string;
+    version: string;
+    major: string;
   }
   export interface APIFeatures {
     entryRedirect?: string;
