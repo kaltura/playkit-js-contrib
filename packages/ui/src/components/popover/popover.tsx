@@ -41,6 +41,28 @@ interface PopoverState {
   open: boolean;
 }
 
+/**
+ * Popover renders popup with a target.
+ * Properties description:
+ *   onOpen - function that will be executed when popover opens;
+ *   onClose - function that will be executed when popover closes;
+ *   verticalPosition - vertical position of popover relative to target ("top" or "bottom"), default - "top";
+ *   horizontalPosition - horizontal position of popover relative to target ("left" or "right"), default - "left";
+ *   className - popover class, can be use for popover styling, default - 'popover';
+ *   closeOnEsc - handle ESC keyboard pressed event and close popover, default - true;
+ *   triggerMode - popover support 2 ways for opening: click (keyPress) and mouse hover ("click" or "hover"), default - "click";
+ *   content - content of popover. Can be any valid Preact node, ex:
+ *      <select>
+ *          <option>Option 1</option>
+ *          ...
+ *          <option>Option n</option>
+ *      </select>
+ *   children - popover target. Can be any valid Preact node, ex:
+ *      <button>
+ *          <i className="icon" />
+ *      </button>
+ */
+
 export class Popover extends Component<PopoverProps, PopoverState> {
   private _closeTimeout: any = null;
   private _controlElement = null;
@@ -122,10 +144,26 @@ export class Popover extends Component<PopoverProps, PopoverState> {
       }
     }
   };
+  private _getHoverEvents = () => {
+    if (this.props.triggerMode === PopoverTriggerMode.Hover) {
+      return {
+        targetEvents: {
+          onMouseEnter: this._handleMouseEnter,
+          onMouseLeave: this._handleMouseLeave,
+        },
+        popoverEvents: {
+          onMouseEnter: this._handleHoverOnPopover,
+          onMouseLeave: this._handleHoverOnPopover,
+        },
+      };
+    }
+    return {targetEvents: {}, popoverEvents: {}};
+  };
   render(props: PopoverProps): JSX.Element | null {
     if (!props.content || !props.children) {
       return null;
     }
+    const {targetEvents, popoverEvents} = this._getHoverEvents();
     const verticalAlignment =
       props.verticalPosition === PopoverVerticalPositions.Top
         ? PopoverVerticalPositions.Top
@@ -139,25 +177,23 @@ export class Popover extends Component<PopoverProps, PopoverState> {
         <div
           className="popover-anchor-container"
           onClick={this._handleClick}
-          onMouseEnter={this._handleMouseEnter}
-          onMouseLeave={this._handleMouseLeave}
           ref={node => {
             this._controlElement = node;
-          }}>
+          }}
+          {...targetEvents}>
           {props.children}
         </div>
         <div
           aria-expanded={this.state.open ? 'true' : 'false'}
           tabIndex={-1}
-          onMouseEnter={this._handleHoverOnPopover}
-          onMouseLeave={this._handleHoverOnPopover}
           className={[
             props.className,
             styles.popoverComponent,
             this.state.open ? styles.visible : '',
             styles[verticalAlignment],
             styles[horizontalAlignment],
-          ].join(' ')}>
+          ].join(' ')}
+          {...popoverEvents}>
           {this.state.open && (
             <PopoverContent
               clickHandler={this._handleClickOutside}
