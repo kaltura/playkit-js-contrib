@@ -114,34 +114,25 @@ export class Popover extends Component<PopoverProps, PopoverState> {
     }
   };
   private _handleClick = () => {
-    if (this.props.triggerMode === PopoverTriggerMode.Click) {
-      if (this.state.open) {
-        this._closePopover();
-      } else {
-        this._openPopover();
-      }
+    if (this.state.open) {
+      this._closePopover();
+    } else {
+      this._openPopover();
     }
   };
   private _handleMouseEnter = () => {
-    if (
-      this.props.triggerMode === PopoverTriggerMode.Hover &&
-      !this.state.open
-    ) {
+    if (!this.state.open) {
       this._openPopover();
     }
   };
   private _handleMouseLeave = () => {
-    if (this.props.triggerMode === PopoverTriggerMode.Hover) {
-      this._closeTimeout = setTimeout(this._closePopover, CLOSE_ON_HOVER_DELAY);
-    }
+    this._closeTimeout = setTimeout(this._closePopover, CLOSE_ON_HOVER_DELAY);
   };
   private _handleHoverOnPopover = () => {
-    if (this.props.triggerMode === PopoverTriggerMode.Hover) {
-      if (this.state.open && this._closeTimeout) {
-        this._clearTimeout();
-      } else {
-        this._closePopover();
-      }
+    if (this.state.open && this._closeTimeout) {
+      this._clearTimeout();
+    } else {
+      this._closePopover();
     }
   };
   private _getHoverEvents = () => {
@@ -157,7 +148,7 @@ export class Popover extends Component<PopoverProps, PopoverState> {
         },
       };
     }
-    return {targetEvents: {}, popoverEvents: {}};
+    return {targetEvents: {onClick: this._handleClick}, popoverEvents: {}};
   };
   render(props: PopoverProps): JSX.Element | null {
     if (!props.content || !props.children) {
@@ -176,7 +167,6 @@ export class Popover extends Component<PopoverProps, PopoverState> {
       <div className={styles.popoverContainer}>
         <div
           className="popover-anchor-container"
-          onClick={this._handleClick}
           ref={node => {
             this._controlElement = node;
           }}
