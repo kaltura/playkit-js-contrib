@@ -121,13 +121,13 @@ declare namespace KalturaPlayerTypes {
     analyticsServiceUrl?: string;
     apiFeatures?: APIFeatures;
     browser: Browser;
-    os: Os;
+    os: OS;
   }
   export interface Browser {
     name: string;
     version: string;
   }
-  export interface Os {
+  export interface OS {
     name: string;
     version: string;
     major: string;
