@@ -120,8 +120,18 @@ declare namespace KalturaPlayerTypes {
     liveStatsServiceUrl?: string;
     analyticsServiceUrl?: string;
     apiFeatures?: APIFeatures;
+    browser: Browser;
+    os: OS;
   }
-
+  export interface Browser {
+    name: string;
+    version: string;
+  }
+  export interface OS {
+    name: string;
+    version: string;
+    major: string;
+  }
   export interface APIFeatures {
     entryRedirect?: string;
   }
