@@ -1,6 +1,5 @@
 import {h, Component} from 'preact';
 import * as styles from './popover.scss';
-import {PopoverContent} from './popover-content';
 
 export enum PopoverVerticalPositions {
   Top = 'top',
@@ -15,6 +14,11 @@ export enum PopoverTriggerMode {
   Hover = 'hover',
 }
 
+export enum KeyboardKeys {
+  Esc = 27,
+  Enter = 13,
+}
+
 const CLOSE_ON_HOVER_DELAY = 500;
 
 const defaultProps = {
@@ -23,15 +27,17 @@ const defaultProps = {
   triggerMode: PopoverTriggerMode.Click,
   className: 'popover',
   closeOnEsc: true,
+  closeOnClick: true,
 };
 
 interface PopoverProps {
   onClose?: () => void;
   onOpen?: () => void;
+  closeOnClick: boolean;
+  closeOnEsc: boolean;
   verticalPosition: PopoverVerticalPositions;
   horizontalPosition: PopoverHorizontalPositions;
   className: string;
-  closeOnEsc: boolean;
   triggerMode: PopoverTriggerMode;
   content: JSX.Element;
   children: JSX.Element | JSX.Element[];
@@ -46,6 +52,7 @@ interface PopoverState {
  * Properties description:
  *   onOpen - function that will be executed when popover opens;
  *   onClose - function that will be executed when popover closes;
+ *   closeOnClick - close the popover on mouse click;
  *   verticalPosition - vertical position of popover relative to target ("top" or "bottom"), default - "top";
  *   horizontalPosition - horizontal position of popover relative to target ("left" or "right"), default - "left";
  *   className - popover class, can be use for popover styling, default - 'popover';
@@ -78,22 +85,40 @@ export class Popover extends Component<PopoverProps, PopoverState> {
     this._closeTimeout = null;
   };
 
-  private _handleClickOutside = (e: any) => {
+  private _handleMouseEvent = (event: MouseEvent) => {
     if (
-      !!this._controlElement &&
-      !this._controlElement.contains(e.target) &&
-      this.state.open
+      !this._controlElement.contains(event.target) &&
+      this.props.closeOnClick
     ) {
+      this._closePopover();
+    }
+  };
+
+  private _handleKeyboardEvent = (event: KeyboardEvent) => {
+    if (
+      this._controlElement.contains(event.target) &&
+      event.keyCode === KeyboardKeys.Enter
+    ) {
+      // handle Enter key pressed on Target icon to prevent triggering of _closePopover twice
+      return;
+    }
+    if (
+      (this.props.closeOnEsc && event.keyCode === KeyboardKeys.Esc) ||
+      event.keyCode === KeyboardKeys.Enter
+    ) {
+      // handle if ESC or Enter button presesd
       this._closePopover();
     }
   };
 
   private _openPopover = () => {
     const {onOpen} = this.props;
+    this._clearTimeout();
     this.setState({open: true}, () => {
       if (onOpen) {
         onOpen();
       }
+      this._addListeners();
     });
   };
 
@@ -104,16 +129,11 @@ export class Popover extends Component<PopoverProps, PopoverState> {
       if (onClose) {
         onClose();
       }
+      this._removeListeners();
     });
   };
 
-  private _handleEscButtonPressed = (e: KeyboardEvent) => {
-    // check if ESC or Enter pressed
-    if (this.state.open && (e.keyCode === 27 || e.keyCode === 13)) {
-      this._closePopover();
-    }
-  };
-  private _handleClick = () => {
+  private _togglePopover = (e: MouseEvent | KeyboardEvent) => {
     if (this.state.open) {
       this._closePopover();
     } else {
@@ -135,6 +155,14 @@ export class Popover extends Component<PopoverProps, PopoverState> {
       this._closePopover();
     }
   };
+  private _addListeners = () => {
+    document.addEventListener('click', this._handleMouseEvent);
+    document.addEventListener('keydown', this._handleKeyboardEvent);
+  };
+  private _removeListeners = () => {
+    document.removeEventListener('click', this._handleMouseEvent);
+    document.removeEventListener('keydown', this._handleKeyboardEvent);
+  };
   private _getHoverEvents = () => {
     if (this.props.triggerMode === PopoverTriggerMode.Hover) {
       return {
@@ -148,21 +176,13 @@ export class Popover extends Component<PopoverProps, PopoverState> {
         },
       };
     }
-    return {targetEvents: {onClick: this._handleClick}, popoverEvents: {}};
+    return {targetEvents: {onClick: this._togglePopover}, popoverEvents: {}};
   };
   render(props: PopoverProps): JSX.Element | null {
     if (!props.content || !props.children) {
       return null;
     }
     const {targetEvents, popoverEvents} = this._getHoverEvents();
-    const verticalAlignment =
-      props.verticalPosition === PopoverVerticalPositions.Top
-        ? PopoverVerticalPositions.Top
-        : PopoverVerticalPositions.Bottom;
-    const horizontalAlignment =
-      props.horizontalPosition === PopoverHorizontalPositions.Left
-        ? PopoverHorizontalPositions.Left
-        : PopoverHorizontalPositions.Right;
     return (
       <div className={styles.popoverContainer}>
         <div
@@ -173,25 +193,19 @@ export class Popover extends Component<PopoverProps, PopoverState> {
           {...targetEvents}>
           {props.children}
         </div>
-        <div
-          aria-expanded={this.state.open ? 'true' : 'false'}
-          tabIndex={-1}
-          className={[
-            props.className,
-            styles.popoverComponent,
-            this.state.open ? styles.visible : '',
-            styles[verticalAlignment],
-            styles[horizontalAlignment],
-          ].join(' ')}
-          {...popoverEvents}>
-          {this.state.open && (
-            <PopoverContent
-              clickHandler={this._handleClickOutside}
-              keyHandler={this._handleEscButtonPressed}>
-              {props.content}
-            </PopoverContent>
-          )}
-        </div>
+        {this.state.open && (
+          <div
+            aria-expanded="true"
+            className={[
+              props.className,
+              styles.popoverComponent,
+              styles[props.verticalPosition],
+              styles[props.horizontalPosition],
+            ].join(' ')}
+            {...popoverEvents}>
+            {props.content}
+          </div>
+        )}
       </div>
     );
   }

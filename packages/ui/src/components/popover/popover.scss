@@ -6,11 +6,7 @@
         position: absolute;
         right: 0px;
         font-size: 15px;
-        z-index: -1;
         display: block;
-        transition: opacity 500ms;
-        opacity: 0;
-        visibility: hidden;
         &.visible {
             visibility: visible;
             opacity: 1;
