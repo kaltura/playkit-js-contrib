@@ -23,3 +23,4 @@ export * from './local-content-utils';
 export * from './overlay-manager';
 export * from './overlay-item';
 export * from './overlay-item-data';
+export * from './components/popover';
