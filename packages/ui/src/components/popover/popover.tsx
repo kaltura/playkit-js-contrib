@@ -55,6 +55,7 @@ interface PopoverState {
  *   closeOnClick - close the popover on mouse click;
  *   verticalPosition - vertical position of popover relative to target ("top" or "bottom"), default - "top";
  *   horizontalPosition - horizontal position of popover relative to target ("left" or "right"), default - "left";
+ *   !!! known limitation of popover positions: if popover opens beyond the visible area of the player - the popover will be overlapped by player
  *   className - popover class, can be use for popover styling, default - 'popover';
  *   closeOnEsc - handle ESC keyboard pressed event and close popover, default - true;
  *   triggerMode - popover support 2 ways for opening: click (keyPress) and mouse hover ("click" or "hover"), default - "click";
