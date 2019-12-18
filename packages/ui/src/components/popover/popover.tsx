@@ -80,6 +80,10 @@ export class Popover extends Component<PopoverProps, PopoverState> {
     open: false,
   };
 
+  componentWillUnmount() {
+    this._removeListeners();
+  }
+
   private _clearTimeout = () => {
     clearTimeout(this._closeTimeout);
     this._closeTimeout = null;
@@ -115,10 +119,10 @@ export class Popover extends Component<PopoverProps, PopoverState> {
     const {onOpen} = this.props;
     this._clearTimeout();
     this.setState({open: true}, () => {
+      this._addListeners();
       if (onOpen) {
         onOpen();
       }
-      this._addListeners();
     });
   };
 
@@ -126,10 +130,10 @@ export class Popover extends Component<PopoverProps, PopoverState> {
     const {onClose} = this.props;
     this._clearTimeout();
     this.setState({open: false}, () => {
+      this._removeListeners();
       if (onClose) {
         onClose();
       }
-      this._removeListeners();
     });
   };
 
