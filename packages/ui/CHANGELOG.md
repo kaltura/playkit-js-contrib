@@ -5,13 +5,13 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [3.1.2](https://github.com/kaltura/playkit-js-contrib/compare/v3.1.1...v3.1.2) (2019-12-22)
 
+### Features
+
+* **ui:** Support popover  ([#115](https://github.com/kaltura/playkit-js-contrib/issues/115)) ([e988af9](https://github.com/kaltura/playkit-js-contrib/commit/e988af9b31aa8503bc32b965965e63c3c7f839b7))
 
 ### Bug Fixes
 
 * improve answer on air banner theme ([#113](https://github.com/kaltura/playkit-js-contrib/issues/113)) WEBC-1728 ([d69e09c](https://github.com/kaltura/playkit-js-contrib/commit/d69e09cbd9afdd3f98c53cc1c0afc23b41103e10))
-
-
-
 
 
 ## [3.1.1](https://github.com/kaltura/playkit-js-contrib/compare/v3.1.0...v3.1.1) (2019-12-08)
