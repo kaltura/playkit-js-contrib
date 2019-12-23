@@ -1,4 +1,4 @@
-import {h, Component} from 'preact';
+import {h, Component, ComponentChild} from 'preact';
 import * as styles from './popover.scss';
 
 export enum PopoverVerticalPositions {
@@ -39,8 +39,8 @@ interface PopoverProps {
   horizontalPosition: PopoverHorizontalPositions;
   className: string;
   triggerMode: PopoverTriggerMode;
-  content: JSX.Element;
-  children: JSX.Element | JSX.Element[];
+  content: ComponentChild;
+  children: ComponentChild;
 }
 
 interface PopoverState {
@@ -183,7 +183,7 @@ export class Popover extends Component<PopoverProps, PopoverState> {
     }
     return {targetEvents: {onClick: this._togglePopover}, popoverEvents: {}};
   };
-  render(props: PopoverProps): JSX.Element | null {
+  render(props: PopoverProps) {
     if (!props.content || !props.children) {
       return null;
     }
