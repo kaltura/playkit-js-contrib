@@ -16,6 +16,7 @@ declare global {
       components: {
         withPlayer: any;
       };
+      Portal: ContribPreact.ComponentFactory<{into: string}>;
     };
     core: {
       registerPlugin(name: string, component: any): void;
