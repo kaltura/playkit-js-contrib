@@ -1,4 +1,3 @@
-import {h} from 'preact';
 import {ContribLogger, getContribLogger} from '@playkit-js-contrib/common';
 import {
   FloatingItemData,
@@ -6,6 +5,7 @@ import {
   FloatingUIModes,
 } from './floating-item-data';
 import {ManagedComponent} from './components/managed-component';
+const {h} = KalturaPlayer.ui.preact;
 
 export interface FloatingItemOptions {
   kalturaPlayer: KalturaPlayerTypes.Player;

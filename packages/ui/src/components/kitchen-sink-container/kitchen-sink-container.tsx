@@ -1,6 +1,6 @@
-import {Component, h} from 'preact';
 import * as styles from './_kitchen-sink-container.scss';
 import {ContribLogger, getContribLogger} from '@playkit-js-contrib/common';
+const {h, Component} = KalturaPlayer.ui.preact;
 
 export interface KitchenSinkContainerRendererProps {}
 

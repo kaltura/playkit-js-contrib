@@ -1,4 +1,5 @@
-import {ComponentChild, h} from 'preact';
+import {ComponentChild} from 'preact';
+const {h} = KalturaPlayer.ui.preact;
 
 export default (href: string, text: string, key: number): ComponentChild => {
   return (

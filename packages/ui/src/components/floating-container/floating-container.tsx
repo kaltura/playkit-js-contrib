@@ -1,7 +1,7 @@
-import {h, Component} from 'preact';
 import * as styles from './_floating-container.scss';
 import {getContribLogger} from '@playkit-js-contrib/common';
 import {ContribLogger} from '@playkit-js-contrib/common';
+const {h, Component} = KalturaPlayer.ui.preact;
 
 export class FloatingContainer extends Component {
   private _logger: ContribLogger | null = null;

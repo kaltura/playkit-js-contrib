@@ -1,4 +1,4 @@
-import {ComponentChild, h} from 'preact';
+import {ComponentChild} from 'preact';
 import {UpperBarItem} from './upper-bar-item';
 import {UpperBarItemData} from './upper-bar-item-data';
 import {UpperBar} from './components/upper-bar';
@@ -8,6 +8,7 @@ import {ManagedComponent} from './components/managed-component';
 import {PresetsUtils} from './presets-utils';
 import UpperBarConfig = KalturaPlayerContribTypes.UpperBarConfig;
 import {getContribConfig} from './contrib-utils';
+const {h} = KalturaPlayer.ui.preact;
 
 export interface UpperBarManagerOptions {
   kalturaPlayer: KalturaPlayerTypes.Player;

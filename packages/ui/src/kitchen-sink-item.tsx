@@ -1,4 +1,4 @@
-import {ComponentChild, h} from 'preact';
+import {ComponentChild} from 'preact';
 import {
   ContribLogger,
   getContribLogger,
@@ -12,6 +12,7 @@ import {
   KitchenSinkEventTypes,
 } from './kitchen-sink-manager';
 import {KitchenSink} from './components/kitchen-sink';
+const {h} = KalturaPlayer.ui.preact;
 
 export interface KitchenSinkItemOptions {
   data: KitchenSinkItemData;

@@ -6,13 +6,14 @@ import {
 } from './floating-item-data';
 import {PresetManager, PresetManagerEventTypes} from './preset-manager';
 import {ObjectUtils} from '@playkit-js-contrib/common';
-import {ComponentChild, h} from 'preact';
+import {ComponentChild} from 'preact';
 import {PlayerSize, VideoSize} from './common.types';
 import {getPlayerSize, getVideoSize} from './player-utils';
 import {ManagedComponent} from './components/managed-component';
 import {PresetsUtils} from './presets-utils';
 import FloatingConfig = KalturaPlayerContribTypes.FloatingConfig;
 import {getContribConfig} from './contrib-utils';
+const {h} = KalturaPlayer.ui.preact;
 
 export interface FloatingManagerOptions {
   kalturaPlayer: KalturaPlayerTypes.Player;

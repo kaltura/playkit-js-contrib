@@ -1,4 +1,4 @@
-import {ComponentChild, h} from 'preact';
+import {ComponentChild} from 'preact';
 import {OverlayItem} from './overlay-item';
 import {OverlayItemData, OverlayPositions} from './overlay-item-data';
 import {PresetManager} from './preset-manager';
@@ -8,6 +8,7 @@ import {OverlayItemContainer} from './components/overlay-item-container';
 import {PresetsUtils} from './presets-utils';
 import OverlayConfig = KalturaPlayerContribTypes.OverlayConfig;
 import {getContribConfig} from './contrib-utils';
+const {h} = KalturaPlayer.ui.preact;
 
 export interface OverlayManagerOptions {
   presetManager: PresetManager;

@@ -1,4 +1,4 @@
-import {ComponentChild, Ref} from 'preact';
+import {ComponentChild} from 'preact';
 import {PlayerSize, VideoSize} from './common.types';
 
 export enum OverlayPositions {

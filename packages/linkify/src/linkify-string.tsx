@@ -1,6 +1,7 @@
-import {Component, ComponentChild, h} from 'preact';
+import {ComponentChild} from 'preact';
 import * as LinkifyIt from 'linkify-it';
 import defaultComponentRenderer from './decorators/default-component-renderer';
+const {h, Component} = KalturaPlayer.ui.preact;
 
 export interface LinkifyStringProps {
   text: string;

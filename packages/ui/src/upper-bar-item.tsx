@@ -1,7 +1,8 @@
-import {h, ComponentChild} from 'preact';
+import {ComponentChild} from 'preact';
 import {UpperBarItemData} from './upper-bar-item-data';
 import {ContribLogger} from '@playkit-js-contrib/common';
 import {getContribLogger} from '@playkit-js-contrib/common';
+const {h} = KalturaPlayer.ui.preact;
 
 export interface UpperBarItemOptions {
   data: UpperBarItemData;

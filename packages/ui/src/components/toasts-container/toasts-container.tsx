@@ -1,6 +1,6 @@
-import {Component, h} from 'preact';
 import {Toast, ToastProps} from '../toast/toast';
 import * as styles from './_toasts-container.scss';
+const {h, Component} = KalturaPlayer.ui.preact;
 
 export interface ToastsContainerProps {
   toasts: ToastProps[];

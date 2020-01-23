@@ -1,5 +1,6 @@
-import {h, Component, ComponentChild} from 'preact';
+import {ComponentChild} from 'preact';
 import * as styles from './popover.scss';
+const {h, Component} = KalturaPlayer.ui.preact;
 
 export enum PopoverVerticalPositions {
   Top = 'top',

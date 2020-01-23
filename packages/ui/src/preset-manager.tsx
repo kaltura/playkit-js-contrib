@@ -1,4 +1,3 @@
-import {h} from 'preact';
 import {PresetItemData, ReservedPresetNames} from './preset-item-data';
 import {KalturaPlayerPresetComponent, PresetItem} from './preset-item';
 import {EventsManager, ObjectUtils} from '@playkit-js-contrib/common';
@@ -6,6 +5,7 @@ import {UIPlayerAdapter} from './components/ui-player-adapter';
 import PresetConfig = KalturaPlayerContribTypes.PresetConfig;
 import {PresetsUtils} from './presets-utils';
 import {getContribConfig} from './contrib-utils';
+const {h} = KalturaPlayer.ui.preact;
 
 export interface PresetManagerOptions {
   kalturaPlayer: KalturaPlayerTypes.Player;

@@ -1,6 +1,6 @@
-import {h, Component} from 'preact';
 import * as styles from './injected-component.scss';
 import {getContribLogger} from '@playkit-js-contrib/common';
+const {h, Component} = KalturaPlayer.ui.preact;
 
 const logger = getContribLogger({
   module: 'contrib-ui',

@@ -6,13 +6,14 @@ import {
   FloatingPositions,
   FloatingUIModes,
 } from './floating-item-data';
-import {ComponentChild, h} from 'preact';
+import {ComponentChild} from 'preact';
 import {Banner} from './components/banner';
 import {BannerContainer} from './components/banner-container';
 import {BannerContainerProps} from './components/banner-container/banner-container';
 import {getPlayerSize} from './player-utils';
 import BannerConfig = KalturaPlayerContribTypes.BannerConfig;
 import {getContribConfig} from './contrib-utils';
+const {h} = KalturaPlayer.ui.preact;
 
 export interface BannerContent {
   text: string;

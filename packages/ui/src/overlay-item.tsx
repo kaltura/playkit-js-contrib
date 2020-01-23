@@ -1,7 +1,7 @@
-import {h} from 'preact';
 import {ContribLogger, getContribLogger} from '@playkit-js-contrib/common';
 import {OverlayItemData, OverlayItemProps} from './overlay-item-data';
 import {ManagedComponent} from './components/managed-component';
+const {h} = KalturaPlayer.ui.preact;
 
 export interface OverlayItemOptions {
   data: OverlayItemData;

@@ -1,4 +1,4 @@
-import {ComponentChild, h} from 'preact';
+import {ComponentChild} from 'preact';
 import {
   KitchenSinkExpandModes,
   KitchenSinkItemData,
@@ -18,6 +18,7 @@ import {ManagedComponent} from './components/managed-component';
 import {UpperBarItem} from './upper-bar-item';
 import {PresetsUtils} from './presets-utils';
 import {getContribConfig} from './contrib-utils';
+const {h} = KalturaPlayer.ui.preact;
 
 export interface KitchenSinkManagerOptions {
   kalturaPlayer: KalturaPlayerTypes.Player;

@@ -1,9 +1,9 @@
-import {h, render} from 'preact';
 import {getContribLogger} from '@playkit-js-contrib/common';
 import {PresetItemData, RelativeToTypes} from './preset-item-data';
 import {ManagedComponent} from './components/managed-component';
 import {ContribLogger} from '@playkit-js-contrib/common';
 import {InjectedComponent} from './components/injected-component/injected-component';
+const {h, render} = KalturaPlayer.ui.preact;
 
 export interface PresetItemOptions {
   kalturaPlayer: KalturaPlayerTypes.Player;

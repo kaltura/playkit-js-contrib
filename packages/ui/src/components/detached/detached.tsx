@@ -1,5 +1,4 @@
-const {preact, Portal} = KalturaPlayer.ui;
-const {h, Component} = preact;
+const {h, Component} = KalturaPlayer.ui.preact;
 
 export interface DetachedProps {
   children: any;

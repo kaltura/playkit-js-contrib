@@ -1,7 +1,8 @@
-import {h, Component, ComponentChild, ComponentChildren} from 'preact';
+import {ComponentChildren} from 'preact';
 import {getContribLogger} from '@playkit-js-contrib/common';
 import {ContribLogger} from '@playkit-js-contrib/common';
 import * as styles from './_managed-component.scss';
+const {h, Component} = KalturaPlayer.ui.preact;
 
 type ManagedComponentState = {
   toggler: boolean;
