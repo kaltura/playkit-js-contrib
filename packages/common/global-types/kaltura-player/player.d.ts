@@ -22,6 +22,7 @@ declare namespace KalturaPlayerTypes {
     duration: number;
     ended: boolean;
     env: KalturaPlayerTypes.Env;
+    configure: Function;
     config: KalturaPlayerTypes.PlayerConfig &
       DeepPartial<KalturaPlayerContribTypes.ContribConfig>;
   }
