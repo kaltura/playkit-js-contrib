@@ -1,11 +1,27 @@
 export function downloadContent(content: string, name: string): void {
-  const link = document.createElement('a');
-  link.setAttribute(
-    'href',
-    'data:text/plain;charset=utf-8,' + encodeURIComponent(content)
-  );
-  link.setAttribute('download', name);
-  link.click();
+  const blob = new Blob([content], {type: 'text/plain;charset=utf-8;'});
+  const anchor = document.createElement('a');
+  if (window.navigator.msSaveBlob) {
+    // IE
+    window.navigator.msSaveOrOpenBlob(blob, name);
+  } else if (navigator.userAgent.search('Firefox') !== -1) {
+    // Firefox
+    anchor.style.display = 'none';
+    anchor.setAttribute(
+      'href',
+      'data:attachment/csv;charset=utf-8,' + encodeURIComponent(content)
+    );
+    anchor.setAttribute('target', '_blank');
+    anchor.setAttribute('download', name);
+    anchor.click();
+    anchor.remove();
+  } else {
+    // Chrome
+    anchor.setAttribute('href', URL.createObjectURL(blob));
+    anchor.setAttribute('target', '_blank');
+    anchor.setAttribute('download', name);
+    anchor.click();
+  }
 }
 
 export function printContent(content: string): void {
