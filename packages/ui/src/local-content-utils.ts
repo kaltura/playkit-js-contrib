@@ -9,7 +9,7 @@ export function downloadContent(content: string, name: string): void {
     anchor.style.display = 'none';
     anchor.setAttribute(
       'href',
-      'data:attachment/csv;charset=utf-8,' + encodeURIComponent(content)
+      'data:text/plain;charset=utf-8,' + encodeURIComponent(content)
     );
     anchor.setAttribute('target', '_blank');
     anchor.setAttribute('download', name);
