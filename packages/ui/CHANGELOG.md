@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0](https://github.com/kaltura/playkit-js-contrib/compare/v3.1.3...v3.2.0) (2020-02-10)
+
+
+### Bug Fixes
+
+* **ui:** fix banner layout (webc-1766) ([#127](https://github.com/kaltura/playkit-js-contrib/issues/127)) ([a52f91c](https://github.com/kaltura/playkit-js-contrib/commit/a52f91cd732ce6b7264b37a9b032b50814a4e7dd))
+
+
+
+
+
 ## [3.1.3](https://github.com/kaltura/playkit-js-contrib/compare/v3.1.2...v3.1.3) (2019-12-23)
 
 **Note:** Version bump only for package @playkit-js-contrib/ui
