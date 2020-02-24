@@ -112,7 +112,7 @@ export class ObjectUtils {
     obj: Record<string, any>,
     path: string,
     defaultValue: any
-  ): unknown {
+  ): any {
     function stringToPath(path: string) {
       const output = [];
       // Split to an array with dot notation
