@@ -90,18 +90,20 @@ export class PresetItem {
   }
 
   private _render = (): any => {
-    if (this._options.data.shareAdvancedPlayerAPI) {
+    if (!this._options.data.isolatedMode) {
       return this._options.data.renderChild();
     }
 
     const {
-      data: {label, fillContainer},
+      data: {label, isolatedOptions = {}},
     } = this._options;
+    const {fillContainer, className} = isolatedOptions;
 
     return (
       <InjectedComponent
         label={label}
         fillContainer={fillContainer || false}
+        className={className}
         onCreate={this._onCreate}
         onDestroy={this._onDestroy}
       />

@@ -1,7 +1,7 @@
 import {h} from 'preact';
-import {PresetItemData, ReservedPresetNames} from './preset-item-data';
+import {PresetItemData} from './preset-item-data';
 import {KalturaPlayerPresetComponent, PresetItem} from './preset-item';
-import {EventsManager, ObjectUtils} from '@playkit-js-contrib/common';
+import {EventsManager} from '@playkit-js-contrib/common';
 import {UIPlayerAdapter} from './components/ui-player-adapter';
 import PresetConfig = KalturaPlayerContribTypes.PresetConfig;
 import {PresetsUtils} from './presets-utils';
@@ -64,7 +64,7 @@ export class PresetManager {
     this.add({
       label: 'preset-manager',
       presetAreas: groupedPresets['PlayerArea'],
-      shareAdvancedPlayerAPI: true,
+      isolatedMode: false,
       renderChild: () => (
         <UIPlayerAdapter
           onMount={this._registerToPlayer}

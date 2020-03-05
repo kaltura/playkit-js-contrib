@@ -2,7 +2,6 @@ import {ComponentChild, h} from 'preact';
 import {OverlayItem} from './overlay-item';
 import {OverlayItemData, OverlayPositions} from './overlay-item-data';
 import {PresetManager} from './preset-manager';
-import {ObjectUtils} from '@playkit-js-contrib/common';
 import {ManagedComponent} from './components/managed-component';
 import {OverlayItemContainer} from './components/overlay-item-container';
 import {PresetsUtils} from './presets-utils';
@@ -58,7 +57,10 @@ export class OverlayManager {
 
     this.options.presetManager.add({
       label: 'overlay-manager',
-      fillContainer: true,
+      isolatedMode: true,
+      isolatedOptions: {
+        fillContainer: true,
+      },
       presetAreas: groupedPresets['PlayerArea'],
       renderChild: () => this._renderChild(OverlayPositions.PlayerArea),
     });

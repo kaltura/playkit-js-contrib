@@ -12,6 +12,7 @@ export interface InjectedComponentProps {
   onDestroy: (options: {parent: HTMLDivElement}) => void;
   label: string;
   fillContainer: boolean;
+  className?: string;
 }
 
 class InjectedComponent extends Component<InjectedComponentProps> {
@@ -70,12 +71,14 @@ class InjectedComponent extends Component<InjectedComponentProps> {
   }
 
   render() {
-    const {label, fillContainer} = this.props;
-    const className = fillContainer ? styles.fillContainer : '';
+    const {label, fillContainer, className} = this.props;
     return (
       <div
         data-contrib-injected={label}
-        className={className}
+        className={[
+          className ? className : '',
+          fillContainer ? styles.fillContainer : '',
+        ].join(' ')}
         ref={ref => (this._root = ref)}
       />
     );

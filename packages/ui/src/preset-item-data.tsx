@@ -29,12 +29,15 @@ export enum RelativeToTypes {
 
 export interface PresetItemData {
   label: string;
-  fillContainer?: boolean;
+  isolatedMode?: boolean; // this property replaces ShareAdvancedPlayerAPI and flips its
+  isolatedOptions?: {
+    fillContainer?: boolean;
+    className?: string;
+  };
   presetAreas: Record<
     ReservedPresetNames | string,
     ReservedPresetAreas | string
   >;
-  shareAdvancedPlayerAPI?: boolean;
   renderChild: () => ComponentChild;
   relativeTo?: {
     type: RelativeToTypes;

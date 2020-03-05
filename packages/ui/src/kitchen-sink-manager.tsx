@@ -114,21 +114,27 @@ export class KitchenSinkManager {
 
     this.options.presetManager.add({
       label: 'kitchen-sink-right',
-      fillContainer: true,
+      isolatedMode: true,
+      isolatedOptions: {
+        fillContainer: true,
+      },
       presetAreas: groupedPresets['SidePanelRight'],
       renderChild: this._renderChild.bind(this, KitchenSinkPositions.Right),
     });
 
     this.options.presetManager.add({
       label: 'kitchen-sink-bottom',
-      fillContainer: true,
+      isolatedMode: true,
+      isolatedOptions: {
+        fillContainer: true,
+      },
       presetAreas: groupedPresets['SidePanelBottom'],
       renderChild: this._renderChild.bind(this, KitchenSinkPositions.Bottom),
     });
 
     this.options.presetManager.add({
       label: 'kitchen-sink-adapter',
-      shareAdvancedPlayerAPI: true,
+      isolatedMode: false,
       presetAreas: groupedPresets['PlayerArea'],
       renderChild: () => <KitchenSinkAdapter ref={this._setRef} />,
     });
