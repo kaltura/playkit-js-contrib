@@ -1,8 +1,9 @@
-import {Component, ComponentChild, h} from 'preact';
+// import {ComponentChild} from 'preact';
 import {ContribLogger, getContribLogger} from '@playkit-js-contrib/common';
 import * as styles from './_overlay-item-container.scss';
 
 export interface OverlayContainerProps {
+  // @ts-ignore:
   renderContent: () => ComponentChild;
 }
 

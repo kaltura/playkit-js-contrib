@@ -1,4 +1,4 @@
-import {h, ComponentChild} from 'preact';
+// import {ComponentChild} from 'preact';
 import {UpperBarItemData} from './upper-bar-item-data';
 import {ContribLogger} from '@playkit-js-contrib/common';
 import {getContribLogger} from '@playkit-js-contrib/common';
@@ -31,6 +31,7 @@ export class UpperBarItem {
     });
   }
 
+  // @ts-ignore:
   public renderChild = (props: UpperBarItemProps): ComponentChild => {
     const {onClick, renderItem, label} = this._options.data;
     const children = renderItem(props);

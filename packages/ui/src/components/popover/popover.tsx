@@ -1,4 +1,4 @@
-import {h, Component, ComponentChild} from 'preact';
+// import {ComponentChild} from 'preact';
 import * as styles from './popover.scss';
 
 export enum PopoverVerticalPositions {
@@ -39,7 +39,9 @@ interface PopoverProps {
   horizontalPosition: PopoverHorizontalPositions;
   className: string;
   triggerMode: PopoverTriggerMode;
+  // @ts-ignore:
   content: ComponentChild;
+  // @ts-ignore:
   children: ComponentChild;
 }
 

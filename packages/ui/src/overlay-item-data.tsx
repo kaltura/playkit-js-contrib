@@ -1,4 +1,4 @@
-import {ComponentChild, Ref} from 'preact';
+// import {ComponentChild} from 'preact';
 import {PlayerSize, VideoSize} from './common.types';
 
 export enum OverlayPositions {
@@ -7,6 +7,7 @@ export enum OverlayPositions {
 
 export interface OverlayItemData {
   label: string;
+  // @ts-ignore:
   renderContent: (overlayItemProps: OverlayItemProps) => ComponentChild;
   className?: string;
   position: OverlayPositions;

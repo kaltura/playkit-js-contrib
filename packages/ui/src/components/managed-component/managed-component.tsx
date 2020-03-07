@@ -1,4 +1,4 @@
-import {h, Component, ComponentChild, ComponentChildren} from 'preact';
+// import {ComponentChildren} from 'preact';
 import {getContribLogger} from '@playkit-js-contrib/common';
 import {ContribLogger} from '@playkit-js-contrib/common';
 import * as styles from './_managed-component.scss';
@@ -8,6 +8,7 @@ type ManagedComponentState = {
 };
 type ManagedComponentProps = {
   isShown: () => boolean;
+  // @ts-ignore:
   renderChildren: () => ComponentChildren;
   label: string;
   fillContainer: boolean;

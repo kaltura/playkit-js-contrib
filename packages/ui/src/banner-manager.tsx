@@ -6,7 +6,7 @@ import {
   FloatingPositions,
   FloatingUIModes,
 } from './floating-item-data';
-import {ComponentChild, h} from 'preact';
+// import {ComponentChild} from 'preact';
 import {Banner} from './components/banner';
 import {BannerContainer} from './components/banner-container';
 import {BannerContainerProps} from './components/banner-container/banner-container';
@@ -27,7 +27,8 @@ export interface BannerOptions {
   renderContent?: (
     content: BannerContent,
     floatingItemProps: FloatingItemProps
-  ) => ComponentChild;
+  ) => // @ts-ignore:
+  ComponentChild;
 }
 
 export interface BannerManagerOptions {

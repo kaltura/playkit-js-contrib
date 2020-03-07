@@ -1,4 +1,4 @@
-import {ComponentChild, h} from 'preact';
+// import {ComponentChild} from 'preact';
 import {OverlayItem} from './overlay-item';
 import {OverlayItemData, OverlayPositions} from './overlay-item-data';
 import {PresetManager} from './preset-manager';
@@ -133,6 +133,7 @@ export class OverlayManager {
     );
   };
 
+  // @ts-ignore:
   private _renderChild = (position: OverlayPositions): ComponentChild => {
     return (
       <ManagedComponent

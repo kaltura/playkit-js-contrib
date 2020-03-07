@@ -1,4 +1,4 @@
-import {ComponentChild} from 'preact';
+// import {ComponentChild} from 'preact';
 
 export enum ReservedPresetNames {
   Playback = 'Playback',
@@ -35,6 +35,7 @@ export interface PresetItemData {
     ReservedPresetAreas | string
   >;
   shareAdvancedPlayerAPI?: boolean;
+  // @ts-ignore:
   renderChild: () => ComponentChild;
   relativeTo?: {
     type: RelativeToTypes;

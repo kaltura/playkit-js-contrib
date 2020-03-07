@@ -1,4 +1,4 @@
-import {ComponentChild, h} from 'preact';
+// import {ComponentChild} from 'preact';
 import {UpperBarItem} from './upper-bar-item';
 import {UpperBarItemData} from './upper-bar-item-data';
 import {UpperBar} from './components/upper-bar';
@@ -57,6 +57,7 @@ export class UpperBarManager {
     });
   }
 
+  // @ts-ignore:
   private _renderChild = (): ComponentChild => {
     const items = this._items.map(item => item.renderChild({}));
     return (

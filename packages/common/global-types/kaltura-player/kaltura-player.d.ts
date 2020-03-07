@@ -1,4 +1,5 @@
 import * as ContribPreact from 'preact';
+// import * as ContribPreact from '../preact';
 
 declare global {
   const KalturaPlayer: {

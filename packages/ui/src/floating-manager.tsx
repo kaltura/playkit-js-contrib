@@ -6,7 +6,7 @@ import {
 } from './floating-item-data';
 import {PresetManager, PresetManagerEventTypes} from './preset-manager';
 import {ObjectUtils} from '@playkit-js-contrib/common';
-import {ComponentChild, h} from 'preact';
+// import {ComponentChild} from 'preact';
 import {PlayerSize, VideoSize} from './common.types';
 import {getPlayerSize, getVideoSize} from './player-utils';
 import {ManagedComponent} from './components/managed-component';
@@ -170,6 +170,7 @@ export class FloatingManager {
     return this._items[position].map(item => item.renderFloatingChild(props));
   };
 
+  // @ts-ignore:
   private _renderChild = (position: FloatingPositions): ComponentChild => {
     return (
       <ManagedComponent

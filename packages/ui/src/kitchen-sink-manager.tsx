@@ -1,4 +1,3 @@
-import {ComponentChild, h} from 'preact';
 import {
   KitchenSinkExpandModes,
   KitchenSinkItemData,
@@ -274,6 +273,7 @@ export class KitchenSinkManager {
     return <KitchenSinkContainer>{items}</KitchenSinkContainer>;
   }
 
+  // @ts-ignore:
   private _renderChild = (position: KitchenSinkPositions): ComponentChild => {
     return (
       <ManagedComponent

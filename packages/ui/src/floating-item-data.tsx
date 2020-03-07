@@ -1,4 +1,3 @@
-import {ComponentChild, Ref} from 'preact';
 import {PlayerSize, VideoSize} from './common.types';
 
 export enum FloatingUIModes {
@@ -17,6 +16,7 @@ export enum FloatingPositions {
 export interface FloatingItemData {
   label: string;
   mode: FloatingUIModes;
+  // @ts-ignore:
   renderContent: (floatingItemProps: FloatingItemProps) => ComponentChild;
   className?: string;
   position: FloatingPositions;
