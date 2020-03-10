@@ -57,6 +57,9 @@ export class OverlayManager {
 
     this.options.presetManager.add({
       label: 'overlay-manager',
+      // TODO:  maybe we should try to default to false and also set all contrib usage to false.
+      // Let's see if it works without isolation and keep isolation only for edge cases. wdyt?
+      // because we will probably want later to have i18n and isolated mode will not allow it.
       isolatedMode: true,
       isolatedOptions: {
         fillContainer: true,

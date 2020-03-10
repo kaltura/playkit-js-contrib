@@ -29,7 +29,9 @@ export enum RelativeToTypes {
 
 export interface PresetItemData {
   label: string;
-  isolatedMode?: boolean; // this property replaces ShareAdvancedPlayerAPI and flips its
+  isolatedMode?: boolean;
+  // this property replaces ShareAdvancedPlayerAPI and flips its default value
+  // TODO: figure out default behaviour of isolatedMode === false
   isolatedOptions?: {
     fillContainer?: boolean;
     className?: string;
