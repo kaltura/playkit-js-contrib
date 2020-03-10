@@ -1,4 +1,4 @@
-import {Component, h} from 'preact';
+const {h,Component} = KalturaPlayer.ui.preact;
 import {ContribLogger, getContribLogger} from '@playkit-js-contrib/common';
 import * as styles from './_kitchen-sink.scss';
 
@@ -48,7 +48,7 @@ export class KitchenSink extends Component<KitchenSinkProps> {
         <div
           className={styles.backgroundLayout}
           style={`
-                background-color:${backgroundColor}; 
+                background-color:${backgroundColor};
                 backdrop-filter: blur(${blur});
              `}
         />

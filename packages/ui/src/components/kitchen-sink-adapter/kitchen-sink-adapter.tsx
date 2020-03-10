@@ -1,4 +1,4 @@
-import {h} from 'preact';
+const {h} = KalturaPlayer.ui.preact;
 import {ContribLogger, getContribLogger} from '@playkit-js-contrib/common';
 import {
   KitchenSinkExpandModes,

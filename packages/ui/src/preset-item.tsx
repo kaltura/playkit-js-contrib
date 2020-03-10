@@ -1,4 +1,4 @@
-import {h, render} from 'preact';
+const {h,render} = KalturaPlayer.ui.preact;
 import {getContribLogger} from '@playkit-js-contrib/common';
 import {PresetItemData, RelativeToTypes} from './preset-item-data';
 import {ManagedComponent} from './components/managed-component';

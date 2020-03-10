@@ -1,4 +1,5 @@
-// import {ComponentChild} from 'preact';
+// @ts-nocheck
+const {h,Component} = KalturaPlayer.ui.preact;
 import {UpperBarItem} from './upper-bar-item';
 import {UpperBarItemData} from './upper-bar-item-data';
 import {UpperBar} from './components/upper-bar';

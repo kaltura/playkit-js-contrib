@@ -4,7 +4,7 @@ import {FloatingPositions, FloatingUIModes} from './floating-item-data';
 import {FloatingItem} from './floating-item';
 import {ToastProps} from './components/toast/toast';
 import {ToastsContainer} from './components/toasts-container';
-import {h} from 'preact';
+const {h} = KalturaPlayer.ui.preact;
 
 export interface ToastManagerOptions {
   floatingManager: FloatingManager;

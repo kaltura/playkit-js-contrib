@@ -1,3 +1,4 @@
+// @ts-nocheck
 import * as LinkifyIt from 'linkify-it';
 import defaultComponentRenderer from './decorators/default-component-renderer';
 
@@ -7,7 +8,7 @@ export interface LinkifyStringProps {
     href: string,
     text: string,
     key: number
-  ) => // @ts-ignore:
+  ) =>
   ComponentChild;
 }
 
@@ -18,7 +19,6 @@ export class LinkifyString extends Component<LinkifyStringProps> {
 
   private _linkify: any = new LinkifyIt();
 
-  // @ts-ignore:
   private _parseString(inputString: string): Array<ComponentChild> | string {
     if ((inputString || '').trim().length === 0) {
       return '';

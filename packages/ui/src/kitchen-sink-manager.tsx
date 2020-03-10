@@ -1,22 +1,26 @@
+// @ts-nocheck
 import {
   KitchenSinkExpandModes,
   KitchenSinkItemData,
-  KitchenSinkPositions,
-} from './kitchen-sink-item-data';
-import {KitchenSinkItem, KitchenSinkItemRenderProps} from './kitchen-sink-item';
-import {UpperBarManager} from './upper-bar-manager';
-import {PresetManager} from './preset-manager';
+  KitchenSinkPositions
+} from "./kitchen-sink-item-data";
+import {
+  KitchenSinkItem,
+  KitchenSinkItemRenderProps
+} from "./kitchen-sink-item";
+import { UpperBarManager } from "./upper-bar-manager";
+import { PresetManager } from "./preset-manager";
 import {
   ArrayUtils,
   EventsManager,
-  ObjectUtils,
-} from '@playkit-js-contrib/common';
-import {KitchenSinkContainer} from './components/kitchen-sink-container/kitchen-sink-container';
-import {KitchenSinkAdapter} from './components/kitchen-sink-adapter';
-import {ManagedComponent} from './components/managed-component';
-import {UpperBarItem} from './upper-bar-item';
-import {PresetsUtils} from './presets-utils';
-import {getContribConfig} from './contrib-utils';
+  ObjectUtils
+} from "@playkit-js-contrib/common";
+import { KitchenSinkContainer } from "./components/kitchen-sink-container/kitchen-sink-container";
+import { KitchenSinkAdapter } from "./components/kitchen-sink-adapter";
+import { ManagedComponent } from "./components/managed-component";
+import { UpperBarItem } from "./upper-bar-item";
+import { PresetsUtils } from "./presets-utils";
+import { getContribConfig } from "./contrib-utils";
 
 export interface KitchenSinkManagerOptions {
   kalturaPlayer: KalturaPlayerTypes.Player;
@@ -24,15 +28,15 @@ export interface KitchenSinkManagerOptions {
   upperBarManager: UpperBarManager;
 }
 
-const acceptableTypes = ['PlayerArea', 'SidePanelRight', 'SidePanelBottom'];
+const acceptableTypes = ["PlayerArea", "SidePanelRight", "SidePanelBottom"];
 
 export enum ItemActiveStates {
-  Active = 'Active',
-  InActive = 'InActive',
+  Active = "Active",
+  InActive = "InActive",
 }
 
 export enum KitchenSinkEventTypes {
-  ItemActiveStateChangeEvent = 'ItemActiveStateChangeEvent',
+  ItemActiveStateChangeEvent = "ItemActiveStateChangeEvent",
 }
 
 export interface ItemActiveStateChangeEvent {
@@ -54,43 +58,41 @@ interface KitchenSinkPanel {
 
 const defaultKitchenSinkConfig: KalturaPlayerContribTypes.KitchenSinkConfig = {
   theme: {
-    backgroundColor: 'rgba(0, 0, 0, .7)',
-    blur: '10px',
+    backgroundColor: "rgba(0, 0, 0, .7)",
+    blur: "10px"
   },
   presetAreasMapping: {
     Playback: {
-      PlayerArea: 'PlayerArea',
-      SidePanelRight: 'SidePanelRight',
-      SidePanelBottom: 'SidePanelBottom',
+      PlayerArea: "PlayerArea",
+      SidePanelRight: "SidePanelRight",
+      SidePanelBottom: "SidePanelBottom"
     },
     Live: {
-      PlayerArea: 'PlayerArea',
-      SidePanelRight: 'SidePanelRight',
-      SidePanelBottom: 'SidePanelBottom',
-    },
-  },
+      PlayerArea: "PlayerArea",
+      SidePanelRight: "SidePanelRight",
+      SidePanelBottom: "SidePanelBottom"
+    }
+  }
 };
 
 export class KitchenSinkManager {
-  private _events: EventsManager<KitchenSinkEvents> = new EventsManager<
-    KitchenSinkEvents
-  >();
+  private _events: EventsManager<KitchenSinkEvents> = new EventsManager<KitchenSinkEvents>();
 
   private _panels: Record<KitchenSinkPositions, KitchenSinkPanel> = {
-    [KitchenSinkPositions.Bottom]: {ref: null, items: [], activeItem: null},
-    [KitchenSinkPositions.Right]: {ref: null, items: [], activeItem: null},
-    [KitchenSinkPositions.Top]: {ref: null, items: [], activeItem: null},
-    [KitchenSinkPositions.Left]: {ref: null, items: [], activeItem: null},
+    [KitchenSinkPositions.Bottom]: { ref: null, items: [], activeItem: null },
+    [KitchenSinkPositions.Right]: { ref: null, items: [], activeItem: null },
+    [KitchenSinkPositions.Top]: { ref: null, items: [], activeItem: null },
+    [KitchenSinkPositions.Left]: { ref: null, items: [], activeItem: null }
   };
 
   private _options: KitchenSinkManagerOptions;
   private _kitchenSinkAdapterRef: KitchenSinkAdapter | null = null;
   private _kitchenSinkConfig: KalturaPlayerContribTypes.KitchenSinkConfig;
 
-  on: EventsManager<KitchenSinkEvents>['on'] = this._events.on.bind(
+  on: EventsManager<KitchenSinkEvents>["on"] = this._events.on.bind(
     this._events
   );
-  off: EventsManager<KitchenSinkEvents>['off'] = this._events.off.bind(
+  off: EventsManager<KitchenSinkEvents>["off"] = this._events.off.bind(
     this._events
   );
 
@@ -99,37 +101,37 @@ export class KitchenSinkManager {
 
     this._kitchenSinkConfig = getContribConfig(
       this._options.kalturaPlayer,
-      'ui.kitchenSink',
+      "ui.kitchenSink",
       defaultKitchenSinkConfig,
       {
-        explicitMerge: ['presetAreasMapping'],
+        explicitMerge: ["presetAreasMapping"]
       }
     );
 
     const groupedPresets = PresetsUtils.groupPresetAreasByType({
       presetAreasMapping: this._kitchenSinkConfig.presetAreasMapping,
-      acceptableTypes,
+      acceptableTypes
     });
 
     this.options.presetManager.add({
-      label: 'kitchen-sink-right',
+      label: "kitchen-sink-right",
       fillContainer: true,
-      presetAreas: groupedPresets['SidePanelRight'],
-      renderChild: this._renderChild.bind(this, KitchenSinkPositions.Right),
+      presetAreas: groupedPresets["SidePanelRight"],
+      renderChild: this._renderChild.bind(this, KitchenSinkPositions.Right)
     });
 
     this.options.presetManager.add({
-      label: 'kitchen-sink-bottom',
+      label: "kitchen-sink-bottom",
       fillContainer: true,
-      presetAreas: groupedPresets['SidePanelBottom'],
-      renderChild: this._renderChild.bind(this, KitchenSinkPositions.Bottom),
+      presetAreas: groupedPresets["SidePanelBottom"],
+      renderChild: this._renderChild.bind(this, KitchenSinkPositions.Bottom)
     });
 
     this.options.presetManager.add({
-      label: 'kitchen-sink-adapter',
+      label: "kitchen-sink-adapter",
       shareAdvancedPlayerAPI: true,
-      presetAreas: groupedPresets['PlayerArea'],
-      renderChild: () => <KitchenSinkAdapter ref={this._setRef} />,
+      presetAreas: groupedPresets["PlayerArea"],
+      renderChild: () => <KitchenSinkAdapter ref={this._setRef}/>
     });
   }
 
@@ -144,7 +146,7 @@ export class KitchenSinkManager {
       activate: this._activateItem,
       deactivate: this._deactivateItem,
       eventManager: this._events,
-      kitchenSinkConfig: this._kitchenSinkConfig,
+      kitchenSinkConfig: this._kitchenSinkConfig
     };
 
     const relevantPanel = this._panels[data.position];
@@ -152,11 +154,11 @@ export class KitchenSinkManager {
     const upperBarItem = this.options.upperBarManager.add({
       label: data.label,
       renderItem: data.renderIcon,
-      onClick: () => this._toggle(kitchenSinkItem),
+      onClick: () => this._toggle(kitchenSinkItem)
     });
     relevantPanel.items.push({
       kitchenSinkItem,
-      upperBarItem,
+      upperBarItem
     });
     if (relevantPanel.ref) {
       relevantPanel.ref.update();
@@ -169,7 +171,7 @@ export class KitchenSinkManager {
     const relevantPanel = this._panels[item.data.position];
     const itemsIndex = ArrayUtils.findIndex(
       relevantPanel.items,
-      ({kitchenSinkItem}) => {
+      ({ kitchenSinkItem }) => {
         return item === kitchenSinkItem;
       }
     );
@@ -177,7 +179,7 @@ export class KitchenSinkManager {
     if (itemsIndex === -1) return;
 
     this._deactivateItem(item);
-    const {upperBarItem} = relevantPanel.items[itemsIndex];
+    const { upperBarItem } = relevantPanel.items[itemsIndex];
     item._destroy();
     this.options.upperBarManager.remove(upperBarItem);
     relevantPanel.items.splice(itemsIndex, 1);
@@ -196,7 +198,7 @@ export class KitchenSinkManager {
   };
 
   private _activateItem = (item: KitchenSinkItem): void => {
-    const {position, expandMode} = item.data;
+    const { position, expandMode } = item.data;
     const relevantPanel = this._panels[position];
 
     // trying to activate an already active item
@@ -207,7 +209,7 @@ export class KitchenSinkManager {
       this._events.emit({
         type: KitchenSinkEventTypes.ItemActiveStateChangeEvent,
         state: ItemActiveStates.InActive,
-        item: relevantPanel.activeItem,
+        item: relevantPanel.activeItem
       });
     }
     //update new item as active
@@ -216,14 +218,14 @@ export class KitchenSinkManager {
     this._events.emit({
       type: KitchenSinkEventTypes.ItemActiveStateChangeEvent,
       state: ItemActiveStates.Active,
-      item: item,
+      item: item
     });
     //expand kitchenSink component (won't do anything if already expanded)
     this._expand(position, expandMode);
   };
 
   private _deactivateItem = (item: KitchenSinkItem): void => {
-    const {position} = item.data;
+    const { position } = item.data;
     const relevantPanel = this._panels[position];
 
     //item is not active
@@ -234,7 +236,7 @@ export class KitchenSinkManager {
     this._events.emit({
       type: KitchenSinkEventTypes.ItemActiveStateChangeEvent,
       state: ItemActiveStates.InActive,
-      item: relevantPanel.activeItem,
+      item: relevantPanel.activeItem
     });
     //remove item from _activeItems
     relevantPanel.activeItem = null;
@@ -264,9 +266,9 @@ export class KitchenSinkManager {
   }
 
   private _renderKitchenSink(position: KitchenSinkPositions) {
-    const items = this._panels[position].items.map(({kitchenSinkItem}) => {
+    const items = this._panels[position].items.map(({ kitchenSinkItem }) => {
       const itemProps: KitchenSinkItemRenderProps = {
-        onClose: this._deactivateItem.bind(this, kitchenSinkItem),
+        onClose: this._deactivateItem.bind(this, kitchenSinkItem)
       };
       return kitchenSinkItem.renderContentChild(itemProps);
     });
@@ -277,7 +279,7 @@ export class KitchenSinkManager {
   private _renderChild = (position: KitchenSinkPositions): ComponentChild => {
     return (
       <ManagedComponent
-        label={'kitchen-sink-manager'}
+        label={"kitchen-sink-manager"}
         renderChildren={() => this._renderKitchenSink(position)}
         isShown={() => true}
         ref={ref => (this._panels[position].ref = ref)}

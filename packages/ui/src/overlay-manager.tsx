@@ -1,3 +1,4 @@
+// @ts-nocheck
 // import {ComponentChild} from 'preact';
 import {OverlayItem} from './overlay-item';
 import {OverlayItemData, OverlayPositions} from './overlay-item-data';

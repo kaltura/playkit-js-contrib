@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {PlayerContribRegistry} from '@playkit-js-contrib/common';
 import {
   FloatingManager,
@@ -5,11 +6,8 @@ import {
   KitchenSinkManager,
   PresetManager,
   BannerManager,
-  BannerManagerOptions,
   ToastManager,
-  ToastManagerOptions,
   FontManager,
-  FontManagerOptions,
   OverlayManager,
 } from '@playkit-js-contrib/ui';
 import {enableLogIfNeeded} from '@playkit-js-contrib/common';

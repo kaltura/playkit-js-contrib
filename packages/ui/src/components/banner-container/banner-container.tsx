@@ -1,4 +1,4 @@
-import {Component, h} from 'preact';
+const {h,Component} = KalturaPlayer.ui.preact;
 import {ContribLogger, getContribLogger} from '@playkit-js-contrib/common';
 import * as styles from './_banner-container.scss';
 
@@ -41,7 +41,7 @@ export class BannerContainer extends Component<BannerContainerProps> {
       <div className={styles.bannerContainerRoot}>
         <div
           style={`
-                background-color:${backgroundColor}; 
+                background-color:${backgroundColor};
                 backdrop-filter: blur(${blur});
              `}
           className={styles.bannerContainer}>

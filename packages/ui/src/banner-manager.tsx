@@ -1,3 +1,5 @@
+// @ts-nocheck
+const {h} = KalturaPlayer.ui.preact;
 import {FloatingItem} from './floating-item';
 import {FloatingManager} from './floating-manager';
 import {ObjectUtils} from '@playkit-js-contrib/common';
@@ -6,7 +8,6 @@ import {
   FloatingPositions,
   FloatingUIModes,
 } from './floating-item-data';
-// import {ComponentChild} from 'preact';
 import {Banner} from './components/banner';
 import {BannerContainer} from './components/banner-container';
 import {BannerContainerProps} from './components/banner-container/banner-container';
@@ -27,7 +28,7 @@ export interface BannerOptions {
   renderContent?: (
     content: BannerContent,
     floatingItemProps: FloatingItemProps
-  ) => // @ts-ignore:
+  ) =>
   ComponentChild;
 }
 

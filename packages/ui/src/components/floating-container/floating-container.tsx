@@ -1,4 +1,4 @@
-import {h, Component} from 'preact';
+const {h,Component} = KalturaPlayer.ui.preact;
 import * as styles from './_floating-container.scss';
 import {getContribLogger} from '@playkit-js-contrib/common';
 import {ContribLogger} from '@playkit-js-contrib/common';

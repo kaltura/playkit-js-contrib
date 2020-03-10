@@ -1,5 +1,8 @@
-// import {ComponentChild} from 'preact';
+// @ts-nocheck
 import * as styles from './popover.scss';
+const {h,Component} = KalturaPlayer.ui.preact;
+// import {ComponentChild} from "../../../../common/global-types/preact"
+
 
 export enum PopoverVerticalPositions {
   Top = 'top',
@@ -39,9 +42,7 @@ interface PopoverProps {
   horizontalPosition: PopoverHorizontalPositions;
   className: string;
   triggerMode: PopoverTriggerMode;
-  // @ts-ignore:
   content: ComponentChild;
-  // @ts-ignore:
   children: ComponentChild;
 }
 

@@ -1,4 +1,5 @@
-import {h} from 'preact';
+// @ts-nocheck
+const {h} = KalturaPlayer.ui.preact;
 import {ContribLogger, getContribLogger} from '@playkit-js-contrib/common';
 import {
   FloatingItemData,

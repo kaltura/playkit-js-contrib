@@ -1,4 +1,4 @@
-import {Component, h} from 'preact';
+const {h,Component} = KalturaPlayer.ui.preact;
 import {ContribLogger, getContribLogger} from '@playkit-js-contrib/common';
 import {BannerContent} from '../../banner-manager';
 import * as styles from './_banner.scss';

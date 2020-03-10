@@ -1,4 +1,5 @@
-// import {ComponentChildren} from 'preact';
+// @ts-nocheck
+const {h,Component} = KalturaPlayer.ui.preact;
 import {getContribLogger} from '@playkit-js-contrib/common';
 import {ContribLogger} from '@playkit-js-contrib/common';
 import * as styles from './_managed-component.scss';

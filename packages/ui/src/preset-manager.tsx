@@ -1,4 +1,5 @@
-import {h} from 'preact';
+// @ts-nocheck
+const {h} = KalturaPlayer.ui.preact;
 import {PresetItemData, ReservedPresetNames} from './preset-item-data';
 import {KalturaPlayerPresetComponent, PresetItem} from './preset-item';
 import {EventsManager, ObjectUtils} from '@playkit-js-contrib/common';

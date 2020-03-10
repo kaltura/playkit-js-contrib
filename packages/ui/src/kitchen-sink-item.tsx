@@ -1,4 +1,5 @@
-import {ComponentChild, h} from 'preact';
+// @ts-nocheck
+const {h,Component} = KalturaPlayer.ui.preact;
 import {
   ContribLogger,
   getContribLogger,

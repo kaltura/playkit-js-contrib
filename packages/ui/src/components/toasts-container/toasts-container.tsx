@@ -1,4 +1,4 @@
-import {Component, h} from 'preact';
+const {h,Component} = KalturaPlayer.ui.preact;
 import {Toast, ToastProps} from '../toast/toast';
 import * as styles from './_toasts-container.scss';
 

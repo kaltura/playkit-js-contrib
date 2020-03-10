@@ -1,3 +1,5 @@
+// @ts-nocheck
+const {h,Component} = KalturaPlayer.ui.preact;
 import {FloatingItem} from './floating-item';
 import {
   FloatingItemData,
@@ -6,7 +8,6 @@ import {
 } from './floating-item-data';
 import {PresetManager, PresetManagerEventTypes} from './preset-manager';
 import {ObjectUtils} from '@playkit-js-contrib/common';
-// import {ComponentChild} from 'preact';
 import {PlayerSize, VideoSize} from './common.types';
 import {getPlayerSize, getVideoSize} from './player-utils';
 import {ManagedComponent} from './components/managed-component';

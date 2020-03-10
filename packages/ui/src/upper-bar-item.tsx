@@ -1,4 +1,5 @@
-// import {ComponentChild} from 'preact';
+// @ts-nocheck
+const {h} = KalturaPlayer.ui.preact;
 import {UpperBarItemData} from './upper-bar-item-data';
 import {ContribLogger} from '@playkit-js-contrib/common';
 import {getContribLogger} from '@playkit-js-contrib/common';
