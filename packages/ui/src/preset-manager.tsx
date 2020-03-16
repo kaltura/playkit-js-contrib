@@ -151,7 +151,7 @@ export class PresetManager {
   }
 
   registerComponents(): KalturaPlayerPresetComponent[] {
-    let configs: (KalturaPlayerPresetComponent)[] = [];
+    let configs: KalturaPlayerPresetComponent[] = [];
     this._pendingItems.forEach(item => {
       configs = [...configs, ...item.playerConfig];
     });
