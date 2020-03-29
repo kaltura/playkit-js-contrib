@@ -90,18 +90,20 @@ export class UpperBarManager {
   private _renderItems = () => {
     const {upperBarItems, iconMenuItems} = this._prepareUpperBarItems();
 
-    const itemOptions = {
-      kalturaPlayer: this._options.kalturaPlayer,
-      data: {
-        label: 'Icon-menu',
-        onClick: () => console.log('click'),
-        renderItem: () => <IconMenu content={iconMenuItems} />,
-      },
-    };
-    const iconMenu = new UpperBarItem(itemOptions);
-    const upperBarContent = [...upperBarItems, iconMenu].map(item =>
-      item.renderChild({})
-    );
+    if (iconMenuItems.length) {
+      const itemOptions = {
+        kalturaPlayer: this._options.kalturaPlayer,
+        data: {
+          label: 'Icon-menu',
+          onClick: () => {},
+          renderItem: () => <IconMenu content={iconMenuItems} />,
+        },
+      };
+      const iconMenu = new UpperBarItem(itemOptions);
+      upperBarItems.push(iconMenu);
+    }
+
+    const upperBarContent = upperBarItems.map(item => item.renderChild({}));
 
     return <UpperBar>{upperBarContent}</UpperBar>;
   };
