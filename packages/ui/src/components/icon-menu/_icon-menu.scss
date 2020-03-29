@@ -1,0 +1,24 @@
+.icon-menu {
+    width: 32px;
+    height: 32px;
+    opacity: 0.8;
+    cursor: pointer;
+    &:hover,
+    &:focus {
+      opacity: 1;
+    }
+
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    background-image: url('./assets/more.svg');
+}
+
+.icon-menu-item {
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  .item-label {
+    margin-left: 12px;
+  }
+}

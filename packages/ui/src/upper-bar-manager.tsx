@@ -8,6 +8,14 @@ import {ManagedComponent} from './components/managed-component';
 import {PresetsUtils} from './presets-utils';
 import UpperBarConfig = KalturaPlayerContribTypes.UpperBarConfig;
 import {getContribConfig} from './contrib-utils';
+import {IconMenu} from './components/icon-menu';
+
+enum PlayeSize {
+  Tiny = 'tiny',
+  Small = 'small',
+  Medium = 'medium',
+  Large = 'large',
+}
 
 export interface UpperBarManagerOptions {
   kalturaPlayer: KalturaPlayerTypes.Player;
@@ -32,6 +40,7 @@ export class UpperBarManager {
   private _items: UpperBarItem[] = [];
   private _options: UpperBarManagerOptions;
   private _upperBarConfig: UpperBarConfig;
+  private _playerSize: PlayeSize = PlayeSize.Large;
 
   constructor(options: UpperBarManagerOptions) {
     this._options = options;
@@ -45,6 +54,12 @@ export class UpperBarManager {
       }
     );
 
+    this._options.kalturaPlayer.addEventListener(
+      'resize',
+      this._checkPlayerSize
+    );
+    // TODO: remove event listener
+
     const groupedPresets = PresetsUtils.groupPresetAreasByType({
       presetAreasMapping: this._upperBarConfig.presetAreasMapping,
       acceptableTypes,
@@ -57,8 +72,11 @@ export class UpperBarManager {
     });
   }
 
+  private _checkPlayerSize = () => {
+    console.log('check size', this._playerSize, this._options.kalturaPlayer);
+  };
+
   private _renderChild = (): ComponentChild => {
-    const items = this._items.map(item => item.renderChild({}));
     return (
       <ManagedComponent
         label={'upper-bar-manager'}
@@ -70,8 +88,22 @@ export class UpperBarManager {
   };
 
   private _renderItems = () => {
-    const items = this._items.map(item => item.renderChild({}));
-    return <UpperBar>{items}</UpperBar>;
+    const {upperBarItems, iconMenuItems} = this._prepareUpperBarItems();
+
+    const itemOptions = {
+      kalturaPlayer: this._options.kalturaPlayer,
+      data: {
+        label: 'Icon-menu',
+        onClick: () => console.log('click'),
+        renderItem: () => <IconMenu content={iconMenuItems} />,
+      },
+    };
+    const iconMenu = new UpperBarItem(itemOptions);
+    const upperBarContent = [...upperBarItems, iconMenu].map(item =>
+      item.renderChild({})
+    );
+
+    return <UpperBar>{upperBarContent}</UpperBar>;
   };
 
   /**
@@ -79,15 +111,26 @@ export class UpperBarManager {
    * @param item
    */
   add(data: UpperBarItemData): UpperBarItem {
+    const orderList = {
+      Info: 20,
+      Info2: 30,
+      Info3: 40,
+      Info4: 50,
+      Info5: 60,
+      Info6: 1,
+      Info7: 100,
+      Info8: 84,
+    };
     const itemOptions = {
       kalturaPlayer: this._options.kalturaPlayer,
       data,
+      order: orderList[data.label],
     };
     const item = new UpperBarItem(itemOptions);
     this._items.push(item);
-    if (this._rootElement) {
-      this._rootElement.update();
-    }
+    this._items = ArrayUtils.sortByKey(this._items, '_options.order').reverse();
+
+    this._update();
     return item;
   }
 
@@ -98,9 +141,35 @@ export class UpperBarManager {
     if (itemIndex === -1) return;
 
     this._items.splice(itemIndex, 1);
+    this._update();
+  }
+
+  _update() {
     if (this._rootElement) {
       this._rootElement.update();
     }
+  }
+
+  _prepareUpperBarItems(): {
+    upperBarItems: UpperBarItem[];
+    iconMenuItems: UpperBarItem[];
+  } {
+    const iconMenuItems = [...this._items];
+    let upperBarItems = [];
+    switch (this._playerSize) {
+      case PlayeSize.Large:
+        upperBarItems = iconMenuItems.splice(0, 4);
+        break;
+      case PlayeSize.Medium:
+        upperBarItems = iconMenuItems.splice(0, 2);
+        break;
+      default:
+        upperBarItems = [];
+    }
+    return {
+      upperBarItems,
+      iconMenuItems,
+    };
   }
 
   /**
