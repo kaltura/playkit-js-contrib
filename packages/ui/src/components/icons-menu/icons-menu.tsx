@@ -1,5 +1,5 @@
 import {h, Component} from 'preact';
-import * as styles from './_icon-menu.scss';
+import * as styles from './_icons-menu.scss';
 import {getContribLogger} from '@playkit-js-contrib/common';
 import {ContribLogger} from '@playkit-js-contrib/common';
 import {
@@ -8,13 +8,14 @@ import {
   PopoverHorizontalPositions,
   KeyboardKeys,
 } from '../popover';
-import {PopoverMenu, PopoverMenuItem} from './popover-menu';
+import {PopoverMenu, PopoverMenuItem} from '../popover/popover-menu';
+import {UpperBarItem} from '../../upper-bar-item';
 
-export interface IconMenuProps {
-  content: any;
+export interface IconsMenuProps {
+  content: UpperBarItem[];
 }
 
-export class IconMenu extends Component<IconMenuProps> {
+export class IconsMenu extends Component<IconsMenuProps> {
   private _logger: ContribLogger | null = null;
 
   componentDidMount(): void {
@@ -49,9 +50,8 @@ export class IconMenu extends Component<IconMenuProps> {
     }
   };
 
-  private _getPopoverMenuOptions = () => {
-    return this.props.content.map((item: any) => {
-      console.log('item', item);
+  private _getPopoverMenuOptions = (): PopoverMenuItem[] => {
+    return this.props.content.map((item: UpperBarItem) => {
       const {
         renderChild,
         _options: {
@@ -67,7 +67,13 @@ export class IconMenu extends Component<IconMenuProps> {
               onKeyDown={(e: KeyboardEvent) => this._onKeyDown(e, onClick)}
               onClick={onClick}
               className={styles.iconMenuItem}>
-              {renderChild({})}
+              <div
+                aria-hidden="true"
+                onClick={(e: MouseEvent) => {
+                  e.stopPropagation();
+                }}>
+                {renderChild({})}
+              </div>
               <span className={styles.itemLabel}>{label}</span>
             </div>
           );
@@ -80,7 +86,7 @@ export class IconMenu extends Component<IconMenuProps> {
     return <PopoverMenu options={this._getPopoverMenuOptions()} />;
   };
 
-  render(props: any) {
+  render(props: IconsMenuProps) {
     if (this._logger) {
       this._logger.trace(`render component`, {
         method: 'render',
@@ -89,11 +95,11 @@ export class IconMenu extends Component<IconMenuProps> {
 
     return (
       <Popover
-        className="download-print-popover"
+        className="icons-menu"
         verticalPosition={PopoverVerticalPositions.Bottom}
         horizontalPosition={PopoverHorizontalPositions.Left}
         content={this._popoverContent()}>
-        <div className={styles.iconMenu} role="button" tabIndex={1} />
+        <button className={styles.iconMenu} tabIndex={1} />
       </Popover>
     );
   }

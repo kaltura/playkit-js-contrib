@@ -8,11 +8,10 @@ import {ManagedComponent} from './components/managed-component';
 import {PresetsUtils} from './presets-utils';
 import UpperBarConfig = KalturaPlayerContribTypes.UpperBarConfig;
 import {getContribConfig} from './contrib-utils';
-import {IconMenu} from './components/icon-menu';
+import {IconsMenu} from './components/icons-menu';
 
 enum PlayeSize {
   Tiny = 'tiny',
-  Small = 'small',
   Medium = 'medium',
   Large = 'large',
 }
@@ -54,12 +53,6 @@ export class UpperBarManager {
       }
     );
 
-    this._options.kalturaPlayer.addEventListener(
-      'resize',
-      this._checkPlayerSize
-    );
-    // TODO: remove event listener
-
     const groupedPresets = PresetsUtils.groupPresetAreasByType({
       presetAreasMapping: this._upperBarConfig.presetAreasMapping,
       acceptableTypes,
@@ -70,10 +63,22 @@ export class UpperBarManager {
       presetAreas: groupedPresets['TopBarRightControls'],
       renderChild: this._renderChild,
     });
+
+    this._registerToPlayer();
   }
 
   private _checkPlayerSize = () => {
-    console.log('check size', this._playerSize, this._options.kalturaPlayer);
+    // TODO: _el.getBoundingClientRect returns 0 on init
+    const {width} = (this._options
+      .kalturaPlayer as any)._el.getBoundingClientRect();
+    if (width <= 280) {
+      this._playerSize = PlayeSize.Tiny;
+    } else if (width <= 480) {
+      this._playerSize = PlayeSize.Medium;
+    } else {
+      this._playerSize = PlayeSize.Large;
+    }
+    this._update();
   };
 
   private _renderChild = (): ComponentChild => {
@@ -90,13 +95,13 @@ export class UpperBarManager {
   private _renderItems = () => {
     const {upperBarItems, iconMenuItems} = this._prepareUpperBarItems();
 
-    if (iconMenuItems.length) {
+    if (upperBarItems.length && iconMenuItems.length) {
       const itemOptions = {
         kalturaPlayer: this._options.kalturaPlayer,
         data: {
           label: 'Icon-menu',
           onClick: () => {},
-          renderItem: () => <IconMenu content={iconMenuItems} />,
+          renderItem: () => <IconsMenu content={iconMenuItems} />,
         },
       };
       const iconMenu = new UpperBarItem(itemOptions);
@@ -108,15 +113,29 @@ export class UpperBarManager {
     return <UpperBar>{upperBarContent}</UpperBar>;
   };
 
+  private _registerToPlayer = () => {
+    this._options.kalturaPlayer.addEventListener(
+      this._options.kalturaPlayer.Event.RESIZE,
+      this._checkPlayerSize
+    );
+  };
+
+  private _unregisterToPlayer = () => {
+    this._options.kalturaPlayer.removeEventListener(
+      this._options.kalturaPlayer.Event.RESIZE,
+      this._checkPlayerSize
+    );
+  };
+
   /**
    * initialize new upper bar item
    * @param item
    */
   add(data: UpperBarItemData): UpperBarItem {
     const orderList = {
-      Info: 20,
+      Info: 40,
       Info2: 30,
-      Info3: 40,
+      'Report Video': 41,
       Info4: 50,
       Info5: 60,
       Info6: 1,
@@ -131,7 +150,6 @@ export class UpperBarManager {
     const item = new UpperBarItem(itemOptions);
     this._items.push(item);
     this._items = ArrayUtils.sortByKey(this._items, '_options.order').reverse();
-
     this._update();
     return item;
   }
@@ -177,5 +195,7 @@ export class UpperBarManager {
   /**
    * remove all ui manager items
    */
-  reset(): void {}
+  reset(): void {
+    this._unregisterToPlayer();
+  }
 }

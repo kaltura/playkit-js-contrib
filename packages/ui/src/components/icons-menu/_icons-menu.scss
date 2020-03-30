@@ -2,7 +2,10 @@
     width: 32px;
     height: 32px;
     opacity: 0.8;
+    border: none;
+    padding: 0;
     cursor: pointer;
+    background-color: inherit;
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
@@ -14,13 +17,21 @@
 }
 
 .icon-menu-item {
+  opacity: 0.8;
+  &:hover,
+  &:focus {
+    opacity: 1;
+  }
   display: flex;
   align-items: center;
-  padding: 2px 8px;
+  height: 36px;
+  margin-bottom: 1px;
+  padding: 0 8px;
   min-width: 228px;
   border-radius: 4px;
   background-color: #222222;
   .item-label {
     margin-left: 2px;
+    font-size: 15px;
   }
 }
