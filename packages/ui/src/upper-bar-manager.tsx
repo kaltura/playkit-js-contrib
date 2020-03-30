@@ -63,12 +63,10 @@ export class UpperBarManager {
       presetAreas: groupedPresets['TopBarRightControls'],
       renderChild: this._renderChild,
     });
-
-    this._registerToPlayer();
   }
 
   private _checkPlayerSize = () => {
-    // TODO: _el.getBoundingClientRect returns 0 on init
+    // TODO: replace with property from redux srore of Player (VIP-1154)
     const {width} = (this._options
       .kalturaPlayer as any)._el.getBoundingClientRect();
     if (width <= 280) {
@@ -95,18 +93,28 @@ export class UpperBarManager {
   private _renderItems = () => {
     const {upperBarItems, iconMenuItems} = this._prepareUpperBarItems();
 
-    if (upperBarItems.length && iconMenuItems.length) {
-      const itemOptions = {
-        kalturaPlayer: this._options.kalturaPlayer,
-        data: {
-          label: 'Icon-menu',
-          onClick: () => {},
-          renderItem: () => <IconsMenu content={iconMenuItems} />,
-        },
-      };
-      const iconMenu = new UpperBarItem(itemOptions);
-      upperBarItems.push(iconMenu);
-    }
+    const isIconMenuVisible = !!(upperBarItems.length && iconMenuItems.length);
+
+    const itemOptions = {
+      kalturaPlayer: this._options.kalturaPlayer,
+      data: {
+        label: 'Icon-menu',
+        onClick: () => {},
+        renderItem: () => (
+          <IconsMenu
+            visible={isIconMenuVisible}
+            content={iconMenuItems}
+            onMount={() => {
+              this._registerToPlayer();
+              this._checkPlayerSize();
+            }}
+            onUnmount={this._unregisterToPlayer}
+          />
+        ),
+      },
+    };
+    const iconMenu = new UpperBarItem(itemOptions);
+    upperBarItems.push(iconMenu);
 
     const upperBarContent = upperBarItems.map(item => item.renderChild({}));
 
@@ -132,15 +140,14 @@ export class UpperBarManager {
    * @param item
    */
   add(data: UpperBarItemData): UpperBarItem {
+    // TODO: list of icons order hardcoded here until we found
+    // solution where we takes it from
     const orderList = {
-      Info: 40,
-      Info2: 30,
+      Playlist: 40,
+      Download: 30,
       'Report Video': 41,
-      Info4: 50,
-      Info5: 60,
-      Info6: 1,
-      Info7: 100,
-      Info8: 84,
+      Info: 50,
+      'Q&A': 60,
     };
     const itemOptions = {
       kalturaPlayer: this._options.kalturaPlayer,
@@ -195,7 +202,5 @@ export class UpperBarManager {
   /**
    * remove all ui manager items
    */
-  reset(): void {
-    this._unregisterToPlayer();
-  }
+  reset(): void {}
 }

@@ -13,6 +13,9 @@ import {UpperBarItem} from '../../upper-bar-item';
 
 export interface IconsMenuProps {
   content: UpperBarItem[];
+  onMount: () => void;
+  onUnmount: () => void;
+  visible: boolean;
 }
 
 export class IconsMenu extends Component<IconsMenuProps> {
@@ -26,9 +29,11 @@ export class IconsMenu extends Component<IconsMenuProps> {
     this._logger.info(`mount component`, {
       method: 'componentDidMount',
     });
+    this.props.onMount();
   }
 
   componentWillUnmount(): void {
+    this.props.onUnmount();
     if (!this._logger) {
       return;
     }
@@ -91,6 +96,9 @@ export class IconsMenu extends Component<IconsMenuProps> {
       this._logger.trace(`render component`, {
         method: 'render',
       });
+    }
+    if (!props.visible) {
+      return null;
     }
 
     return (
