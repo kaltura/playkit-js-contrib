@@ -63,12 +63,14 @@ export class UpperBarManager {
       presetAreas: groupedPresets['TopBarRightControls'],
       renderChild: this._renderChild,
     });
+    this._registerToPlayer();
   }
 
   private _checkPlayerSize = () => {
     // TODO: replace with property from redux srore of Player (VIP-1154)
     const {width} = (this._options
       .kalturaPlayer as any)._el.getBoundingClientRect();
+    const currentPlayerSize = this._playerSize;
     if (width <= 280) {
       this._playerSize = PlayeSize.Tiny;
     } else if (width <= 480) {
@@ -76,7 +78,9 @@ export class UpperBarManager {
     } else {
       this._playerSize = PlayeSize.Large;
     }
-    this._update();
+    if (currentPlayerSize !== this._playerSize) {
+      this._update();
+    }
   };
 
   private _renderChild = (): ComponentChild => {
@@ -95,26 +99,18 @@ export class UpperBarManager {
 
     const isIconMenuVisible = !!(upperBarItems.length && iconMenuItems.length);
 
-    const itemOptions = {
-      kalturaPlayer: this._options.kalturaPlayer,
-      data: {
-        label: 'Icon-menu',
-        onClick: () => {},
-        renderItem: () => (
-          <IconsMenu
-            visible={isIconMenuVisible}
-            content={iconMenuItems}
-            onMount={() => {
-              this._registerToPlayer();
-              this._checkPlayerSize();
-            }}
-            onUnmount={this._unregisterToPlayer}
-          />
-        ),
-      },
-    };
-    const iconMenu = new UpperBarItem(itemOptions);
-    upperBarItems.push(iconMenu);
+    if (isIconMenuVisible) {
+      const itemOptions = {
+        kalturaPlayer: this._options.kalturaPlayer,
+        data: {
+          label: 'Icon-menu',
+          onClick: () => {},
+          renderItem: () => <IconsMenu content={iconMenuItems} />,
+        },
+      };
+      const iconMenu = new UpperBarItem(itemOptions);
+      upperBarItems.push(iconMenu);
+    }
 
     const upperBarContent = upperBarItems.map(item => item.renderChild({}));
 
@@ -126,11 +122,21 @@ export class UpperBarManager {
       this._options.kalturaPlayer.Event.RESIZE,
       this._checkPlayerSize
     );
+
+    this._options.kalturaPlayer.addEventListener(
+      this._options.kalturaPlayer.Event.LOADED_DATA,
+      this._checkPlayerSize
+    );
   };
 
   private _unregisterToPlayer = () => {
     this._options.kalturaPlayer.removeEventListener(
       this._options.kalturaPlayer.Event.RESIZE,
+      this._checkPlayerSize
+    );
+
+    this._options.kalturaPlayer.addEventListener(
+      this._options.kalturaPlayer.Event.LOADED_DATA,
       this._checkPlayerSize
     );
   };
@@ -202,5 +208,7 @@ export class UpperBarManager {
   /**
    * remove all ui manager items
    */
-  reset(): void {}
+  reset(): void {
+    this._unregisterToPlayer();
+  }
 }
