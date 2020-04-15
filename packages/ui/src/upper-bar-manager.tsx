@@ -11,14 +11,18 @@ import {getContribConfig} from './contrib-utils';
 import {IconsMenu} from './components/icons-menu';
 
 enum PlayeSize {
-  Tiny = 'tiny',
-  Medium = 'medium',
-  Large = 'large',
+  Tiny = 'Tiny',
+  Medium = 'Medium',
+  Large = 'Large',
 }
 
 export interface UpperBarManagerOptions {
   kalturaPlayer: KalturaPlayerTypes.Player;
   presetManager: PresetManager;
+}
+
+interface IconsMenuConfig {
+  iconsOrder: Record<string, number>;
 }
 
 const defaultUpperBarConfig: UpperBarConfig = {
@@ -40,6 +44,7 @@ export class UpperBarManager {
   private _options: UpperBarManagerOptions;
   private _upperBarConfig: UpperBarConfig;
   private _playerSize: PlayeSize = PlayeSize.Large;
+  private _iconsMenuConfig: IconsMenuConfig;
 
   constructor(options: UpperBarManagerOptions) {
     this._options = options;
@@ -51,6 +56,11 @@ export class UpperBarManager {
       {
         explicitMerge: ['presetAreasMapping'],
       }
+    );
+    this._iconsMenuConfig = getContribConfig(
+      this._options.kalturaPlayer,
+      'ui.iconsMenu',
+      {iconsOrder: {}}
     );
 
     const groupedPresets = PresetsUtils.groupPresetAreasByType({
@@ -68,8 +78,7 @@ export class UpperBarManager {
 
   private _checkPlayerSize = () => {
     // TODO: replace with property from redux srore of Player (VIP-1154)
-    const {width} = (this._options
-      .kalturaPlayer as any)._el.getBoundingClientRect();
+    const {width} = this._options.kalturaPlayer.dimensions;
     const currentPlayerSize = this._playerSize;
     if (width <= 280) {
       this._playerSize = PlayeSize.Tiny;
@@ -117,6 +126,7 @@ export class UpperBarManager {
     return <UpperBar>{upperBarContent}</UpperBar>;
   };
 
+  // TODO: replace with property from redux srore of Player (VIP-1154)
   private _registerToPlayer = () => {
     this._options.kalturaPlayer.addEventListener(
       this._options.kalturaPlayer.Event.RESIZE,
@@ -135,7 +145,7 @@ export class UpperBarManager {
       this._checkPlayerSize
     );
 
-    this._options.kalturaPlayer.addEventListener(
+    this._options.kalturaPlayer.removeEventListener(
       this._options.kalturaPlayer.Event.LOADED_DATA,
       this._checkPlayerSize
     );
@@ -148,17 +158,14 @@ export class UpperBarManager {
   add(data: UpperBarItemData): UpperBarItem {
     // TODO: list of icons order hardcoded here until we found
     // solution where we takes it from
-    const orderList = {
-      Playlist: 40,
-      Download: 30,
-      'Report Video': 41,
-      Info: 50,
-      'Q&A': 60,
-    };
     const itemOptions = {
       kalturaPlayer: this._options.kalturaPlayer,
       data,
-      order: orderList[data.label],
+      order: ObjectUtils.get(
+        this._iconsMenuConfig,
+        `iconsOrder.${data.label}`,
+        0
+      ),
     };
     const item = new UpperBarItem(itemOptions);
     this._items.push(item);

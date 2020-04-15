@@ -44,7 +44,7 @@ export class IconsMenu extends Component<IconsMenuProps> {
       e.stopPropagation();
     }
     switch (e.keyCode) {
-      case 13: // Enter pressed
+      case KeyboardKeys.Enter:
         callBack();
         break;
     }
@@ -94,6 +94,7 @@ export class IconsMenu extends Component<IconsMenuProps> {
     }
 
     return (
+      // TODO - consider replace with core drop-down if possible
       <Popover
         className="icons-menu"
         verticalPosition={PopoverVerticalPositions.Bottom}
