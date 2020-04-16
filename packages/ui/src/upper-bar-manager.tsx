@@ -156,8 +156,19 @@ export class UpperBarManager {
    * @param item
    */
   add(data: UpperBarItemData): UpperBarItem {
-    // TODO: list of icons order hardcoded here until we found
-    // solution where we takes it from
+    // TODO: for now list of icons order loads from embeded config, ex:
+    // contrib: {
+    //   ui: {
+    //       fonts: { ... },
+    //       iconsMenu: {
+    //           iconsOrder: {
+    //               'Report Video': 41,
+    //               Info: 50,
+    //               'Q&A': 60,
+    //           }
+    //       }
+    //     }
+    // };
     const itemOptions = {
       kalturaPlayer: this._options.kalturaPlayer,
       data,
