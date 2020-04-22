@@ -58,7 +58,6 @@ export class UpperBarManager {
   }
 
   private _renderChild = (): ComponentChild => {
-    const items = this._items.map(item => item.renderChild({}));
     return (
       <ManagedComponent
         label={'upper-bar-manager'}
@@ -106,5 +105,9 @@ export class UpperBarManager {
   /**
    * remove all ui manager items
    */
-  reset(): void {}
+  reset(): void {
+    this._items.forEach((item: UpperBarItem) => {
+      this.remove(item);
+    });
+  }
 }

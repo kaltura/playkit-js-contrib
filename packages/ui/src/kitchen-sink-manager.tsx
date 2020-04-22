@@ -293,7 +293,14 @@ export class KitchenSinkManager {
    * remove all ui manager items
    */
   reset(): void {
-    //todo [sa] unregister items from eventManager events
-    //iterate over all items and call this.remove(item)
+    const allItems = [
+      ...this._panels[KitchenSinkPositions.Bottom].items,
+      ...this._panels[KitchenSinkPositions.Left].items,
+      ...this._panels[KitchenSinkPositions.Top].items,
+      ...this._panels[KitchenSinkPositions.Right].items,
+    ];
+    allItems.forEach(({kitchenSinkItem}) => {
+      this.remove(kitchenSinkItem);
+    });
   }
 }
