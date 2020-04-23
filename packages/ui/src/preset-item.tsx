@@ -1,14 +1,15 @@
-import {h, render} from 'preact';
 import {getContribLogger} from '@playkit-js-contrib/common';
 import {PresetItemData, RelativeToTypes} from './preset-item-data';
 import {ManagedComponent} from './components/managed-component';
 import {ContribLogger} from '@playkit-js-contrib/common';
 import {InjectedComponent} from './components/injected-component/injected-component';
-
+import {render} from 'preact';
 export interface PresetItemOptions {
   kalturaPlayer: KalturaPlayerTypes.Player;
   data: PresetItemData;
 }
+
+const {h} = KalturaPlayer.ui.preact;
 
 export interface PresetItemProps {}
 
@@ -134,7 +135,7 @@ export class PresetItem {
       method: '_onDestroy',
     });
 
-    this._element = render(null, options.parent, this._element);
+    this._element = render(null, options.parent);
   };
 
   private _onCreate = (options: {context?: any; parent: HTMLElement}): void => {

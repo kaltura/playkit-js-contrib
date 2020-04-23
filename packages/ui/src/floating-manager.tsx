@@ -201,6 +201,14 @@ export class FloatingManager {
     });
 
     this._options.presetManager.on(
+      PresetManagerEventTypes.VideoResizeEvent,
+      () => {
+        this._updateCachedCanvas();
+        this._updateComponents();
+      }
+    );
+
+    this._options.presetManager.on(
       PresetManagerEventTypes.PresetResizeEvent,
       () => {
         this._updateCachedCanvas();
