@@ -69,7 +69,6 @@ export class PresetManager {
     this.add({
       label: 'preset-manager',
       presetAreas: groupedPresets['PlayerArea'],
-      shareAdvancedPlayerAPI: true,
       renderChild: () => (
         <UIPlayerAdapter
           onMount={this._registerToPlayer}
