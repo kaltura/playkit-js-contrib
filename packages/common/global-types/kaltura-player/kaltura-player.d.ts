@@ -8,7 +8,7 @@ declare global {
         connect: (...args: any) => any;
       };
       reducers: Record<string, {actions: Record<string, unknown>[]}>;
-      preact: typeof ContribPreact;
+
       utils: {
         getLogger: (name: string) => KalturaPlayerTypes.Logger;
         bindActions(actions: Record<string, unknown>[]): (...args: any) => void;

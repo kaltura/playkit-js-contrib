@@ -1,3 +1,4 @@
+import {h, Component} from 'preact';
 import {ContribLogger, getContribLogger} from '@playkit-js-contrib/common';
 
 export interface UIPlayerAdapterProps {
@@ -6,12 +7,8 @@ export interface UIPlayerAdapterProps {
   onUnmount: (player: KalturaPlayerTypes.Player) => void;
 }
 
-const {h} = KalturaPlayer.ui.preact;
-
 @KalturaPlayer.ui.components.withPlayer
-export class UIPlayerAdapter extends KalturaPlayer.ui.preact.Component<
-  UIPlayerAdapterProps
-> {
+export class UIPlayerAdapter extends Component<UIPlayerAdapterProps> {
   static defaultProps = {
     player: null,
   };

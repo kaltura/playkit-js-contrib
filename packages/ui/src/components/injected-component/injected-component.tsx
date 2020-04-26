@@ -1,3 +1,4 @@
+import {h, Component} from 'preact';
 import * as styles from './injected-component.scss';
 import {getContribLogger} from '@playkit-js-contrib/common';
 
@@ -6,8 +7,6 @@ const logger = getContribLogger({
   class: 'InjectedComponent',
 });
 
-const {h} = KalturaPlayer.ui.preact;
-
 export interface InjectedComponentProps {
   onCreate: (options: {parent: HTMLDivElement}) => void;
   onDestroy: (options: {parent: HTMLDivElement}) => void;
@@ -15,9 +14,7 @@ export interface InjectedComponentProps {
   fillContainer: boolean;
 }
 
-class InjectedComponent extends KalturaPlayer.ui.preact.Component<
-  InjectedComponentProps
-> {
+class InjectedComponent extends Component<InjectedComponentProps> {
   _root = null;
 
   shouldComponentUpdate(): boolean {

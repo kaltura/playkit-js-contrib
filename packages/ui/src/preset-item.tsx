@@ -1,15 +1,13 @@
+import {h, render} from 'preact';
 import {getContribLogger} from '@playkit-js-contrib/common';
 import {PresetItemData, RelativeToTypes} from './preset-item-data';
 import {ManagedComponent} from './components/managed-component';
 import {ContribLogger} from '@playkit-js-contrib/common';
 import {InjectedComponent} from './components/injected-component/injected-component';
-import {render} from 'preact';
 export interface PresetItemOptions {
   kalturaPlayer: KalturaPlayerTypes.Player;
   data: PresetItemData;
 }
-
-const {h} = KalturaPlayer.ui.preact;
 
 export interface PresetItemProps {}
 
@@ -25,7 +23,6 @@ export interface KalturaPlayerPresetComponent {
 
 export class PresetItem {
   private _options: PresetItemOptions;
-  private _element: Element | null = null;
   private _logger: ContribLogger;
 
   constructor(options: PresetItemOptions) {
@@ -121,21 +118,11 @@ export class PresetItem {
       return;
     }
 
-    if (!this._element) {
-      this._logger.warn(
-        `missing injected component reference, aborting element removal`,
-        {
-          method: '_onDestroy',
-        }
-      );
-      return;
-    }
-
     this._logger.info(`remove injected contrib preset component`, {
       method: '_onDestroy',
     });
 
-    this._element = render(null, options.parent);
+    render(null, options.parent);
   };
 
   private _onCreate = (options: {context?: any; parent: HTMLElement}): void => {
@@ -164,7 +151,7 @@ export class PresetItem {
       this._logger.info(`inject contrib preset component`, {
         method: '_create',
       });
-      this._element = render(child, options.parent);
+      render(child, options.parent);
     } catch (error) {
       this._logger.error(`failed to create injected component.`, {
         method: '_onCreate',

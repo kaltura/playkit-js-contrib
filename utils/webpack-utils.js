@@ -1,7 +1,13 @@
 function createExternals() {
   return [function(context, request, callback) {
-    if (request.indexOf('@playkit-js') === 0 || request.indexOf('preact') === 0) {
-      return callback(null, 'umd ' + request);
+    if (request.indexOf('@playkit-js') === 0) {
+      callback(null, 'umd ' + request);
+      return;
+    }
+
+    if (request.indexOf('preact') === 0) {
+      callback(null, 'root KalturaPlayer.ui.preact');
+      return;
     }
 
     callback();
