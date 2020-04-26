@@ -16,6 +16,6 @@ npm run deploy:production-player
 1. **copy & execute** the three instuctions lines printed in console after step 2.1. It will be similar to the following:
 ```
   _git_ commit -am "chore(release): publish ${packageVersion}"
-  _git_ tag -a v${packageVersion} -m "v${packageVersion}"
+  _git_ tag -a kaltura-ovp-player@${packageVersion} -m "kaltura-ovp-player@${packageVersion}"
   _git_ push --follow-tags
 ```
