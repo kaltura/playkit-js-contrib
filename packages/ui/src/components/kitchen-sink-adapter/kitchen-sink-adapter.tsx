@@ -1,10 +1,9 @@
+import {h, Component} from 'preact';
 import {ContribLogger, getContribLogger} from '@playkit-js-contrib/common';
 import {
   KitchenSinkExpandModes,
   KitchenSinkPositions,
 } from '../../kitchen-sink-item-data';
-
-const {h} = KalturaPlayer.ui.preact;
 
 export interface KitchenSinkAdapterProps {
   updateSidePanelMode: (
@@ -41,9 +40,7 @@ const mapStateToProps = state => {
     forwardRef: true,
   }
 )
-export class KitchenSinkAdapter extends KalturaPlayer.ui.preact.Component<
-  KitchenSinkAdapterProps
-> {
+export class KitchenSinkAdapter extends Component<KitchenSinkAdapterProps> {
   static defaultProps = {
     updateSidePanelMode: () => {},
   };

@@ -128,7 +128,6 @@ export class KitchenSinkManager {
 
     this.options.presetManager.add({
       label: 'kitchen-sink-adapter',
-      shareAdvancedPlayerAPI: true,
       presetAreas: groupedPresets['PlayerArea'],
       renderChild: () => <KitchenSinkAdapter ref={this._setRef} />,
     });
