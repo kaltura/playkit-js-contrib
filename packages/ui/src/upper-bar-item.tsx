@@ -10,7 +10,7 @@ export interface UpperBarItemOptions {
 export interface UpperBarItemProps {}
 
 export class UpperBarItem {
-  private _options: UpperBarItemOptions;
+  public _options: UpperBarItemOptions;
   private _logger: ContribLogger;
 
   constructor(options: UpperBarItemOptions) {
