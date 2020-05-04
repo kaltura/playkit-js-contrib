@@ -3,6 +3,38 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/kaltura/playkit-js-contrib/compare/v0.53.4-vamb.1...v4.0.0) (2020-05-04)
+
+
+* Preact free (#227) ([5757633](https://github.com/kaltura/playkit-js-contrib/commit/57576334cf1ac99ce72fa66ebf8848a76d2d08d7)), closes [#227](https://github.com/kaltura/playkit-js-contrib/issues/227)
+
+
+### BREAKING CHANGES
+
+* before
+to host a component on the core Preact tree you needed to set a flag explicitly
+```
+    this.options.presetManager.add({
+      shareAdvancedPlayerAPI: true,
+    });
+```
+
+after
+to prevent a component on the core Preact tree you need to set a flag explicitly
+```
+    this.options.presetManager.add({
+      isolateComponent: true,
+    });
+```
+
+* chore: remove unused import
+
+Co-authored-by: Eitan Avgil <eitan.avgil@kaltura.com>
+
+
+
+
+
 ## [3.2.3](https://github.com/kaltura/playkit-js-contrib/compare/v3.2.2...v3.2.3) (2020-03-23)
 
 **Note:** Version bump only for package @playkit-js-contrib/ui
