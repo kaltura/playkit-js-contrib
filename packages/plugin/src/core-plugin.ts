@@ -98,7 +98,6 @@ export class CorePlugin<
   }
 
   public reset() {
-    this._contribServices.reset();
     if (hasOnMediaUnload(this._contribPlugin)) {
       try {
         this._contribPlugin.onMediaUnload();

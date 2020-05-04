@@ -51,6 +51,31 @@ export class ContribServices {
     private _options: ContribServicesOptions
   ) {
     this._initialize();
+    this._addListeners();
+  }
+
+  private _addListeners() {
+    const kalturaPlayer = this._options.kalturaPlayer;
+    kalturaPlayer.addEventListener(
+      kalturaPlayer.Event.PLAYER_RESET,
+      this.reset
+    );
+    kalturaPlayer.addEventListener(
+      kalturaPlayer.Event.PLAYER_DESTROY,
+      this._removeListeners
+    );
+  }
+
+  private _removeListeners() {
+    const kalturaPlayer = this._options.kalturaPlayer;
+    kalturaPlayer.removeEventListener(
+      kalturaPlayer.Event.PLAYER_RESET,
+      this.reset
+    );
+    kalturaPlayer.removeEventListener(
+      kalturaPlayer.Event.PLAYER_DESTROY,
+      this._removeListeners
+    );
   }
 
   private _initialize() {
@@ -140,7 +165,12 @@ export class ContribServices {
   }
 
   reset(): void {
-    // TODO sakal
+    this._toastManager.reset();
+    this._overlayManager.reset();
+    this._bannerManager.reset();
+    this._floatingManager.reset();
+    this._kitchenSinkManager.reset();
+    this._upperBarManager.reset();
   }
 
   public getPlayerKS(): string | null {

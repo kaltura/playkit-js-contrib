@@ -117,13 +117,6 @@ export class FloatingManager {
   }
 
   reset(): void {
-    // TODO sakal missing
-  }
-  /**
-   * destroy all ui manager items
-   */
-  destroy(): void {
-    // TODO sakal sohuld call on destroy
     const allItems = [
       ...this._items.VideoArea,
       ...this._items.InteractiveArea,
