@@ -13,13 +13,18 @@ export interface PresetManagerOptions {
 
 export enum PresetManagerEventTypes {
   PresetResizeEvent = 'PresetResizeEvent',
+  VideoResizeEvent = 'VideoResizeEvent',
 }
 
 export interface PresetResizeEvent {
   type: PresetManagerEventTypes.PresetResizeEvent;
 }
 
-export type PresetManagerEvents = PresetResizeEvent;
+export interface VideoResizeEvent {
+  type: PresetManagerEventTypes.VideoResizeEvent;
+}
+
+export type PresetManagerEvents = PresetResizeEvent | VideoResizeEvent;
 
 const acceptableTypes = ['PlayerArea'];
 
@@ -64,7 +69,6 @@ export class PresetManager {
     this.add({
       label: 'preset-manager',
       presetAreas: groupedPresets['PlayerArea'],
-      shareAdvancedPlayerAPI: true,
       renderChild: () => (
         <UIPlayerAdapter
           onMount={this._registerToPlayer}
@@ -85,10 +89,10 @@ export class PresetManager {
       this._notifyUIPresetResize
     );
 
-    // player.addEventListener(
-    //   KalturaPlayer.ui.EventType.VIDEO_RESIZE,
-    //   this._notifyVideoResize
-    // );
+    player.addEventListener(
+      KalturaPlayer.ui.EventType.VIDEO_RESIZE,
+      this._notifyVideoResize
+    );
   };
 
   // private _notifyPresetChanged = () => {
@@ -96,10 +100,11 @@ export class PresetManager {
   //   console.log(`sakal preset-manager: _notifyPresetChanged`);
   // };
   //
-  // private _notifyVideoResize = () => {
-  //   // TODO implement
-  //   console.log(`sakal preset-manager: _notifyVideoResize`);
-  // };
+  private _notifyVideoResize = () => {
+    this._events.emit({
+      type: PresetManagerEventTypes.VideoResizeEvent,
+    });
+  };
 
   private _notifyUIPresetResize = () => {
     this._events.emit({
@@ -118,10 +123,10 @@ export class PresetManager {
       this._notifyUIPresetResize
     );
 
-    // player.removeEventListener(
-    //   KalturaPlayer.ui.EventType.VIDEO_RESIZE,
-    //   this._notifyVideoResize
-    // );
+    player.removeEventListener(
+      KalturaPlayer.ui.EventType.VIDEO_RESIZE,
+      this._notifyVideoResize
+    );
   };
 
   on: EventsManager<PresetManagerEvents>['on'] = this._events.on.bind(

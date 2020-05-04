@@ -5,7 +5,6 @@ import {
   FloatingPositions,
 } from './floating-item-data';
 import {PresetManager, PresetManagerEventTypes} from './preset-manager';
-import {ObjectUtils} from '@playkit-js-contrib/common';
 import {ComponentChild, h} from 'preact';
 import {PlayerSize, VideoSize} from './common.types';
 import {getPlayerSize, getVideoSize} from './player-utils';
@@ -206,6 +205,14 @@ export class FloatingManager {
       this._updateCachedCanvas();
       this._updateComponents();
     });
+
+    this._options.presetManager.on(
+      PresetManagerEventTypes.VideoResizeEvent,
+      () => {
+        this._updateCachedCanvas();
+        this._updateComponents();
+      }
+    );
 
     this._options.presetManager.on(
       PresetManagerEventTypes.PresetResizeEvent,
