@@ -228,5 +228,8 @@ export class UpperBarManager {
    */
   reset(): void {
     this._unregisterToPlayer();
+    this._items.forEach((item: UpperBarItem) => {
+      this.remove(item);
+    });
   }
 }

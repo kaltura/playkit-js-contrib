@@ -99,13 +99,6 @@ export class OverlayManager {
   }
 
   reset(): void {
-    // TODO sakal missing
-  }
-  /**
-   * destroy all ui manager items
-   */
-  destroy(): void {
-    // TODO sakal sohuld call on destroy
     const allItems = [...this._items.PlayerArea];
     allItems.forEach(item => {
       try {
