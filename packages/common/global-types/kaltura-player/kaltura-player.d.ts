@@ -8,7 +8,7 @@ declare global {
         connect: (...args: any) => any;
       };
       reducers: Record<string, {actions: Record<string, unknown>[]}>;
-
+      createPortal: (children: any, domElement: HTMLElement) => void;
       utils: {
         getLogger: (name: string) => KalturaPlayerTypes.Logger;
         bindActions(actions: Record<string, unknown>[]): (...args: any) => void;

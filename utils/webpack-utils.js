@@ -7,7 +7,7 @@ function createExternals() {
 
     if (request.indexOf('preact') === 0) {
       callback(null, 'root KalturaPlayer.ui.preact');
-      return;
+      return; 
     }
 
     callback();
