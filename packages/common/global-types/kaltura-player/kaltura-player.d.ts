@@ -15,6 +15,7 @@ declare global {
       };
       components: {
         withPlayer: any;
+        Tooltip: any;
       };
     };
     core: {
