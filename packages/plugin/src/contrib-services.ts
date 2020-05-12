@@ -54,7 +54,7 @@ export class ContribServices {
     this._addListeners();
   }
 
-  private _addListeners() {
+  private _addListeners = (): void => {
     const kalturaPlayer = this._options.kalturaPlayer;
     kalturaPlayer.addEventListener(
       kalturaPlayer.Event.PLAYER_RESET,
@@ -64,9 +64,9 @@ export class ContribServices {
       kalturaPlayer.Event.PLAYER_DESTROY,
       this._removeListeners
     );
-  }
+  };
 
-  private _removeListeners() {
+  private _removeListeners = (): void => {
     const kalturaPlayer = this._options.kalturaPlayer;
     kalturaPlayer.removeEventListener(
       kalturaPlayer.Event.PLAYER_RESET,
@@ -76,7 +76,7 @@ export class ContribServices {
       kalturaPlayer.Event.PLAYER_DESTROY,
       this._removeListeners
     );
-  }
+  };
 
   private _initialize() {
     // TODO sakal use DI instead
@@ -164,14 +164,14 @@ export class ContribServices {
     return this._fontManager;
   }
 
-  reset(): void {
+  reset = (): void => {
     this._toastManager.reset();
     this._overlayManager.reset();
     this._bannerManager.reset();
     this._floatingManager.reset();
     this._kitchenSinkManager.reset();
     this._upperBarManager.reset();
-  }
+  };
 
   public getPlayerKS(): string | null {
     const {session} = this._options.kalturaPlayer.config;
