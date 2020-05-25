@@ -54,7 +54,7 @@
     "sass-loader": "^7.1.0",
     "semver": "^6.3.0",
     "style-loader": "^0.23.1",
-    "svg-url-loader": "^3.0.0",
+    "svg-url-loader": "^6.0.0",
     "ts-loader": "^6.0.4",
     "typescript": "^3.2.2",
     "uuid": "^3.3.3",
