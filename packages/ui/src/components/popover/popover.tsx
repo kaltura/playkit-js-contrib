@@ -17,7 +17,6 @@ export enum PopoverTriggerMode {
 export enum KeyboardKeys {
   Esc = 27,
   Enter = 13,
-  Tab = 9,
 }
 
 const CLOSE_ON_HOVER_DELAY = 500;
