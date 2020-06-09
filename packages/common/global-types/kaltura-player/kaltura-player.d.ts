@@ -35,5 +35,6 @@ declare global {
         };
       };
     };
+    getPlayer(targetId?: string): any;
   };
 }
