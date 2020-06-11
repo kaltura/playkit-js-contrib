@@ -18,6 +18,9 @@ export enum KeyboardKeys {
   Esc = 27,
   Enter = 13,
   Tab = 9,
+  Space = 32,
+  End = 35,
+  Home = 36,
 }
 
 const CLOSE_ON_HOVER_DELAY = 500;
