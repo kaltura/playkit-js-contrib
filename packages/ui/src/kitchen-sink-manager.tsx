@@ -198,7 +198,6 @@ export class KitchenSinkManager {
   private _activateItem = (item: KitchenSinkItem): void => {
     const {position, expandMode} = item.data;
     const relevantPanel = this._panels[position];
-
     // trying to activate an already active item
     if (relevantPanel.activeItem === item) return;
     // switch between items if currently there is an active one (without collapsing / expanding KS)

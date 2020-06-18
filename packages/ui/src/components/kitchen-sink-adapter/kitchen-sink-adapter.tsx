@@ -14,16 +14,16 @@ export interface KitchenSinkAdapterProps {
 }
 
 export enum SidePanelPositions {
-  Left = 'LEFT',
-  Top = 'TOP',
-  Bottom = 'BOTTOM',
-  Right = 'RIGHT',
+  Left = 'left',
+  Top = 'top',
+  Bottom = 'bottom',
+  Right = 'right',
 }
 
 export enum SidePanelModes {
-  AlongSideTheVideo = 'ALONG_SIDE_THE_VIDEO',
-  Hidden = 'HIDDEN',
-  OverTheVideo = 'OVER_THE_VIDEO',
+  AlongSideTheVideo = 'alongside',
+  Hidden = 'hidden',
+  OverTheVideo = 'over',
 }
 
 const mapStateToProps = state => {
