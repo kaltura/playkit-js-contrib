@@ -17,6 +17,7 @@ declare global {
         withPlayer: any;
         Tooltip: any;
       };
+      preactHooks: any;
     };
     core: {
       registerPlugin(name: string, component: any): void;
