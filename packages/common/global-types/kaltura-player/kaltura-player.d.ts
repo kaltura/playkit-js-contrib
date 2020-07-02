@@ -18,6 +18,7 @@ declare global {
         Tooltip: any;
       };
       preactHooks: any;
+      preacti18n: any;
     };
     core: {
       registerPlugin(name: string, component: any): void;
