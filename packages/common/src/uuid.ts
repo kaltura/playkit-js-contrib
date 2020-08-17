@@ -1,5 +1,4 @@
-import * as uuidV1 from 'uuid/v1';
-import * as uuidV5 from 'uuid/v5';
+import {v5 as uuidV5, v1 as uuidV1} from 'uuid';
 
 export class UUID {
   //timestamp
