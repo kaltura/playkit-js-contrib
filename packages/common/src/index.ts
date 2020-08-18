@@ -5,7 +5,7 @@ import 'core-js/features/object/keys';
 
 Number.isNaN =
   Number.isNaN ||
-  function(value) {
+  function (value) {
     return value !== null && (value != value || +value != value);
   };
 
