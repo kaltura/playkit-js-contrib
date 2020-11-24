@@ -107,7 +107,6 @@ export interface Logger {
   get(name: string): Logger;
   time(label: string): void;
   timeEnd(label: string): void;
-  enabledFor(level: LogLevel): boolean;
   createDefaultHandler(
     options?: LoggerOpts
   ): (messages: any[], context: LoggerContext) => void;

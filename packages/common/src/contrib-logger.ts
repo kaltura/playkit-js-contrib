@@ -59,10 +59,6 @@ export class ProxyLogger implements ContribLogger {
     message: string,
     messageContext: MessageOptions
   ): void {
-    if (!this._logger.enabledFor(level)) {
-      return;
-    }
-
     const className = messageContext.class || this._defaultOptions.class || '_';
     const module = this._defaultOptions.module || '';
     const method = messageContext.method ? `.${messageContext.method}()` : '';
