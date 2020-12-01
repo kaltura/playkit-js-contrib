@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.4](https://github.com/kaltura/playkit-js-contrib/compare/v4.1.3...v4.1.4) (2020-12-01)
+
+
+### Bug Fixes
+
+* fixed usage of core logger (latest core required) ([1b372ae](https://github.com/kaltura/playkit-js-contrib/commit/1b372ae5dd69e8bac255c630793a85549de00feb))
+
+
+
+
+
 ## [4.1.3](https://github.com/kaltura/playkit-js-contrib/compare/v4.1.2...v4.1.3) (2020-08-18)
 
 **Note:** Version bump only for package @playkit-js-contrib/common
