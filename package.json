@@ -55,7 +55,7 @@
     "semver": "^7.3.2",
     "style-loader": "^1.2.1",
     "svg-url-loader": "^6.0.0",
-    "ts-loader": "^6.0.4",
+    "ts-loader": "^8.0.12",
     "typescript": "^3.2.2",
     "uuid": "^8.3.0",
     "webpack": "^4.29.6",
