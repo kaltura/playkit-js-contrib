@@ -88,7 +88,7 @@ export class UpperBarManager {
       this._playerSize = PlayeSize.Large;
     }
     if (currentPlayerSize !== this._playerSize) {
-      this._update();
+      this.update();
     }
   };
 
@@ -181,7 +181,7 @@ export class UpperBarManager {
     const item = new UpperBarItem(itemOptions);
     this._items.push(item);
     this._items = ArrayUtils.sortByKey(this._items, '_options.order').reverse();
-    this._update();
+    this.update();
     return item;
   }
 
@@ -192,10 +192,10 @@ export class UpperBarManager {
     if (itemIndex === -1) return;
 
     this._items.splice(itemIndex, 1);
-    this._update();
+    this.update();
   }
 
-  _update() {
+  update() {
     if (this._rootElement) {
       this._rootElement.update();
     }

@@ -1,4 +1,4 @@
-import {ComponentChild} from 'preact';
+import {ComponentChild, JSX} from 'preact';
 import {KitchenSinkAdapter} from './components/kitchen-sink-adapter';
 
 export interface KitchenSinkContentRendererProps {
@@ -20,7 +20,7 @@ export enum KitchenSinkPositions {
 
 export interface KitchenSinkItemData {
   label: string;
-  renderIcon: () => ComponentChild;
+  renderIcon: (isActive: boolean) => ComponentChild | JSX.Element;
   expandMode: KitchenSinkExpandModes;
   position: KitchenSinkPositions;
   fillContainer?: boolean;
