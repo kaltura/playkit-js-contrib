@@ -151,8 +151,11 @@ export class KitchenSinkManager {
     const kitchenSinkItem = new KitchenSinkItem(itemOptions);
     const upperBarItem = this.options.upperBarManager.add({
       label: data.label,
-      renderItem: data.renderIcon,
-      onClick: () => this._toggle(kitchenSinkItem),
+      renderItem: () => data.renderIcon(itemOptions.isActive(kitchenSinkItem)),
+      onClick: () => {
+        this._toggle(kitchenSinkItem);
+        this.options.upperBarManager.update();
+      },
     });
     relevantPanel.items.push({
       kitchenSinkItem,
