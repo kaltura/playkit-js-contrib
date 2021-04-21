@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.7](https://github.com/kaltura/playkit-js-contrib/compare/v4.1.6...v4.1.7) (2021-04-21)
+
+
+### Bug Fixes
+
+* **FEV-665:** hide oversized text in banner ([3fe9e7d](https://github.com/kaltura/playkit-js-contrib/commit/3fe9e7d96fa46aad51d2e1a5fc56ddceaf1df1ae))
+
+
+
+
+
 ## [4.1.6](https://github.com/kaltura/playkit-js-contrib/compare/v4.1.5...v4.1.6) (2021-04-05)
 
 **Note:** Version bump only for package @playkit-js-contrib/ui
