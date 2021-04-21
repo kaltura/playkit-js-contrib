@@ -7,7 +7,7 @@ export interface ListenKeysObject {
   eventName: string;
   queueNameHash: string;
   queueKeyHash: string;
-  onMessage: Function;
+  onMessage: Function[];
 }
 
 export interface SocketWrapperParams {
@@ -122,9 +122,11 @@ export class SocketWrapper {
         this._messageKeyToQueueKeyMap[messageKey] &&
         this._listenKeys[this._messageKeyToQueueKeyMap[messageKey]]
       ) {
-        this._listenKeys[this._messageKeyToQueueKeyMap[messageKey]].onMessage(
-          msg
-        );
+        this._listenKeys[
+          this._messageKeyToQueueKeyMap[messageKey]
+        ].onMessage.forEach(cb => {
+          cb(msg);
+        });
       } else {
         logger.error(`couldn't find queueKey in map`, {
           method: `_registerSocket('message')`,
@@ -181,12 +183,16 @@ export class SocketWrapper {
     queueKeyHash: string,
     onMessage: Function
   ) {
-    this._listenKeys[queueKeyHash] = {
-      eventName: eventName,
-      queueNameHash: queueNameHash,
-      queueKeyHash: queueKeyHash,
-      onMessage: onMessage,
-    };
+    if (this._listenKeys[queueKeyHash]) {
+      this._listenKeys[queueKeyHash].onMessage.push(onMessage);
+    } else {
+      this._listenKeys[queueKeyHash] = {
+        eventName: eventName,
+        queueNameHash: queueNameHash,
+        queueKeyHash: queueKeyHash,
+        onMessage: [onMessage],
+      };
+    }
 
     if (this._connected) {
       logger.info('Listening to ${eventName}', {
