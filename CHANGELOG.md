@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.8](https://github.com/kaltura/playkit-js-contrib/compare/v4.1.7...v4.1.8) (2021-04-23)
+
+
+### Bug Fixes
+
+* **fev-803:** change classname for upper-bar icon cause of f-awesome use same classname ([#345](https://github.com/kaltura/playkit-js-contrib/issues/345)) ([90b117b](https://github.com/kaltura/playkit-js-contrib/commit/90b117bcc7a974283cb2c534c6e8f9f447b3f89d))
+
+
+
+
+
 ## [4.1.7](https://github.com/kaltura/playkit-js-contrib/compare/v4.1.6...v4.1.7) (2021-04-21)
 
 
