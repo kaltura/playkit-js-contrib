@@ -36,7 +36,7 @@ export class UpperBarItem {
     const children = renderItem(props);
 
     return (
-      <div onClick={onClick} className={'icon--clickable'}>
+      <div onClick={onClick} className={'upper-bar-icon'}>
         {children}
       </div>
     );
