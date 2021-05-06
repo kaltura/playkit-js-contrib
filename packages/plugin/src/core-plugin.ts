@@ -21,6 +21,10 @@ export class CorePlugin<
 
   constructor(...args: any[]) {
     super(...args);
+    this.player.addEventListener(
+      this.player.Event.MEDIA_LOADED,
+      this.handleMediaLoaded
+    );
   }
 
   setContribContext(context: {
@@ -50,43 +54,40 @@ export class CorePlugin<
     return this._contribServices.presetManager.registerComponents();
   }
 
-  loadMedia(): void {
-    this.eventManager.listenOnce(
-      this.player,
-      this.player.Event.MEDIA_LOADED,
-      () => {
-        if (!this._wasSetupExecuted) {
-          if (hasOnPluginSetup(this._contribPlugin)) {
-            try {
-              this._contribPlugin.onPluginSetup();
-            } catch (e) {
-              this._wasSetupFailed = true;
-              console.error(`failed to execute plugin setup, suspend plugin`, {
-                error: e.message,
-              });
-            }
-          }
-          this._wasSetupExecuted = true;
-        }
-
-        if (this._wasSetupFailed) {
-          return;
-        }
-
-        if (hasOnMediaLoad(this._contribPlugin)) {
-          try {
-            this._contribPlugin.onMediaLoad();
-          } catch (e) {
-            console.error(`failure during media load `, {error: e.message});
-          }
+  handleMediaLoaded = () => {
+    if (!this._wasSetupExecuted) {
+      if (hasOnPluginSetup(this._contribPlugin)) {
+        try {
+          this._contribPlugin.onPluginSetup();
+        } catch (e) {
+          this._wasSetupFailed = true;
+          console.error(`failed to execute plugin setup, suspend plugin`, {
+            error: e.message,
+          });
         }
       }
-    );
-  }
+      this._wasSetupExecuted = true;
+    }
+
+    if (this._wasSetupFailed) {
+      return;
+    }
+
+    if (hasOnMediaLoad(this._contribPlugin)) {
+      try {
+        this._contribPlugin.onMediaLoad();
+      } catch (e) {
+        console.error(`failure during media load `, {error: e.message});
+      }
+    }
+  };
 
   public destroy() {
     this.reset();
-    this.eventManager.destroy();
+    this.player.removeEventListener(
+      this.player.Event.MEDIA_LOADED,
+      this.handleMediaLoaded
+    );
 
     if (hasOnPluginDestroy(this._contribPlugin)) {
       try {
