@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.9](https://github.com/kaltura/playkit-js-contrib/compare/v4.1.8...v4.1.9) (2021-05-13)
+
+
+### Bug Fixes
+
+* **fev-647:** use player event listener instead of event manager ([#352](https://github.com/kaltura/playkit-js-contrib/issues/352)) ([4a875fb](https://github.com/kaltura/playkit-js-contrib/commit/4a875fb0f2acfcafe5160d27791a30fef041d90e))
+
+
+
+
+
 ## [4.1.8](https://github.com/kaltura/playkit-js-contrib/compare/v4.1.7...v4.1.8) (2021-04-23)
 
 
