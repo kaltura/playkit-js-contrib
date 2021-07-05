@@ -1,7 +1,7 @@
 {
     "name": "@playkit-js-contrib/plugin",
     "private": false,
-    "version": "4.1.9",
+    "version": "4.1.10",
     "license": "AGPL-3.0",
     "author": "Kaltura",
     "repository": {

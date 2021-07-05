@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.10](https://github.com/kaltura/playkit-js-contrib/compare/v4.1.9...v4.1.10) (2021-07-05)
+
+
+### Bug Fixes
+
+* **fev-964:** use redux value to define player size ([#366](https://github.com/kaltura/playkit-js-contrib/issues/366)) ([a3c1998](https://github.com/kaltura/playkit-js-contrib/commit/a3c19984ea81a0cd6f3ac9b34235c0808a796348))
+
+
+
+
+
 ## [4.1.8](https://github.com/kaltura/playkit-js-contrib/compare/v4.1.7...v4.1.8) (2021-04-23)
 
 

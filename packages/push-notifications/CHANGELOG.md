@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.10](https://github.com/kaltura/playkit-js-contrib/compare/v4.1.9...v4.1.10) (2021-07-05)
+
+**Note:** Version bump only for package @playkit-js-contrib/push-notifications
+
+
+
+
+
 ## [4.1.7](https://github.com/kaltura/playkit-js-contrib/compare/v4.1.6...v4.1.7) (2021-04-21)
 
 
