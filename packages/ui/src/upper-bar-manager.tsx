@@ -9,12 +9,9 @@ import {PresetsUtils} from './presets-utils';
 import UpperBarConfig = KalturaPlayerContribTypes.UpperBarConfig;
 import {getContribConfig} from './contrib-utils';
 import {IconsMenu} from './components/icons-menu';
-
-enum PlayeSize {
-  Tiny = 'Tiny',
-  Medium = 'Medium',
-  Large = 'Large',
-}
+const {
+  components: {PLAYER_SIZE},
+} = KalturaPlayer.ui;
 
 export interface UpperBarManagerOptions {
   kalturaPlayer: KalturaPlayerTypes.Player;
@@ -43,7 +40,6 @@ export class UpperBarManager {
   private _items: UpperBarItem[] = [];
   private _options: UpperBarManagerOptions;
   private _upperBarConfig: UpperBarConfig;
-  private _playerSize: PlayeSize = PlayeSize.Large;
   private _iconsMenuConfig: IconsMenuConfig;
 
   constructor(options: UpperBarManagerOptions) {
@@ -73,38 +69,24 @@ export class UpperBarManager {
       presetAreas: groupedPresets['TopBarRightControls'],
       renderChild: this._renderChild,
     });
-    this._registerToPlayer();
   }
-
-  private _checkPlayerSize = () => {
-    // TODO: replace with property from redux srore of Player (VIP-1154)
-    const {width} = this._options.kalturaPlayer.dimensions;
-    const currentPlayerSize = this._playerSize;
-    if (width <= 280) {
-      this._playerSize = PlayeSize.Tiny;
-    } else if (width <= 480) {
-      this._playerSize = PlayeSize.Medium;
-    } else {
-      this._playerSize = PlayeSize.Large;
-    }
-    if (currentPlayerSize !== this._playerSize) {
-      this.update();
-    }
-  };
 
   private _renderChild = (): ComponentChild => {
     return (
       <ManagedComponent
         label={'upper-bar-manager'}
-        renderChildren={() => this._renderItems()}
+        renderChildren={playerSize => this._renderItems(playerSize)}
         isShown={() => true}
+        updateOnPlayerSizeChanged
         ref={ref => (this._rootElement = ref)}
       />
     );
   };
 
-  private _renderItems = () => {
-    const {upperBarItems, iconMenuItems} = this._prepareUpperBarItems();
+  private _renderItems = (playerSize: string) => {
+    const {upperBarItems, iconMenuItems} = this._prepareUpperBarItems(
+      playerSize
+    );
 
     const isIconMenuVisible = !!(upperBarItems.length && iconMenuItems.length);
 
@@ -124,31 +106,6 @@ export class UpperBarManager {
     const upperBarContent = upperBarItems.map(item => item.renderChild({}));
 
     return <UpperBar>{upperBarContent}</UpperBar>;
-  };
-
-  // TODO: replace with property from redux srore of Player (VIP-1154)
-  private _registerToPlayer = () => {
-    this._options.kalturaPlayer.addEventListener(
-      this._options.kalturaPlayer.Event.RESIZE,
-      this._checkPlayerSize
-    );
-
-    this._options.kalturaPlayer.addEventListener(
-      this._options.kalturaPlayer.Event.LOADED_DATA,
-      this._checkPlayerSize
-    );
-  };
-
-  private _unregisterToPlayer = () => {
-    this._options.kalturaPlayer.removeEventListener(
-      this._options.kalturaPlayer.Event.RESIZE,
-      this._checkPlayerSize
-    );
-
-    this._options.kalturaPlayer.removeEventListener(
-      this._options.kalturaPlayer.Event.LOADED_DATA,
-      this._checkPlayerSize
-    );
   };
 
   /**
@@ -201,21 +158,24 @@ export class UpperBarManager {
     }
   }
 
-  _prepareUpperBarItems(): {
+  _prepareUpperBarItems(
+    playerSize: string
+  ): {
     upperBarItems: UpperBarItem[];
     iconMenuItems: UpperBarItem[];
   } {
     const iconMenuItems = [...this._items];
     let upperBarItems = [];
-    switch (this._playerSize) {
-      case PlayeSize.Large:
-        upperBarItems = iconMenuItems.splice(0, 4);
+    switch (playerSize) {
+      case PLAYER_SIZE.TINY:
+        upperBarItems = [];
         break;
-      case PlayeSize.Medium:
+      case PLAYER_SIZE.EXTRA_SMALL:
+      case PLAYER_SIZE.SMALL:
         upperBarItems = iconMenuItems.splice(0, 2);
         break;
       default:
-        upperBarItems = [];
+        upperBarItems = iconMenuItems.splice(0, 4);
     }
     return {
       upperBarItems,
@@ -227,7 +187,6 @@ export class UpperBarManager {
    * remove all ui manager items
    */
   reset(): void {
-    this._unregisterToPlayer();
     this._items.forEach((item: UpperBarItem) => {
       this.remove(item);
     });

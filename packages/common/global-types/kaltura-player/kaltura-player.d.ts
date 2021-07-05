@@ -16,6 +16,14 @@ declare global {
       components: {
         withPlayer: any;
         Tooltip: any;
+        PLAYER_SIZE: {
+          EXTRA_LARGE: 'extralarge';
+          EXTRA_SMALL: 'extrasmall';
+          LARGE: 'large';
+          MEDIUM: 'medium';
+          SMALL: 'small';
+          TINY: 'tiny';
+        };
       };
       preactHooks: any;
       preacti18n: any;

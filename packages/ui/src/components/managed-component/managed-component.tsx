@@ -2,17 +2,26 @@ import {h, Component, ComponentChild, ComponentChildren} from 'preact';
 import {getContribLogger} from '@playkit-js-contrib/common';
 import {ContribLogger} from '@playkit-js-contrib/common';
 import * as styles from './_managed-component.scss';
+const {
+  redux: {connect},
+} = KalturaPlayer.ui;
 
 type ManagedComponentState = {
   toggler: boolean;
 };
 type ManagedComponentProps = {
   isShown: () => boolean;
-  renderChildren: () => ComponentChildren;
+  renderChildren: (playerSize: string) => ComponentChildren;
   label: string;
   fillContainer: boolean;
+  playerSize?: string;
+  updateOnPlayerSizeChanged?: boolean;
 };
 
+const mapStateToProps = (state: Record<string, any>) => ({
+  playerSize: state.shell.playerSize,
+});
+@connect(mapStateToProps, null, null, {forwardRef: true})
 export class ManagedComponent extends Component<
   ManagedComponentProps,
   ManagedComponentState
@@ -31,6 +40,14 @@ export class ManagedComponent extends Component<
     });
   }
 
+  shouldComponentUpdate(prevProps: Readonly<ManagedComponentProps>): boolean {
+    const {updateOnPlayerSizeChanged, playerSize} = this.props;
+    return (
+      (updateOnPlayerSizeChanged && prevProps.playerSize !== playerSize) ||
+      prevProps.playerSize === playerSize
+    );
+  }
+
   componentDidMount(): void {
     this._logger = getContribLogger({
       module: 'contrib-ui',
@@ -46,7 +63,7 @@ export class ManagedComponent extends Component<
   }
 
   render() {
-    const {fillContainer, isShown} = this.props;
+    const {fillContainer, isShown, playerSize} = this.props;
     if (!isShown()) {
       return null;
     }
@@ -61,7 +78,7 @@ export class ManagedComponent extends Component<
       <div
         data-contrib-item={this.props.label}
         className={fillContainer ? styles.fillContainer : ''}>
-        {this.props.renderChildren()}
+        {this.props.renderChildren(playerSize)}
       </div>
     );
   }
