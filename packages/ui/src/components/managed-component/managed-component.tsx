@@ -11,7 +11,7 @@ type ManagedComponentState = {
 };
 type ManagedComponentProps = {
   isShown: () => boolean;
-  renderChildren: (palyerSize: string) => ComponentChildren;
+  renderChildren: (playerSize: string) => ComponentChildren;
   label: string;
   fillContainer: boolean;
   playerSize?: string;
