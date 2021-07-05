@@ -40,31 +40,12 @@ export class ManagedComponent extends Component<
     });
   }
 
-  shouldComponentUpdate(
-    prevProps: Readonly<ManagedComponentProps>,
-    prevState: Readonly<ManagedComponentState>
-  ): boolean {
-    const {toggler} = this.state;
-    const {
-      isShown,
-      renderChildren,
-      label,
-      fillContainer,
-      updateOnPlayerSizeChanged,
-      playerSize,
-    } = this.props;
-    if (
-      prevState.toggler !== toggler ||
-      prevProps.isShown !== isShown ||
-      prevProps.renderChildren !== renderChildren ||
-      prevProps.label !== label ||
-      prevProps.fillContainer !== fillContainer ||
-      prevProps.updateOnPlayerSizeChanged !== updateOnPlayerSizeChanged ||
-      (updateOnPlayerSizeChanged && prevProps.playerSize !== playerSize)
-    ) {
-      return true;
-    }
-    return false;
+  shouldComponentUpdate(prevProps: Readonly<ManagedComponentProps>): boolean {
+    const {updateOnPlayerSizeChanged, playerSize} = this.props;
+    return (
+      (updateOnPlayerSizeChanged && prevProps.playerSize !== playerSize) ||
+      prevProps.playerSize === playerSize
+    );
   }
 
   componentDidMount(): void {
