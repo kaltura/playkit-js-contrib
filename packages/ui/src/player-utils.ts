@@ -13,14 +13,20 @@ export function getVideoSize(
     return {width: 0, height: 0};
   }
 
-  const videoElement = kalturaPlayer.getVideoElement();
+  const videoTrack = kalturaPlayer.getActiveTracks().video;
 
-  if (!videoElement) {
+  if (!videoTrack) {
+    if (kalturaPlayer.getVideoElement()){
+      return {
+        width: kalturaPlayer.getVideoElement().videoWidth,
+        height: kalturaPlayer.getVideoElement().videoHeight
+      }
+    }
     return {width: 0, height: 0};
   }
 
   return {
-    width: videoElement.videoWidth,
-    height: videoElement.videoHeight,
+    width: videoTrack.width,
+    height: videoTrack.height,
   };
 }
