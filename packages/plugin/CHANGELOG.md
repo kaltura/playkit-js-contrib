@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.11](https://github.com/kaltura/playkit-js-contrib/compare/v4.1.10...v4.1.11) (2021-11-08)
+
+**Note:** Version bump only for package @playkit-js-contrib/plugin
+
+
+
+
+
 ## [4.1.10](https://github.com/kaltura/playkit-js-contrib/compare/v4.1.9...v4.1.10) (2021-07-05)
 
 **Note:** Version bump only for package @playkit-js-contrib/plugin
