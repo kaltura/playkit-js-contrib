@@ -13,14 +13,14 @@ export function getVideoSize(
     return {width: 0, height: 0};
   }
 
-  const videoTrack = kalturaPlayer.getActiveTracks().video;
+  const videoElement = kalturaPlayer.getVideoElement();
 
-  if (!videoTrack) {
+  if (!videoElement) {
     return {width: 0, height: 0};
   }
 
   return {
-    width: videoTrack.width,
-    height: videoTrack.height,
+    width: videoElement.videoWidth,
+    height: videoElement.videoHeight,
   };
 }
