@@ -199,6 +199,11 @@ export class FloatingManager {
       this._updateComponents();
     });
 
+    kalturaPlayer.addEventListener(kalturaPlayer.Event.LOADED_DATA, () => {
+      this._updateCachedCanvas();
+      this._updateComponents();
+    });
+
     this._options.presetManager.on(
       PresetManagerEventTypes.VideoResizeEvent,
       () => {
