@@ -16,6 +16,13 @@ export function getVideoSize(
   const videoTrack = kalturaPlayer.getActiveTracks().video;
 
   if (!videoTrack) {
+    // fallback - mainly for Safari
+    if (kalturaPlayer.getVideoElement()){
+      return {
+        width: kalturaPlayer.getVideoElement().videoWidth,
+        height: kalturaPlayer.getVideoElement().videoHeight
+      }
+    }
     return {width: 0, height: 0};
   }
 
