@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.12](https://github.com/kaltura/playkit-js-contrib/compare/v4.1.11...v4.1.12) (2021-11-09)
+
+
+### Bug Fixes
+
+* **FEV-1137:** hotspot isn't shown in safari ([#372](https://github.com/kaltura/playkit-js-contrib/issues/372)) ([536b070](https://github.com/kaltura/playkit-js-contrib/commit/536b070f2841cd507801301661eb66ab1fd795f2))
+
+
+
+
+
 ## [4.1.11](https://github.com/kaltura/playkit-js-contrib/compare/v4.1.10...v4.1.11) (2021-11-08)
 
 
