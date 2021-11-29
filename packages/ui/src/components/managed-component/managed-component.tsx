@@ -1,4 +1,10 @@
-import {h, Component, ComponentChild, ComponentChildren} from 'preact';
+import {
+  h,
+  Component,
+  ComponentChild,
+  ComponentChildren,
+  Fragment,
+} from 'preact';
 import {getContribLogger} from '@playkit-js-contrib/common';
 import {ContribLogger} from '@playkit-js-contrib/common';
 import * as styles from './_managed-component.scss';
@@ -77,7 +83,10 @@ export class ManagedComponent extends Component<
     return (
       <div
         data-contrib-item={this.props.label}
-        className={fillContainer ? styles.fillContainer : ''}>
+        className={[
+          `${fillContainer ? styles.fillContainer : ''}`,
+          styles.inlineContainer,
+        ].join(' ')}>
         {this.props.renderChildren(playerSize)}
       </div>
     );
