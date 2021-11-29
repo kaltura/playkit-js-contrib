@@ -9,6 +9,23 @@ import {PresetsUtils} from './presets-utils';
 import UpperBarConfig = KalturaPlayerContribTypes.UpperBarConfig;
 import {getContribConfig} from './contrib-utils';
 import {IconsMenu} from './components/icons-menu';
+
+const DefaultPluginOrder = {
+  Navigation: 10,
+  'Q&A': 20,
+  Moderation: 30,
+  Transcript: 40,
+  'Download transcript': 50,
+  Share: 70,
+  Playlist: 80,
+  Info: 90,
+  Related: 100,
+  Quiz: 110,
+  Layout: 120,
+  'Source Selector': 140,
+  Polls: 150,
+};
+
 const {
   components: {PLAYER_SIZE},
 } = KalturaPlayer.ui;
@@ -45,19 +62,10 @@ export class UpperBarManager {
   constructor(options: UpperBarManagerOptions) {
     this._options = options;
 
-    this._upperBarConfig = getContribConfig(
-      this._options.kalturaPlayer,
-      'ui.upperBar',
-      defaultUpperBarConfig,
-      {
-        explicitMerge: ['presetAreasMapping'],
-      }
-    );
-    this._iconsMenuConfig = getContribConfig(
-      this._options.kalturaPlayer,
-      'ui.iconsMenu',
-      {iconsOrder: {}}
-    );
+    this._upperBarConfig = getContribConfig(this._options.kalturaPlayer, 'ui.upperBar', defaultUpperBarConfig, {
+      explicitMerge: ['presetAreasMapping'],
+    });
+    this._iconsMenuConfig = getContribConfig(this._options.kalturaPlayer, 'ui.iconsMenu', {iconsOrder: {}});
 
     const groupedPresets = PresetsUtils.groupPresetAreasByType({
       presetAreasMapping: this._upperBarConfig.presetAreasMapping,
@@ -84,9 +92,7 @@ export class UpperBarManager {
   };
 
   private _renderItems = (playerSize: string) => {
-    const {upperBarItems, iconMenuItems} = this._prepareUpperBarItems(
-      playerSize
-    );
+    const {upperBarItems, iconMenuItems} = this._prepareUpperBarItems(playerSize);
 
     const isIconMenuVisible = !!(upperBarItems.length && iconMenuItems.length);
 
@@ -126,13 +132,14 @@ export class UpperBarManager {
     //       }
     //     }
     // };
+    const undefinedPluginDefaultOrder = Math.max(...Object.values(DefaultPluginOrder)) + 10;
     const itemOptions = {
       kalturaPlayer: this._options.kalturaPlayer,
       data,
       order: ObjectUtils.get(
         this._iconsMenuConfig,
         `iconsOrder.${data.label}`,
-        0
+        DefaultPluginOrder[data.label] || undefinedPluginDefaultOrder
       ),
     };
     const item = new UpperBarItem(itemOptions);
