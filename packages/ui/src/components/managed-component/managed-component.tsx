@@ -1,10 +1,4 @@
-import {
-  h,
-  Component,
-  ComponentChild,
-  ComponentChildren,
-  Fragment,
-} from 'preact';
+import {h, Component, ComponentChild, ComponentChildren} from 'preact';
 import {getContribLogger} from '@playkit-js-contrib/common';
 import {ContribLogger} from '@playkit-js-contrib/common';
 import * as styles from './_managed-component.scss';
