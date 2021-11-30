@@ -10,7 +10,7 @@ import UpperBarConfig = KalturaPlayerContribTypes.UpperBarConfig;
 import {getContribConfig} from './contrib-utils';
 import {IconsMenu} from './components/icons-menu';
 
-const DefaultPluginOrder = {
+const DefaultPluginOrder: {[pluginName: string]: number} = {
   Navigation: 10,
   'Q&A': 20,
   Moderation: 30,
@@ -132,7 +132,7 @@ export class UpperBarManager {
     //       }
     //     }
     // };
-    const undefinedPluginDefaultOrder = Math.max(...Object.values(DefaultPluginOrder)) + 10;
+    const undefinedPluginDefaultOrder: number = Math.max(...Object.values(DefaultPluginOrder)) + 10;
     const itemOptions = {
       kalturaPlayer: this._options.kalturaPlayer,
       data,
