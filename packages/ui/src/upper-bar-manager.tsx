@@ -9,6 +9,23 @@ import {PresetsUtils} from './presets-utils';
 import UpperBarConfig = KalturaPlayerContribTypes.UpperBarConfig;
 import {getContribConfig} from './contrib-utils';
 import {IconsMenu} from './components/icons-menu';
+
+const DefaultPluginOrder: {[pluginName: string]: number} = {
+  Navigation: 10,
+  'Q&A': 20,
+  Moderation: 30,
+  Transcript: 40,
+  'Download transcript': 50,
+  Share: 70,
+  Playlist: 80,
+  Info: 90,
+  Related: 100,
+  Quiz: 110,
+  Layout: 120,
+  'Source Selector': 140,
+  Polls: 150,
+};
+
 const {
   components: {PLAYER_SIZE},
 } = KalturaPlayer.ui;
@@ -132,7 +149,7 @@ export class UpperBarManager {
       order: ObjectUtils.get(
         this._iconsMenuConfig,
         `iconsOrder.${data.label}`,
-        0
+        DefaultPluginOrder[data.label] || Infinity
       ),
     };
     const item = new UpperBarItem(itemOptions);
