@@ -62,19 +62,10 @@ export class UpperBarManager {
   constructor(options: UpperBarManagerOptions) {
     this._options = options;
 
-    this._upperBarConfig = getContribConfig(
-      this._options.kalturaPlayer,
-      'ui.upperBar',
-      defaultUpperBarConfig,
-      {
-        explicitMerge: ['presetAreasMapping'],
-      }
-    );
-    this._iconsMenuConfig = getContribConfig(
-      this._options.kalturaPlayer,
-      'ui.iconsMenu',
-      {iconsOrder: {}}
-    );
+    this._upperBarConfig = getContribConfig(this._options.kalturaPlayer, 'ui.upperBar', defaultUpperBarConfig, {
+      explicitMerge: ['presetAreasMapping'],
+    });
+    this._iconsMenuConfig = getContribConfig(this._options.kalturaPlayer, 'ui.iconsMenu', {iconsOrder: {}});
 
     const groupedPresets = PresetsUtils.groupPresetAreasByType({
       presetAreasMapping: this._upperBarConfig.presetAreasMapping,
@@ -101,9 +92,7 @@ export class UpperBarManager {
   };
 
   private _renderItems = (playerSize: string) => {
-    const {upperBarItems, iconMenuItems} = this._prepareUpperBarItems(
-      playerSize
-    );
+    const {upperBarItems, iconMenuItems} = this._prepareUpperBarItems(playerSize);
 
     const isIconMenuVisible = !!(upperBarItems.length && iconMenuItems.length);
 
@@ -143,8 +132,7 @@ export class UpperBarManager {
     //       }
     //     }
     // };
-    const undefinedPluginDefaultOrder: number =
-      Math.max(...Object.values(DefaultPluginOrder)) + 10;
+    const undefinedPluginDefaultOrder = Infinity;
     const itemOptions = {
       kalturaPlayer: this._options.kalturaPlayer,
       data,
