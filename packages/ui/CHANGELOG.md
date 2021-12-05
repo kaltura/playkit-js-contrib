@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.13](https://github.com/kaltura/playkit-js-contrib/compare/v4.1.12...v4.1.13) (2021-12-05)
+
+
+### Bug Fixes
+
+* **FEV-413:** i as Kaltura want to define the order in which the plugins are shown on the player ([#373](https://github.com/kaltura/playkit-js-contrib/issues/373)) ([5442ab9](https://github.com/kaltura/playkit-js-contrib/commit/5442ab9397d420de488306dc7e2199c74a06a844))
+
+
+
+
+
 ## [4.1.12](https://github.com/kaltura/playkit-js-contrib/compare/v4.1.11...v4.1.12) (2021-11-09)
 
 
