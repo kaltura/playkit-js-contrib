@@ -132,14 +132,13 @@ export class UpperBarManager {
     //       }
     //     }
     // };
-    const undefinedPluginDefaultOrder = Infinity;
     const itemOptions = {
       kalturaPlayer: this._options.kalturaPlayer,
       data,
       order: ObjectUtils.get(
         this._iconsMenuConfig,
         `iconsOrder.${data.label}`,
-        DefaultPluginOrder[data.label] || undefinedPluginDefaultOrder
+        DefaultPluginOrder[data.label] || Infinity
       ),
     };
     const item = new UpperBarItem(itemOptions);
