@@ -31,7 +31,7 @@
     ],
     "dependencies": {
         "@playkit-js-contrib/common": "file:../common",
-        "axios": "^0.19.0",
+        "axios": "^0.21.1",
         "socket.io-client": "2.3.0"
     }
 }
